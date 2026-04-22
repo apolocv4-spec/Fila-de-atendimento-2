@@ -2,26 +2,126 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <title>Entrar na Fila</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fila de Atendimento</title>
+
+  <!-- Ícones -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .icon {
+      font-size: 50px;
+      color: #007bff;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0,123,255,0.5);
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    #msg {
+      margin-top: 15px;
+      font-weight: bold;
+      color: green;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+      }
+
+      input {
+        font-size: 18px;
+      }
+
+      button {
+        font-size: 20px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>Fila de Atendimento</h2>
+<div class="container">
+  <div class="icon">
+    <i class="fas fa-users"></i>
+  </div>
 
-<form id="form">
-  <input type="text" id="nome" placeholder="Nome" required><br>
-  <input type="text" id="apelido" placeholder="Apelido" required><br>
-  <button type="submit">Entrar</button>
-</form>
+  <h2>Fila de Atendimento</h2>
 
-<p id="msg"></p>
+  <form id="form">
+    <input type="text" id="nome" placeholder="Nome" required>
+    <input type="text" id="apelido" placeholder="Apelido" required>
+    <button type="submit">Entrar na Fila</button>
+  </form>
+
+  <p id="msg"></p>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// CONFIGURAÇÃO FIREBASE (vou te explicar abaixo como criar)
- const firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyBzUwIf6X3dqd7D0G55_HyAl_vSmsvg9R4",
   authDomain: "fila-de-atendimento-a3637.firebaseapp.com",
   databaseURL: "https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com",
@@ -31,7 +131,6 @@ import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.
   appId: "1:469991078953:web:8eaf47cba1ed624d33f038"
 };
 
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
@@ -40,7 +139,6 @@ document.getElementById("form").addEventListener("submit", (e) => {
 
   const nome = document.getElementById("nome").value;
   const apelido = document.getElementById("apelido").value;
-
   const hora = new Date().toLocaleTimeString();
 
   push(ref(db, "fila"), {
@@ -51,7 +149,7 @@ document.getElementById("form").addEventListener("submit", (e) => {
   });
 
   document.getElementById("msg").innerText =
-    "✅ Você entrou na fila. Aguarde ser chamado.";
+    "✅ Entraste na fila! Aguarde ser chamado.";
 
   document.getElementById("form").reset();
 });
