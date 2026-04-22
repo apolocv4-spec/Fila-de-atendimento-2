@@ -2,28 +2,164 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Fila de Atendimento</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Fila de Atendimento</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #0f172a;
+  color: white;
+}
+
+/* HEADER */
+header {
+  text-align: center;
+  padding: 20px;
+  background: #111827;
+}
+
+header h1 {
+  font-size: 22px;
+}
+
+/* CONTAINER PRINCIPAL */
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* CARD */
+.card {
+  background: #1e293b;
+  border-radius: 15px;
+  padding: 20px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+/* TITULOS */
+.card h2, .card h3 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* INPUTS */
+input {
+  width: 100%;
+  padding: 15px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+}
+
+input:focus {
+  outline: 2px solid #38bdf8;
+}
+
+/* BOTÕES */
+button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  background: #38bdf8;
+  color: black;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #0ea5e9;
+}
+
+/* LISTA OPERADOR */
+ul {
+  list-style: none;
+  margin-top: 10px;
+}
+
+li {
+  background: #334155;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 8px;
+}
+
+/* ICONES */
+.icon {
+  font-size: 35px;
+  text-align: center;
+  margin-bottom: 10px;
+  color: #38bdf8;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+</style>
 </head>
 
-<body style="font-family: Arial; text-align:center; margin-top:40px;">
+<body>
 
-<h2>Fila de Atendimento</h2>
+<header>
+  <h1><i class="fa-solid fa-id-card"></i> Sistema de Atendimento & Controlo de Fronteira</h1>
+</header>
 
-<!-- FORMULÁRIO CLIENTE -->
-<form id="form">
-  <input type="text" id="nome" placeholder="Nome" required><br><br>
-  <input type="text" id="apelido" placeholder="Apelido" required><br><br>
-  <button type="submit">Entrar na fila</button>
-</form>
+<div class="container">
 
-<p id="msg"></p>
+  <!-- CLIENTE -->
+  <div class="card">
+    <div class="icon">
+      <i class="fa-solid fa-users"></i>
+    </div>
 
-<hr>
+    <h2>Entrar na Fila</h2>
 
-<h3>Painel (Operador)</h3>
-<button onclick="chamarProximo()">Chamar próximo</button>
+    <form id="form">
+      <input type="text" id="nome" placeholder="Nome" required>
+      <input type="text" id="apelido" placeholder="Apelido" required>
+      <button type="submit"><i class="fa-solid fa-arrow-right"></i> Entrar na fila</button>
+    </form>
 
-<ul id="lista"></ul>
+    <p id="msg" style="text-align:center;margin-top:10px;"></p>
+  </div>
+
+  <!-- OPERADOR -->
+  <div class="card">
+    <div class="icon">
+      <i class="fa-solid fa-passport"></i>
+    </div>
+
+    <h3>Painel do Operador</h3>
+
+    <button onclick="chamarProximo()">
+      <i class="fa-solid fa-bell"></i> Chamar Próximo
+    </button>
+
+    <ul id="lista"></ul>
+  </div>
+
+</div>
 
 <!-- FIREBASE -->
 <script type="module">
@@ -31,8 +167,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-
-  const firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyBzUwIf6X3dqd7D0G55_HyAl_vSmsvg9R4",
   authDomain: "fila-de-atendimento-a3637.firebaseapp.com",
   databaseURL: "https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com",
@@ -42,13 +177,12 @@ import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com
   appId: "1:469991078953:web:8eaf47cba1ed624d33f038"
 };
 
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let fila = [];
 
-// ENTRAR NA FILA
+/* ENTRAR NA FILA */
 document.getElementById("form").addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -62,11 +196,11 @@ document.getElementById("form").addEventListener("submit", (e) => {
     timestamp: Date.now()
   });
 
-  document.getElementById("msg").innerText = "✔ Entrou na fila!";
+  document.getElementById("msg").innerText = "✔ Entraste na fila!";
   document.getElementById("form").reset();
 });
 
-// LER FILA EM TEMPO REAL
+/* LER FILA */
 onValue(ref(db, "fila"), (snapshot) => {
   const data = snapshot.val();
   fila = [];
@@ -79,19 +213,19 @@ onValue(ref(db, "fila"), (snapshot) => {
   atualizarLista();
 });
 
-// ATUALIZAR LISTA
+/* ATUALIZAR LISTA */
 function atualizarLista() {
   const ul = document.getElementById("lista");
   ul.innerHTML = "";
 
   fila.forEach((p, i) => {
     const li = document.createElement("li");
-    li.textContent = `${i+1} - ${p.nome} ${p.apelido} (${p.hora})`;
+    li.innerHTML = `<i class="fa-solid fa-user"></i> ${i+1} - ${p.nome} ${p.apelido} <br><small>${p.hora}</small>`;
     ul.appendChild(li);
   });
 }
 
-// CHAMAR PRÓXIMO
+/* CHAMAR PRÓXIMO */
 window.chamarProximo = function() {
   if (fila.length === 0) return;
 
