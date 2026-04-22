@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Fila de Atendimento</title>
+</head>
+
+<body style="font-family: Arial; text-align:center; margin-top:40px;">
+
+<h2>Fila de Atendimento</h2>
+
+<!-- FORMULÁRIO CLIENTE -->
+<form id="form">
+  <input type="text" id="nome" placeholder="Nome" required><br><br>
+  <input type="text" id="apelido" placeholder="Apelido" required><br><br>
+  <button type="submit">Entrar na fila</button>
+</form>
+
+<p id="msg"></p>
+
+<hr>
+
+<h3>Painel (Operador)</h3>
+<button onclick="chamarProximo()">Chamar próximo</button>
+
+<ul id="lista"></ul>
+
+<!-- FIREBASE -->
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+
+  const firebaseConfig = {
+  apiKey: "AIzaSyBzUwIf6X3dqd7D0G55_HyAl_vSmsvg9R4",
+  authDomain: "fila-de-atendimento-a3637.firebaseapp.com",
+  databaseURL: "https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com",
+  projectId: "fila-de-atendimento-a3637",
+  storageBucket: "fila-de-atendimento-a3637.firebasestorage.app",
+  messagingSenderId: "469991078953",
+  appId: "1:469991078953:web:8eaf47cba1ed624d33f038"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+let fila = [];
+
+// ENTRAR NA FILA
+document.getElementById("form").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const nome = document.getElementById("nome").value;
+  const apelido = document.getElementById("apelido").value;
+
+  push(ref(db, "fila"), {
+    nome,
+    apelido,
+    hora: new Date().toLocaleTimeString(),
+    timestamp: Date.now()
+  });
+
+  document.getElementById("msg").innerText = "✔ Entrou na fila!";
+  document.getElementById("form").reset();
+});
+
+// LER FILA EM TEMPO REAL
+onValue(ref(db, "fila"), (snapshot) => {
+  const data = snapshot.val();
+  fila = [];
+
+  if (data) {
+    fila = Object.entries(data).map(([id, val]) => ({ id, ...val }))
+      .sort((a, b) => a.timestamp - b.timestamp);
+  }
+
+  atualizarLista();
+});
+
+// ATUALIZAR LISTA
+function atualizarLista() {
+  const ul = document.getElementById("lista");
+  ul.innerHTML = "";
+
+  fila.forEach((p, i) => {
+    const li = document.createElement("li");
+    li.textContent = `${i+1} - ${p.nome} ${p.apelido} (${p.hora})`;
+    ul.appendChild(li);
+  });
+}
+
+// CHAMAR PRÓXIMO
+window.chamarProximo = function() {
+  if (fila.length === 0) return;
+
+  const primeiro = fila[0];
+
+  alert("Chamando: " + primeiro.nome + " " + primeiro.apelido);
+
+  remove(ref(db, "fila/" + primeiro.id));
+};
+
+</script>
+
+</body>
+</html>
