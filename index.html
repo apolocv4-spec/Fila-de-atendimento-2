@@ -77,6 +77,36 @@
       background: #0056b3;
     }
 
+    /* PRIORIDADE */
+    .priority-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .priority {
+      background: #f1f1f1;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .priority:hover {
+      background: #28a745;
+      color: white;
+    }
+
+    .priority.active {
+      background: #28a745;
+      color: white;
+    }
+
+    .warning {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #777;
+    }
+
     #msg {
       margin-top: 15px;
       font-weight: bold;
@@ -111,6 +141,30 @@
   <form id="form">
     <input type="text" id="nome" placeholder="Nome" required>
     <input type="text" id="apelido" placeholder="Apelido" required>
+
+    <!-- PRIORIDADE -->
+    <div class="priority-buttons">
+      <button type="button" class="priority" onclick="setPriority(event, 'idoso')">
+        <i class="fas fa-user"></i> +65
+      </button>
+
+      <button type="button" class="priority" onclick="setPriority(event, 'gestante')">
+        <i class="fas fa-person-pregnant"></i> Gestante
+      </button>
+
+      <button type="button" class="priority" onclick="setPriority(event, 'bebe')">
+        <i class="fas fa-baby"></i> Bebê
+      </button>
+
+      <button type="button" class="priority" onclick="setPriority(event, 'pmr')">
+        <i class="fas fa-wheelchair"></i> PMR
+      </button>
+    </div>
+
+    <p class="warning">
+      ⚠️ Utilize prioridade apenas se aplicável.
+    </p>
+
     <button type="submit">Entrar na Fila</button>
   </form>
 
@@ -134,6 +188,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// PRIORIDADE
+let prioridade = false;
+let tipoPrioridade = "";
+
+window.setPriority = function(event, tipo) {
+  prioridade = true;
+  tipoPrioridade = tipo;
+
+  document.querySelectorAll(".priority").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  event.currentTarget.classList.add("active");
+};
+
+// FORM
 document.getElementById("form").addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -145,6 +215,8 @@ document.getElementById("form").addEventListener("submit", (e) => {
     nome,
     apelido,
     hora,
+    prioridade,
+    tipoPrioridade,
     timestamp: Date.now()
   });
 
@@ -152,6 +224,13 @@ document.getElementById("form").addEventListener("submit", (e) => {
     "✅ Entraste na fila! Aguarde ser chamado.";
 
   document.getElementById("form").reset();
+
+  // reset prioridade
+  prioridade = false;
+  tipoPrioridade = "";
+  document.querySelectorAll(".priority").forEach(btn => {
+    btn.classList.remove("active");
+  });
 });
 </script>
 
