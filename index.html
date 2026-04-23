@@ -1,237 +1,205 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fila de Atendimento</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fila de Atendimento</title>
 
-  <!-- Ícones -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
 
-    body {
-      background: linear-gradient(135deg, #007bff, #00c6ff);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+body {
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    .container {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
+.container {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
 
-    .icon {
-      font-size: 50px;
-      color: #007bff;
-      margin-bottom: 10px;
-    }
+.icon {
+  font-size: 50px;
+  color: #007bff;
+  margin-bottom: 10px;
+}
 
-    h2 {
-      margin-bottom: 20px;
-      color: #333;
-    }
+input {
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
 
-    input {
-      width: 100%;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
+/* BOTÃO */
+button.submit {
+  width: 100%;
+  padding: 15px;
+  background: #007bff;
+  color: white;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
 
-    input:focus {
-      outline: none;
-      border-color: #007bff;
-      box-shadow: 0 0 5px rgba(0,123,255,0.5);
-    }
+/* PRIORIDADE */
+.priority-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
 
-    button {
-      width: 100%;
-      padding: 15px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: 0.3s;
-    }
+.priority {
+  background: #f1f1f1;
+  color: black;
+  border: 1px solid #ccc;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
 
-    button:hover {
-      background: #0056b3;
-    }
+.priority i {
+  color: black;
+}
 
-    /* PRIORIDADE */
-    .priority-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 10px;
-    }
+.priority.active {
+  background: #22c55e;
+  color: white;
+}
 
-    .priority {
-      background: #f1f1f1;
-      color: #333;
-      font-size: 14px;
-    }
+.priority.active i {
+  color: white;
+}
 
-    .priority:hover {
-      background: #28a745;
-      color: white;
-    }
+/* 🔵 ESPAÇAMENTO CORRIGIDO */
+.warning {
+  font-size: 12px;
+  color: #666;
+  margin-top: 14px;   /* 👈 mais espaço acima */
+  margin-bottom: 18px; /* 👈 separa do botão */
+  line-height: 1.4;
+}
 
-    .priority.active {
-      background: #28a745;
-      color: white;
-    }
-
-    .warning {
-      margin-top: 10px;
-      font-size: 13px;
-      color: #777;
-    }
-
-    #msg {
-      margin-top: 15px;
-      font-weight: bold;
-      color: green;
-    }
-
-    @media (max-width: 480px) {
-      .container {
-        padding: 20px;
-      }
-
-      input {
-        font-size: 18px;
-      }
-
-      button {
-        font-size: 20px;
-      }
-    }
-  </style>
+#msg {
+  margin-top: 10px;
+  color: green;
+}
+</style>
 </head>
 
 <body>
 
 <div class="container">
-  <div class="icon">
-    <i class="fas fa-users"></i>
-  </div>
 
-  <h2>Fila de Atendimento</h2>
+<div class="icon">
+  <i class="fa-solid fa-users"></i>
+</div>
 
-  <form id="form">
-    <input type="text" id="nome" placeholder="Nome" required>
-    <input type="text" id="apelido" placeholder="Apelido" required>
+<h2>Fila de Atendimento</h2>
 
-    <!-- PRIORIDADE -->
-    <div class="priority-buttons">
-      <button type="button" class="priority" onclick="setPriority(event, 'idoso')">
-        <i class="fas fa-user"></i> +65
-      </button>
+<form id="form">
 
-      <button type="button" class="priority" onclick="setPriority(event, 'gestante')">
-        <i class="fas fa-person-pregnant"></i> Gestante
-      </button>
+<input type="text" id="nome" placeholder="Nome" required>
+<input type="text" id="apelido" placeholder="Apelido" required>
 
-      <button type="button" class="priority" onclick="setPriority(event, 'bebe')">
-        <i class="fas fa-baby"></i> Bebê
-      </button>
+<div class="priority-buttons">
 
-      <button type="button" class="priority" onclick="setPriority(event, 'pmr')">
-        <i class="fas fa-wheelchair"></i> PMR
-      </button>
-    </div>
+<button type="button" class="priority" onclick="setPriority(event,'idoso')">
+  <i class="fa-solid fa-user"></i> +65
+</button>
 
-    <p class="warning">
-      ⚠️ Utilize prioridade apenas se aplicável.
-    </p>
+<button type="button" class="priority" onclick="setPriority(event,'gestante')">
+  <i class="fa-solid fa-person-pregnant"></i> Gestante
+</button>
 
-    <button type="submit">Entrar na Fila</button>
-  </form>
+<button type="button" class="priority" onclick="setPriority(event,'bebe')">
+  <i class="fa-solid fa-baby"></i> Bebê
+</button>
 
-  <p id="msg"></p>
+<button type="button" class="priority" onclick="setPriority(event,'pmr')">
+  <i class="fa-solid fa-wheelchair"></i> PMR
+</button>
+
+</div>
+
+<p class="warning">
+⚠️ Utilize prioridade apenas se aplicável.
+</p>
+
+<button class="submit" type="submit">Entrar na Fila</button>
+
+</form>
+
+<p id="msg"></p>
+
 </div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBzUwIf6X3dqd7D0G55_HyAl_vSmsvg9R4",
+const app = initializeApp({
+  apiKey: "AIzaSy...",
   authDomain: "fila-de-atendimento-a3637.firebaseapp.com",
   databaseURL: "https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com",
-  projectId: "fila-de-atendimento-a3637",
-  storageBucket: "fila-de-atendimento-a3637.firebasestorage.app",
-  messagingSenderId: "469991078953",
-  appId: "1:469991078953:web:8eaf47cba1ed624d33f038"
-};
+  projectId: "fila-de-atendimento-a3637"
+});
 
-const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// PRIORIDADE
 let prioridade = false;
-let tipoPrioridade = "";
+let tipo = "";
 
-window.setPriority = function(event, tipo) {
+window.setPriority = function(e, t) {
   prioridade = true;
-  tipoPrioridade = tipo;
+  tipo = t;
 
-  document.querySelectorAll(".priority").forEach(btn => {
-    btn.classList.remove("active");
-  });
-
-  event.currentTarget.classList.add("active");
+  document.querySelectorAll(".priority").forEach(b => b.classList.remove("active"));
+  e.currentTarget.classList.add("active");
 };
 
-// FORM
 document.getElementById("form").addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const nome = document.getElementById("nome").value;
-  const apelido = document.getElementById("apelido").value;
-  const hora = new Date().toLocaleTimeString();
-
-  push(ref(db, "fila"), {
-    nome,
-    apelido,
-    hora,
+  push(ref(db,"fila"),{
+    nome: nome.value.trim(),
+    apelido: apelido.value.trim(),
     prioridade,
-    tipoPrioridade,
+    tipo: prioridade ? tipo : "normal",
     timestamp: Date.now()
   });
 
-  document.getElementById("msg").innerText =
-    "✅ Entraste na fila! Aguarde ser chamado.";
+  msg.innerText = "✔ Entraste na fila!";
 
-  document.getElementById("form").reset();
-
-  // reset prioridade
+  form.reset();
   prioridade = false;
-  tipoPrioridade = "";
-  document.querySelectorAll(".priority").forEach(btn => {
-    btn.classList.remove("active");
-  });
+  tipo = "";
+
+  document.querySelectorAll(".priority").forEach(b => b.classList.remove("active"));
 });
+
 </script>
 
 </body>
