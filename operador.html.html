@@ -3,17 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistema de Fila</title>
+<title>Sistema de Gestão de Fila e Controlo de Passaporte</title>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
 body {
   background: #0f172a;
   color: white;
-  font-family: Arial;
 }
 
+/* HEADER */
+header {
+  text-align: center;
+  padding: 20px;
+  background: #111827;
+}
+
+header h1 {
+  font-size: 22px;
+}
+
+/* CONTAINER */
 .container {
   display: flex;
   flex-wrap: wrap;
@@ -22,95 +40,192 @@ body {
   padding: 20px;
 }
 
+/* CARD */
 .card {
   background: #1e293b;
   border-radius: 15px;
   padding: 20px;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
 
-input, button {
+/* INPUTS */
+input {
   width: 100%;
-  padding: 12px;
-  margin-top: 8px;
-  border-radius: 8px;
+  padding: 15px;
+  margin: 8px 0;
+  border-radius: 10px;
   border: none;
 }
 
+/* BOTÃO */
 button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
   background: #38bdf8;
+  color: black;
+  font-weight: bold;
   cursor: pointer;
 }
 
-.priority-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.priority.active {
-  background: #22c55e;
-  color: white;
+/* LISTA OPERADOR */
+ul {
+  list-style: none;
+  margin-top: 10px;
 }
 
 li {
   background: #334155;
   padding: 10px;
-  margin-top: 5px;
+  margin: 5px 0;
   border-radius: 8px;
 }
 
-/* CORES */
+/* ICONES */
+.icon {
+  font-size: 35px;
+  text-align: center;
+  margin-bottom: 10px;
+  color: #38bdf8;
+}
+
+.icon-yellow {
+  color: #facc15;
+  margin-right: 6px;
+}
+
+/* PRIORIDADE CORES */
 .gestante { border-left: 5px solid #ec4899; }
 .pmr { border-left: 5px solid #3b82f6; }
 .bebe { border-left: 5px solid #f97316; }
 .idoso { border-left: 5px solid #eab308; }
 
-.icon-yellow {
-  color: #facc15;
-  margin-right: 5px;
+/* nomes prioritários sempre verdes */
+.prioritario {
+  color: #22c55e;
+  font-weight: bold;
 }
 
+/* CLIENTE PRIORIDADE */
+.priority-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 15px;
+  margin-bottom: 25px;
+}
+
+.priority-btn {
+  background: white;
+  color: black;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  border: 1px solid #cbd5e1;
+}
+
+.priority-btn i {
+  color: black;
+}
+
+.priority-btn.active {
+  background: #22c55e;
+  color: white;
+}
+
+.priority-btn.active i {
+  color: white;
+}
+
+/* TEXTO INFO OPERADOR */
 .time {
   font-size: 12px;
-  color: #ccc;
+  color: #cbd5e1;
+  margin-top: 3px;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 </style>
 </head>
 
 <body>
 
+<header>
+  <h1><i class="fa-solid fa-id-card"></i> Sistema de Gestão de Fila e Controlo de Passaporte</h1>
+</header>
+
 <div class="container">
 
 <!-- CLIENTE -->
 <div class="card">
-<h2>Entrar na Fila</h2>
 
-<form id="form">
-<input id="nome" placeholder="Nome" required>
-<input id="apelido" placeholder="Apelido" required>
+  <div class="icon">
+    <i class="fa-solid fa-users"></i>
+  </div>
 
-<div class="priority-buttons">
-<button type="button" class="priority" onclick="setPriority(event,'idoso')">+65</button>
-<button type="button" class="priority" onclick="setPriority(event,'gestante')">Gestante</button>
-<button type="button" class="priority" onclick="setPriority(event,'bebe')">Bebê</button>
-<button type="button" class="priority" onclick="setPriority(event,'pmr')">PMR</button>
+  <h2>Entrar na Fila</h2>
+
+  <form id="form">
+    <input type="text" id="nome" placeholder="Nome" required>
+    <input type="text" id="apelido" placeholder="Apelido" required>
+
+    <div class="priority-grid">
+
+      <div class="priority-btn" onclick="setPriority(event,'idoso')">
+        <i class="fa-solid fa-user"></i> +65
+      </div>
+
+      <div class="priority-btn" onclick="setPriority(event,'gestante')">
+        <i class="fa-solid fa-person-pregnant"></i> Gestante
+      </div>
+
+      <div class="priority-btn" onclick="setPriority(event,'bebe')">
+        <i class="fa-solid fa-baby"></i> Bebé
+      </div>
+
+      <div class="priority-btn" onclick="setPriority(event,'pmr')">
+        <i class="fa-solid fa-wheelchair"></i> PMR
+      </div>
+
+    </div>
+
+    <button type="submit">
+      <i class="fa-solid fa-arrow-right"></i> Entrar na fila
+    </button>
+  </form>
+
+  <p id="msg" style="text-align:center;margin-top:10px;"></p>
 </div>
 
-<button type="submit">Entrar</button>
-</form>
-
-<p id="msg"></p>
-</div>
-
-<!-- OPERADOR -->
+<!-- OPERADOR (INTACTO VISUALMENTE) -->
 <div class="card">
-<h2>Painel Operador</h2>
 
-<button onclick="chamarProximo()">Chamar Próximo</button>
+  <div class="icon">
+    <i class="fa-solid fa-passport"></i>
+  </div>
 
-<ul id="lista"></ul>
+  <h3>Painel do Operador</h3>
+
+  <button onclick="chamarProximo()">
+    <i class="fa-solid fa-bell"></i> Chamar Próximo
+  </button>
+
+  <ul id="lista"></ul>
+
 </div>
 
 </div>
@@ -120,61 +235,53 @@ li {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const app = initializeApp({
-  apiKey: "AIzaSy...",
+const firebaseConfig = {
+  apiKey: "AIzaSyBzUwIf6X3dqd7D0G55_HyAl_vSmsvg9R4",
   authDomain: "fila-de-atendimento-a3637.firebaseapp.com",
   databaseURL: "https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com",
-  projectId: "fila-de-atendimento-a3637"
-});
+  projectId: "fila-de-atendimento-a3637",
+  storageBucket: "fila-de-atendimento-a3637.firebasestorage.app",
+  messagingSenderId: "469991078953",
+  appId: "1:469991078953:web:8eaf47cba1ed624d33f038"
+};
 
+const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let fila = [];
-let prioridade = false;
 let tipo = "";
 
-/* PRIORIDADE */
-window.setPriority = function(e, t) {
-  prioridade = true;
+/* PRIORIDADE CLIENTE */
+window.setPriority = function(e,t){
   tipo = t;
 
-  document.querySelectorAll(".priority").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".priority-btn").forEach(b=>{
+    b.classList.remove("active");
+  });
+
   e.currentTarget.classList.add("active");
 };
 
 /* ENTRAR */
-form.addEventListener("submit", e => {
+document.getElementById("form").addEventListener("submit",(e)=>{
   e.preventDefault();
 
   push(ref(db,"fila"),{
     nome: nome.value,
     apelido: apelido.value,
-    prioridade,
-    tipo,
+    tipo: tipo || "normal",
     timestamp: Date.now()
   });
 
-  msg.innerText = "✔ Entraste na fila";
+  msg.innerText = "✔ Entraste na fila!";
   form.reset();
 
-  prioridade = false;
   tipo = "";
 });
 
-/* PRIORIDADE NIVEL */
-function prioridadeNivel(tipo){
-  switch(tipo){
-    case "gestante": return 1;
-    case "pmr": return 2;
-    case "bebe": return 3;
-    case "idoso": return 4;
-    default: return 5;
-  }
-}
-
 /* ICONES */
-function getIcon(tipo){
-  switch(tipo){
+function getIcon(t){
+  switch(t){
     case "gestante": return '<i class="fa-solid fa-person-pregnant icon-yellow"></i>';
     case "pmr": return '<i class="fa-solid fa-wheelchair icon-yellow"></i>';
     case "bebe": return '<i class="fa-solid fa-baby icon-yellow"></i>';
@@ -183,24 +290,30 @@ function getIcon(tipo){
   }
 }
 
-/* TEMPO */
+/* TEMPO DE ESPERA */
 function tempo(ts){
-  return Math.floor((Date.now()-ts)/60000)+" min";
+  return Math.floor((Date.now() - ts) / 60000) + " min";
+}
+
+/* PRIORIDADE TEXTO */
+function tipoTexto(t){
+  switch(t){
+    case "gestante": return "GESTANTE";
+    case "pmr": return "PMR";
+    case "bebe": return "BEBÉ";
+    case "idoso": return "IDOSO";
+    default: return "NORMAL";
+  }
 }
 
 /* LER */
-onValue(ref(db,"fila"), snap=>{
+onValue(ref(db,"fila"),snap=>{
   const data=snap.val();
   fila=[];
 
   if(data){
     fila=Object.entries(data).map(([id,v])=>({id,...v}))
-    .sort((a,b)=>{
-      let pa=prioridadeNivel(a.tipo);
-      let pb=prioridadeNivel(b.tipo);
-      if(pa!==pb) return pa-pb;
-      return a.timestamp-b.timestamp;
-    });
+    .sort((a,b)=>a.timestamp-b.timestamp);
   }
 
   render();
@@ -213,13 +326,20 @@ function render(){
   fila.forEach((p,i)=>{
     const li=document.createElement("li");
 
-    li.classList.add(p.tipo || "");
+    if(p.tipo==="gestante") li.classList.add("gestante");
+    if(p.tipo==="pmr") li.classList.add("pmr");
+    if(p.tipo==="bebe") li.classList.add("bebe");
+    if(p.tipo==="idoso") li.classList.add("idoso");
 
-    li.innerHTML=`
+    const nomeClass = p.tipo !== "normal" ? "prioritario" : "";
+
+    li.innerHTML = `
       ${getIcon(p.tipo)}
-      ${i+1} - ${p.nome} ${p.apelido}
+      <span class="${nomeClass}">
+        ${i+1} - ${p.nome} ${p.apelido}
+      </span>
       <div class="time">
-        ${p.tipo ? p.tipo.toUpperCase() : "NORMAL"} | ${tempo(p.timestamp)}
+        ${tipoTexto(p.tipo)} | ${tempo(p.timestamp)}
       </div>
     `;
 
