@@ -20,18 +20,12 @@ body {
   color: white;
 }
 
-/* HEADER */
 header {
   text-align: center;
   padding: 20px;
   background: #111827;
 }
 
-header h1 {
-  font-size: 22px;
-}
-
-/* CONTAINER PRINCIPAL */
 .container {
   display: flex;
   flex-wrap: wrap;
@@ -40,7 +34,6 @@ header h1 {
   padding: 20px;
 }
 
-/* CARD */
 .card {
   background: #1e293b;
   border-radius: 15px;
@@ -50,37 +43,21 @@ header h1 {
   box-shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
 
-/* TITULOS */
-.card h2, .card h3 {
-  text-align: center;
-  margin-bottom: 15px;
-}
-
-/* INPUTS */
 input {
   width: 100%;
   padding: 15px;
   margin: 8px 0;
   border-radius: 10px;
   border: none;
-  font-size: 16px;
 }
 
-input:focus {
-  outline: 2px solid #38bdf8;
-}
-
-/* BOTÕES */
 button {
   width: 100%;
   padding: 15px;
-  border: none;
   border-radius: 10px;
+  border: none;
   background: #38bdf8;
-  color: black;
-  font-size: 16px;
   cursor: pointer;
-  margin-top: 10px;
   font-weight: bold;
 }
 
@@ -88,33 +65,50 @@ button:hover {
   background: #0ea5e9;
 }
 
-/* LISTA OPERADOR */
+/* PRIORIDADE */
+.priority-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.priority {
+  background: #334155;
+  color: white;
+}
+
+.priority.active {
+  background: #22c55e;
+}
+
+.warning {
+  font-size: 12px;
+  margin-top: 5px;
+  color: #ccc;
+}
+
+/* LISTA */
 ul {
   list-style: none;
-  margin-top: 10px;
 }
 
 li {
   background: #334155;
-  padding: 10px;
-  margin: 5px 0;
+  padding: 12px;
+  margin: 6px 0;
   border-radius: 8px;
 }
 
-/* ICONES */
-.icon {
-  font-size: 35px;
-  text-align: center;
-  margin-bottom: 10px;
-  color: #38bdf8;
+.prioritario {
+  color: #22c55e;
+  font-weight: bold;
+  border-left: 5px solid #22c55e;
 }
 
-/* RESPONSIVO */
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-    align-items: center;
-  }
+/* ICONES AMARELOS */
+.icon-priority {
+  color: #facc15;
+  margin-right: 5px;
 }
 </style>
 </head>
@@ -122,46 +116,56 @@ li {
 <body>
 
 <header>
-  <h1><i class="fa-solid fa-id-card"></i> Sistema de Atendimento & Controlo de Fronteira</h1>
+<h1><i class="fa-solid fa-id-card"></i> Sistema de Atendimento</h1>
 </header>
 
 <div class="container">
 
-  <!-- CLIENTE -->
-  <div class="card">
-    <div class="icon">
-      <i class="fa-solid fa-users"></i>
-    </div>
+<!-- CLIENTE -->
+<div class="card">
+<h2>Entrar na Fila</h2>
 
-    <h2>Entrar na Fila</h2>
+<form id="form">
+<input type="text" id="nome" placeholder="Nome" required>
+<input type="text" id="apelido" placeholder="Apelido" required>
 
-    <form id="form">
-      <input type="text" id="nome" placeholder="Nome" required>
-      <input type="text" id="apelido" placeholder="Apelido" required>
-      <button type="submit"><i class="fa-solid fa-arrow-right"></i> Entrar na fila</button>
-    </form>
+<div class="priority-buttons">
+<button type="button" class="priority" onclick="setPriority(event,'idoso')">
+<i class="fa-solid fa-user icon-priority"></i> +65
+</button>
 
-    <p id="msg" style="text-align:center;margin-top:10px;"></p>
-  </div>
+<button type="button" class="priority" onclick="setPriority(event,'gestante')">
+<i class="fa-solid fa-person-pregnant icon-priority"></i> Gestante
+</button>
 
-  <!-- OPERADOR -->
-  <div class="card">
-    <div class="icon">
-      <i class="fa-solid fa-passport"></i>
-    </div>
+<button type="button" class="priority" onclick="setPriority(event,'bebe')">
+<i class="fa-solid fa-baby icon-priority"></i> Bebê
+</button>
 
-    <h3>Painel do Operador</h3>
+<button type="button" class="priority" onclick="setPriority(event,'pmr')">
+<i class="fa-solid fa-wheelchair icon-priority"></i> PMR
+</button>
+</div>
 
-    <button onclick="chamarProximo()">
-      <i class="fa-solid fa-bell"></i> Chamar Próximo
-    </button>
+<p class="warning">⚠️ Use prioridade apenas se aplicável</p>
 
-    <ul id="lista"></ul>
-  </div>
+<button type="submit">Entrar na fila</button>
+</form>
+
+<p id="msg"></p>
+</div>
+
+<!-- OPERADOR -->
+<div class="card">
+<h3>Painel do Operador</h3>
+
+<button onclick="chamarProximo()">Chamar Próximo</button>
+
+<ul id="lista"></ul>
+</div>
 
 </div>
 
-<!-- FIREBASE -->
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -171,16 +175,24 @@ const firebaseConfig = {
   apiKey: "AIzaSyBzUwIf6X3dqd7D0G55_HyAl_vSmsvg9R4",
   authDomain: "fila-de-atendimento-a3637.firebaseapp.com",
   databaseURL: "https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com",
-  projectId: "fila-de-atendimento-a3637",
-  storageBucket: "fila-de-atendimento-a3637.firebasestorage.app",
-  messagingSenderId: "469991078953",
-  appId: "1:469991078953:web:8eaf47cba1ed624d33f038"
+  projectId: "fila-de-atendimento-a3637"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let fila = [];
+let prioridade = false;
+let tipo = "";
+
+/* SELECIONAR PRIORIDADE */
+window.setPriority = function(e, t) {
+  prioridade = true;
+  tipo = t;
+
+  document.querySelectorAll(".priority").forEach(btn => btn.classList.remove("active"));
+  e.currentTarget.classList.add("active");
+};
 
 /* ENTRAR NA FILA */
 document.getElementById("form").addEventListener("submit", (e) => {
@@ -192,12 +204,18 @@ document.getElementById("form").addEventListener("submit", (e) => {
   push(ref(db, "fila"), {
     nome,
     apelido,
+    prioridade,
+    tipo,
     hora: new Date().toLocaleTimeString(),
     timestamp: Date.now()
   });
 
   document.getElementById("msg").innerText = "✔ Entraste na fila!";
   document.getElementById("form").reset();
+
+  prioridade = false;
+  tipo = "";
+  document.querySelectorAll(".priority").forEach(btn => btn.classList.remove("active"));
 });
 
 /* LER FILA */
@@ -207,11 +225,31 @@ onValue(ref(db, "fila"), (snapshot) => {
 
   if (data) {
     fila = Object.entries(data).map(([id, val]) => ({ id, ...val }))
-      .sort((a, b) => a.timestamp - b.timestamp);
+      .sort((a, b) => {
+        if (a.prioridade && !b.prioridade) return -1;
+        if (!a.prioridade && b.prioridade) return 1;
+        return a.timestamp - b.timestamp;
+      });
   }
 
   atualizarLista();
 });
+
+/* ICONES */
+function getIcon(tipo) {
+  switch(tipo) {
+    case "idoso":
+      return '<i class="fa-solid fa-user icon-priority"></i> +65';
+    case "gestante":
+      return '<i class="fa-solid fa-person-pregnant icon-priority"></i> Gestante';
+    case "bebe":
+      return '<i class="fa-solid fa-baby icon-priority"></i> Bebê';
+    case "pmr":
+      return '<i class="fa-solid fa-wheelchair icon-priority"></i> PMR';
+    default:
+      return '<i class="fa-solid fa-user"></i>';
+  }
+}
 
 /* ATUALIZAR LISTA */
 function atualizarLista() {
@@ -220,20 +258,34 @@ function atualizarLista() {
 
   fila.forEach((p, i) => {
     const li = document.createElement("li");
-    li.innerHTML = `<i class="fa-solid fa-user"></i> ${i+1} - ${p.nome} ${p.apelido} <br><small>${p.hora}</small>`;
+
+    let iconHtml = '<i class="fa-solid fa-user"></i>';
+    let prioridadeInfo = "";
+
+    if (p.prioridade) {
+      li.classList.add("prioritario");
+      iconHtml = getIcon(p.tipo);
+      prioridadeInfo = `<br><small>Prioritário - ${p.tipo}</small>`;
+    }
+
+    li.innerHTML = `
+      ${iconHtml}
+      ${i+1} - ${p.nome} ${p.apelido}
+      ${prioridadeInfo}
+      <br><small>${p.hora}</small>
+    `;
+
     ul.appendChild(li);
   });
 }
 
-/* CHAMAR PRÓXIMO */
+/* CHAMAR */
 window.chamarProximo = function() {
   if (fila.length === 0) return;
 
-  const primeiro = fila[0];
-
-  alert("Chamando: " + primeiro.nome + " " + primeiro.apelido);
-
-  remove(ref(db, "fila/" + primeiro.id));
+  const p = fila[0];
+  alert("Chamando: " + p.nome + " " + p.apelido);
+  remove(ref(db, "fila/" + p.id));
 };
 
 </script>
