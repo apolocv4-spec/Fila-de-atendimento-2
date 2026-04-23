@@ -3,27 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistema de Fila de Atendimento</title>
+<title>Sistema de Fila</title>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
 body {
   background: #0f172a;
   color: white;
-}
-
-header {
-  text-align: center;
-  padding: 20px;
-  background: #111827;
+  font-family: Arial;
 }
 
 .container {
@@ -39,85 +27,59 @@ header {
   border-radius: 15px;
   padding: 20px;
   width: 100%;
-  max-width: 420px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  max-width: 400px;
 }
 
-input {
+input, button {
   width: 100%;
-  padding: 15px;
-  margin: 8px 0;
-  border-radius: 10px;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 8px;
   border: none;
 }
 
 button {
-  width: 100%;
-  padding: 15px;
-  border-radius: 10px;
-  border: none;
   background: #38bdf8;
   cursor: pointer;
-  font-weight: bold;
 }
 
-button:hover {
-  background: #0ea5e9;
-}
-
-/* PRIORIDADE */
 .priority-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.priority {
-  background: #334155;
-  color: white;
+  gap: 8px;
 }
 
 .priority.active {
   background: #22c55e;
-}
-
-.warning {
-  font-size: 12px;
-  margin-top: 5px;
-  color: #ccc;
-}
-
-/* LISTA */
-ul {
-  list-style: none;
+  color: white;
 }
 
 li {
   background: #334155;
-  padding: 12px;
-  margin: 6px 0;
+  padding: 10px;
+  margin-top: 5px;
   border-radius: 8px;
 }
 
-.prioritario {
-  color: #22c55e;
-  font-weight: bold;
-  border-left: 5px solid #22c55e;
-}
+/* CORES */
+.gestante { border-left: 5px solid #ec4899; }
+.pmr { border-left: 5px solid #3b82f6; }
+.bebe { border-left: 5px solid #f97316; }
+.idoso { border-left: 5px solid #eab308; }
 
-/* ICONES AMARELOS */
-.icon-priority {
+.icon-yellow {
   color: #facc15;
   margin-right: 5px;
+}
+
+.time {
+  font-size: 12px;
+  color: #ccc;
 }
 </style>
 </head>
 
 <body>
-
-<header>
-<h1><i class="fa-solid fa-id-card"></i> Sistema de Atendimento</h1>
-</header>
 
 <div class="container">
 
@@ -126,30 +88,17 @@ li {
 <h2>Entrar na Fila</h2>
 
 <form id="form">
-<input type="text" id="nome" placeholder="Nome" required>
-<input type="text" id="apelido" placeholder="Apelido" required>
+<input id="nome" placeholder="Nome" required>
+<input id="apelido" placeholder="Apelido" required>
 
 <div class="priority-buttons">
-<button type="button" class="priority" onclick="setPriority(event,'idoso')">
-<i class="fa-solid fa-user icon-priority"></i> +65
-</button>
-
-<button type="button" class="priority" onclick="setPriority(event,'gestante')">
-<i class="fa-solid fa-person-pregnant icon-priority"></i> Gestante
-</button>
-
-<button type="button" class="priority" onclick="setPriority(event,'bebe')">
-<i class="fa-solid fa-baby icon-priority"></i> Bebê
-</button>
-
-<button type="button" class="priority" onclick="setPriority(event,'pmr')">
-<i class="fa-solid fa-wheelchair icon-priority"></i> PMR
-</button>
+<button type="button" class="priority" onclick="setPriority(event,'idoso')">+65</button>
+<button type="button" class="priority" onclick="setPriority(event,'gestante')">Gestante</button>
+<button type="button" class="priority" onclick="setPriority(event,'bebe')">Bebê</button>
+<button type="button" class="priority" onclick="setPriority(event,'pmr')">PMR</button>
 </div>
 
-<p class="warning">⚠️ Use prioridade apenas se aplicável</p>
-
-<button type="submit">Entrar na fila</button>
+<button type="submit">Entrar</button>
 </form>
 
 <p id="msg"></p>
@@ -157,7 +106,7 @@ li {
 
 <!-- OPERADOR -->
 <div class="card">
-<h3>Painel do Operador</h3>
+<h2>Painel Operador</h2>
 
 <button onclick="chamarProximo()">Chamar Próximo</button>
 
@@ -171,121 +120,120 @@ li {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBzUwIf6X3dqd7D0G55_HyAl_vSmsvg9R4",
+const app = initializeApp({
+  apiKey: "AIzaSy...",
   authDomain: "fila-de-atendimento-a3637.firebaseapp.com",
   databaseURL: "https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com",
   projectId: "fila-de-atendimento-a3637"
-};
+});
 
-const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let fila = [];
 let prioridade = false;
 let tipo = "";
 
-/* SELECIONAR PRIORIDADE */
+/* PRIORIDADE */
 window.setPriority = function(e, t) {
   prioridade = true;
   tipo = t;
 
-  document.querySelectorAll(".priority").forEach(btn => btn.classList.remove("active"));
+  document.querySelectorAll(".priority").forEach(b => b.classList.remove("active"));
   e.currentTarget.classList.add("active");
 };
 
-/* ENTRAR NA FILA */
-document.getElementById("form").addEventListener("submit", (e) => {
+/* ENTRAR */
+form.addEventListener("submit", e => {
   e.preventDefault();
 
-  const nome = document.getElementById("nome").value;
-  const apelido = document.getElementById("apelido").value;
-
-  push(ref(db, "fila"), {
-    nome,
-    apelido,
+  push(ref(db,"fila"),{
+    nome: nome.value,
+    apelido: apelido.value,
     prioridade,
     tipo,
-    hora: new Date().toLocaleTimeString(),
     timestamp: Date.now()
   });
 
-  document.getElementById("msg").innerText = "✔ Entraste na fila!";
-  document.getElementById("form").reset();
+  msg.innerText = "✔ Entraste na fila";
+  form.reset();
 
   prioridade = false;
   tipo = "";
-  document.querySelectorAll(".priority").forEach(btn => btn.classList.remove("active"));
 });
 
-/* LER FILA */
-onValue(ref(db, "fila"), (snapshot) => {
-  const data = snapshot.val();
-  fila = [];
-
-  if (data) {
-    fila = Object.entries(data).map(([id, val]) => ({ id, ...val }))
-      .sort((a, b) => {
-        if (a.prioridade && !b.prioridade) return -1;
-        if (!a.prioridade && b.prioridade) return 1;
-        return a.timestamp - b.timestamp;
-      });
-  }
-
-  atualizarLista();
-});
-
-/* ICONES */
-function getIcon(tipo) {
-  switch(tipo) {
-    case "idoso":
-      return '<i class="fa-solid fa-user icon-priority"></i> +65';
-    case "gestante":
-      return '<i class="fa-solid fa-person-pregnant icon-priority"></i> Gestante';
-    case "bebe":
-      return '<i class="fa-solid fa-baby icon-priority"></i> Bebê';
-    case "pmr":
-      return '<i class="fa-solid fa-wheelchair icon-priority"></i> PMR';
-    default:
-      return '<i class="fa-solid fa-user"></i>';
+/* PRIORIDADE NIVEL */
+function prioridadeNivel(tipo){
+  switch(tipo){
+    case "gestante": return 1;
+    case "pmr": return 2;
+    case "bebe": return 3;
+    case "idoso": return 4;
+    default: return 5;
   }
 }
 
-/* ATUALIZAR LISTA */
-function atualizarLista() {
-  const ul = document.getElementById("lista");
-  ul.innerHTML = "";
+/* ICONES */
+function getIcon(tipo){
+  switch(tipo){
+    case "gestante": return '<i class="fa-solid fa-person-pregnant icon-yellow"></i>';
+    case "pmr": return '<i class="fa-solid fa-wheelchair icon-yellow"></i>';
+    case "bebe": return '<i class="fa-solid fa-baby icon-yellow"></i>';
+    case "idoso": return '<i class="fa-solid fa-user icon-yellow"></i>';
+    default: return '<i class="fa-solid fa-user"></i>';
+  }
+}
 
-  fila.forEach((p, i) => {
-    const li = document.createElement("li");
+/* TEMPO */
+function tempo(ts){
+  return Math.floor((Date.now()-ts)/60000)+" min";
+}
 
-    let iconHtml = '<i class="fa-solid fa-user"></i>';
-    let prioridadeInfo = "";
+/* LER */
+onValue(ref(db,"fila"), snap=>{
+  const data=snap.val();
+  fila=[];
 
-    if (p.prioridade) {
-      li.classList.add("prioritario");
-      iconHtml = getIcon(p.tipo);
-      prioridadeInfo = `<br><small>Prioritário - ${p.tipo}</small>`;
-    }
+  if(data){
+    fila=Object.entries(data).map(([id,v])=>({id,...v}))
+    .sort((a,b)=>{
+      let pa=prioridadeNivel(a.tipo);
+      let pb=prioridadeNivel(b.tipo);
+      if(pa!==pb) return pa-pb;
+      return a.timestamp-b.timestamp;
+    });
+  }
 
-    li.innerHTML = `
-      ${iconHtml}
+  render();
+});
+
+/* RENDER */
+function render(){
+  lista.innerHTML="";
+
+  fila.forEach((p,i)=>{
+    const li=document.createElement("li");
+
+    li.classList.add(p.tipo || "");
+
+    li.innerHTML=`
+      ${getIcon(p.tipo)}
       ${i+1} - ${p.nome} ${p.apelido}
-      ${prioridadeInfo}
-      <br><small>${p.hora}</small>
+      <div class="time">
+        ${p.tipo ? p.tipo.toUpperCase() : "NORMAL"} | ${tempo(p.timestamp)}
+      </div>
     `;
 
-    ul.appendChild(li);
+    lista.appendChild(li);
   });
 }
 
 /* CHAMAR */
-window.chamarProximo = function() {
-  if (fila.length === 0) return;
+window.chamarProximo=()=>{
+  if(!fila.length) return;
 
-  const p = fila[0];
-  alert("Chamando: " + p.nome + " " + p.apelido);
-  remove(ref(db, "fila/" + p.id));
+  const p=fila[0];
+  alert("Chamando: "+p.nome);
+  remove(ref(db,"fila/"+p.id));
 };
 
 </script>
