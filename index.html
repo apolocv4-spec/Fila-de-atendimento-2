@@ -92,12 +92,12 @@ button.submit {
   color: white;
 }
 
-/* 🔵 ESPAÇAMENTO CORRIGIDO */
+/* WARNING */
 .warning {
   font-size: 12px;
   color: #666;
-  margin-top: 14px;   /* 👈 mais espaço acima */
-  margin-bottom: 18px; /* 👈 separa do botão */
+  margin-top: 14px;
+  margin-bottom: 18px;
   line-height: 1.4;
 }
 
@@ -172,6 +172,7 @@ const db = getDatabase(app);
 let prioridade = false;
 let tipo = "";
 
+/* PRIORIDADE */
 window.setPriority = function(e, t) {
   prioridade = true;
   tipo = t;
@@ -180,8 +181,24 @@ window.setPriority = function(e, t) {
   e.currentTarget.classList.add("active");
 };
 
+/* ⛔ CONTROLO DE HORÁRIO (08h - 16h) */
+function dentroHorario() {
+  const agora = new Date();
+  const hora = agora.getHours();
+  return hora >= 8 && hora < 16;
+}
+
+/* SUBMIT */
 document.getElementById("form").addEventListener("submit", (e) => {
   e.preventDefault();
+
+  /* VERIFICA HORÁRIO */
+  if (!dentroHorario()) {
+    alert("⛔ Fora de serviço");
+    msg.style.color = "red";
+    msg.innerText = "⛔ Fora de serviço (08h - 16h)";
+    return;
+  }
 
   push(ref(db,"fila"),{
     nome: nome.value.trim(),
@@ -191,6 +208,7 @@ document.getElementById("form").addEventListener("submit", (e) => {
     timestamp: Date.now()
   });
 
+  msg.style.color = "green";
   msg.innerText = "✔ Entraste na fila!";
 
   form.reset();
