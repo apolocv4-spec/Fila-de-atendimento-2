@@ -152,6 +152,11 @@ li {
   margin-top: 3px;
 }
 
+/* 🔧 AJUSTE PEDIDO (ESPAÇAMENTO) */
+.card h3 {
+  margin-bottom: 20px; /* 👈 aumentei espaço */
+}
+
 /* RESPONSIVO */
 @media (max-width: 768px) {
   .container {
@@ -211,7 +216,7 @@ li {
   <p id="msg" style="text-align:center;margin-top:10px;"></p>
 </div>
 
-<!-- OPERADOR (INTACTO VISUALMENTE) -->
+<!-- OPERADOR -->
 <div class="card">
 
   <div class="icon">
@@ -251,7 +256,6 @@ const db = getDatabase(app);
 let fila = [];
 let tipo = "";
 
-/* PRIORIDADE CLIENTE */
 window.setPriority = function(e,t){
   tipo = t;
 
@@ -262,7 +266,6 @@ window.setPriority = function(e,t){
   e.currentTarget.classList.add("active");
 };
 
-/* ENTRAR */
 document.getElementById("form").addEventListener("submit",(e)=>{
   e.preventDefault();
 
@@ -279,7 +282,6 @@ document.getElementById("form").addEventListener("submit",(e)=>{
   tipo = "";
 });
 
-/* ICONES */
 function getIcon(t){
   switch(t){
     case "gestante": return '<i class="fa-solid fa-person-pregnant icon-yellow"></i>';
@@ -290,12 +292,10 @@ function getIcon(t){
   }
 }
 
-/* TEMPO DE ESPERA */
 function tempo(ts){
   return Math.floor((Date.now() - ts) / 60000) + " min";
 }
 
-/* PRIORIDADE TEXTO */
 function tipoTexto(t){
   switch(t){
     case "gestante": return "GESTANTE";
@@ -306,20 +306,33 @@ function tipoTexto(t){
   }
 }
 
-/* LER */
+function prioridadeNivel(t){
+  switch(t){
+    case "gestante": return 1;
+    case "pmr": return 2;
+    case "bebe": return 3;
+    case "idoso": return 4;
+    default: return 5;
+  }
+}
+
 onValue(ref(db,"fila"),snap=>{
   const data=snap.val();
   fila=[];
 
   if(data){
     fila=Object.entries(data).map(([id,v])=>({id,...v}))
-    .sort((a,b)=>a.timestamp-b.timestamp);
+    .sort((a,b)=>{
+      let pa=prioridadeNivel(a.tipo);
+      let pb=prioridadeNivel(b.tipo);
+      if(pa!==pb) return pa-pb;
+      return a.timestamp-b.timestamp;
+    });
   }
 
   render();
 });
 
-/* RENDER */
 function render(){
   lista.innerHTML="";
 
@@ -347,7 +360,6 @@ function render(){
   });
 }
 
-/* CHAMAR */
 window.chamarProximo=()=>{
   if(!fila.length) return;
 
