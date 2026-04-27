@@ -46,7 +46,6 @@ input {
   border: 1px solid #ccc;
 }
 
-/* BOTÃO */
 button.submit {
   width: 100%;
   padding: 15px;
@@ -57,7 +56,6 @@ button.submit {
   cursor: pointer;
 }
 
-/* PRIORIDADE */
 .priority-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -72,7 +70,6 @@ button.submit {
   padding: 12px;
   border-radius: 8px;
   cursor: pointer;
-  transition: 0.2s;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -92,18 +89,23 @@ button.submit {
   color: white;
 }
 
-/* WARNING */
 .warning {
   font-size: 12px;
   color: #666;
   margin-top: 14px;
   margin-bottom: 18px;
-  line-height: 1.4;
 }
 
 #msg {
   margin-top: 10px;
   color: green;
+}
+
+/* NOVO: INFO FILA */
+#filaInfo {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #333;
 }
 </style>
 </head>
@@ -117,6 +119,9 @@ button.submit {
 </div>
 
 <h2>Fila de Atendimento</h2>
+
+<!-- NOVO: INFO FILA -->
+<p id="filaInfo">A carregar fila...</p>
 
 <form id="form">
 
@@ -158,7 +163,7 @@ button.submit {
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const app = initializeApp({
   apiKey: "AIzaSy...",
@@ -171,6 +176,7 @@ const db = getDatabase(app);
 
 let prioridade = false;
 let tipo = "";
+let totalFila = 0;
 
 /* PRIORIDADE */
 window.setPriority = function(e, t) {
@@ -181,10 +187,23 @@ window.setPriority = function(e, t) {
   e.currentTarget.classList.add("active");
 };
 
-/* ⛔ CONTROLO DE HORÁRIO (08h - 16h) */
+/* 🔄 LER FILA EM TEMPO REAL */
+onValue(ref(db,"fila"), snapshot => {
+  const data = snapshot.val();
+
+  if (data) {
+    totalFila = Object.keys(data).length;
+  } else {
+    totalFila = 0;
+  }
+
+  document.getElementById("filaInfo").innerText =
+    `👥 Pessoas na fila à sua frente: ${totalFila}`;
+});
+
+/* ⛔ CONTROLO DE HORÁRIO */
 function dentroHorario() {
-  const agora = new Date();
-  const hora = agora.getHours();
+  const hora = new Date().getHours();
   return hora >= 8 && hora < 16;
 }
 
@@ -192,7 +211,6 @@ function dentroHorario() {
 document.getElementById("form").addEventListener("submit", (e) => {
   e.preventDefault();
 
-  /* VERIFICA HORÁRIO */
   if (!dentroHorario()) {
     alert("⛔ Fora de serviço");
     msg.style.color = "red";
@@ -209,7 +227,7 @@ document.getElementById("form").addEventListener("submit", (e) => {
   });
 
   msg.style.color = "green";
-  msg.innerText = "✔ Entraste na fila!";
+  msg.innerText = "✔ Entraste na fila! Aguarde a sua vez, em breve será chamado.";
 
   form.reset();
   prioridade = false;
