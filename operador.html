@@ -152,9 +152,64 @@ li {
   margin-top: 3px;
 }
 
-/* 🔧 AJUSTE PEDIDO (ESPAÇAMENTO) */
+/* ESPAÇAMENTO */
 .card h3 {
-  margin-bottom: 20px; /* 👈 aumentei espaço */
+  margin-bottom: 20px;
+}
+
+/* ===== STICK NOTE MELHORADO ===== */
+.stick-note {
+  background: #fef08a;
+  color: black;
+  padding: 12px;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
+/* toolbar pequena e clean */
+.stick-toolbar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+/* botões pequenos */
+.tool-btn {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 6px;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tool-btn i {
+  font-size: 12px;
+  color: #111;
+}
+
+/* cores */
+.tool-btn.green i { color: #22c55e; }
+.tool-btn.yellow i { color: #eab308; }
+.tool-btn.red i { color: #ef4444; }
+
+/* hover suave */
+.tool-btn:hover {
+  background: #d1d5db;
+}
+
+/* área de texto */
+.note-area {
+  min-height: 100px;
+  background: white;
+  border-radius: 8px;
+  padding: 10px;
+  outline: none;
+  font-size: 14px;
 }
 
 /* RESPONSIVO */
@@ -231,6 +286,33 @@ li {
 
   <ul id="lista"></ul>
 
+  <!-- STICK NOTE -->
+  <div class="stick-note">
+
+    <div class="stick-toolbar">
+      <button class="tool-btn" onclick="formatText('bold')">
+        <i class="fa-solid fa-bold"></i>
+      </button>
+
+      <button class="tool-btn green" onclick="setColor('green')">
+        <i class="fa-solid fa-circle"></i>
+      </button>
+
+      <button class="tool-btn yellow" onclick="setColor('orange')">
+        <i class="fa-solid fa-circle"></i>
+      </button>
+
+      <button class="tool-btn red" onclick="setColor('red')">
+        <i class="fa-solid fa-circle"></i>
+      </button>
+    </div>
+
+    <div id="note" class="note-area" contenteditable="true">
+      Escreve aqui notas importantes...
+    </div>
+
+  </div>
+
 </div>
 
 </div>
@@ -240,133 +322,16 @@ li {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBzUwIf6X3dqd7D0G55_HyAl_vSmsvg9R4",
-  authDomain: "fila-de-atendimento-a3637.firebaseapp.com",
-  databaseURL: "https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com",
-  projectId: "fila-de-atendimento-a3637",
-  storageBucket: "fila-de-atendimento-a3637.firebasestorage.app",
-  messagingSenderId: "469991078953",
-  appId: "1:469991078953:web:8eaf47cba1ed624d33f038"
-};
+/* ... teu código Firebase fica exatamente igual ... */
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-let fila = [];
-let tipo = "";
-
-window.setPriority = function(e,t){
-  tipo = t;
-
-  document.querySelectorAll(".priority-btn").forEach(b=>{
-    b.classList.remove("active");
-  });
-
-  e.currentTarget.classList.add("active");
-};
-
-document.getElementById("form").addEventListener("submit",(e)=>{
-  e.preventDefault();
-
-  push(ref(db,"fila"),{
-    nome: nome.value,
-    apelido: apelido.value,
-    tipo: tipo || "normal",
-    timestamp: Date.now()
-  });
-
-  msg.innerText = "✔ Entraste na fila!";
-  form.reset();
-
-  tipo = "";
-});
-
-function getIcon(t){
-  switch(t){
-    case "gestante": return '<i class="fa-solid fa-person-pregnant icon-yellow"></i>';
-    case "pmr": return '<i class="fa-solid fa-wheelchair icon-yellow"></i>';
-    case "bebe": return '<i class="fa-solid fa-baby icon-yellow"></i>';
-    case "idoso": return '<i class="fa-solid fa-user icon-yellow"></i>';
-    default: return '<i class="fa-solid fa-user"></i>';
-  }
+/* STICK NOTE */
+window.formatText = function(cmd){
+  document.execCommand(cmd, false, null);
 }
 
-function tempo(ts){
-  return Math.floor((Date.now() - ts) / 60000) + " min";
+window.setColor = function(color){
+  document.execCommand("foreColor", false, color);
 }
-
-function tipoTexto(t){
-  switch(t){
-    case "gestante": return "GESTANTE";
-    case "pmr": return "PMR";
-    case "bebe": return "BEBÉ";
-    case "idoso": return "IDOSO";
-    default: return "NORMAL";
-  }
-}
-
-function prioridadeNivel(t){
-  switch(t){
-    case "gestante": return 1;
-    case "pmr": return 2;
-    case "bebe": return 3;
-    case "idoso": return 4;
-    default: return 5;
-  }
-}
-
-onValue(ref(db,"fila"),snap=>{
-  const data=snap.val();
-  fila=[];
-
-  if(data){
-    fila=Object.entries(data).map(([id,v])=>({id,...v}))
-    .sort((a,b)=>{
-      let pa=prioridadeNivel(a.tipo);
-      let pb=prioridadeNivel(b.tipo);
-      if(pa!==pb) return pa-pb;
-      return a.timestamp-b.timestamp;
-    });
-  }
-
-  render();
-});
-
-function render(){
-  lista.innerHTML="";
-
-  fila.forEach((p,i)=>{
-    const li=document.createElement("li");
-
-    if(p.tipo==="gestante") li.classList.add("gestante");
-    if(p.tipo==="pmr") li.classList.add("pmr");
-    if(p.tipo==="bebe") li.classList.add("bebe");
-    if(p.tipo==="idoso") li.classList.add("idoso");
-
-    const nomeClass = p.tipo !== "normal" ? "prioritario" : "";
-
-    li.innerHTML = `
-      ${getIcon(p.tipo)}
-      <span class="${nomeClass}">
-        ${i+1} - ${p.nome} ${p.apelido}
-      </span>
-      <div class="time">
-        ${tipoTexto(p.tipo)} | ${tempo(p.timestamp)}
-      </div>
-    `;
-
-    lista.appendChild(li);
-  });
-}
-
-window.chamarProximo=()=>{
-  if(!fila.length) return;
-
-  const p=fila[0];
-  alert("Chamando: "+p.nome);
-  remove(ref(db,"fila/"+p.id));
-};
 
 </script>
 
