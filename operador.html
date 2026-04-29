@@ -102,9 +102,6 @@ li {
   margin-top:3px;
 }
 
-.card h3 { margin-bottom:20px; }
-
-/* STICK NOTE */
 .stick-note {
   background:#fef08a;
   color:black;
@@ -145,6 +142,39 @@ li {
   font-size:14px;
 }
 
+/* LOGIN */
+#loginOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.login-box{
+  background:#1e293b;
+  padding:20px;
+  border-radius:12px;
+  width:300px;
+}
+
+.logout-btn{
+  position:fixed;
+  top:10px;
+  right:10px;
+  width:auto;
+  padding:6px 10px;
+  font-size:12px;
+  border:none;
+  border-radius:8px;
+  background:#ef4444;
+  color:white;
+  cursor:pointer;
+  display:none;
+}
+
 @media (max-width:768px) {
   .container { flex-direction:column; align-items:center; }
 }
@@ -152,6 +182,17 @@ li {
 </head>
 
 <body>
+
+<!-- LOGIN -->
+<div id="loginOverlay">
+  <div class="login-box">
+    <h3>Login Operador</h3>
+    <input type="password" id="senhaInput" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+  </div>
+</div>
+
+<button class="logout-btn" id="logoutBtn" onclick="logout()">Logout</button>
 
 <header>
   <h1><i class="fa-solid fa-id-card"></i> Sistema de Gestão de Fila e Controlo de Passaporte</h1>
@@ -162,6 +203,7 @@ li {
 <!-- CLIENTE -->
 <div class="card">
   <div class="icon"><i class="fa-solid fa-users"></i></div>
+
   <h2>Entrar na Fila</h2>
 
   <form id="form">
@@ -175,39 +217,28 @@ li {
       <div class="priority-btn" onclick="setPriority(event,'pmr')"><i class="fa-solid fa-wheelchair"></i> PMR</div>
     </div>
 
-    <button type="submit"><i class="fa-solid fa-arrow-right"></i> Entrar na fila</button>
+    <button type="submit">Entrar na fila</button>
   </form>
 
   <p id="msg"></p>
 </div>
 
 <!-- OPERADOR -->
-<div class="card">
+<div class="card" id="painelOperador" style="display:none;">
   <div class="icon"><i class="fa-solid fa-passport"></i></div>
 
   <h3>Painel do Operador</h3>
 
-  <button onclick="chamarProximo()">
-    <i class="fa-solid fa-bell"></i> Chamar Próximo
-  </button>
+  <button onclick="chamarProximo()">Chamar Próximo</button>
 
   <ul id="lista"></ul>
 
-  <!-- STICK NOTE -->
   <div class="stick-note">
     <div class="stick-toolbar">
-      <button class="tool-btn" onclick="formatText('bold')">
-        <i class="fa-solid fa-bold"></i>
-      </button>
-      <button class="tool-btn green" onclick="setColor('green')">
-        <i class="fa-solid fa-circle"></i>
-      </button>
-      <button class="tool-btn yellow" onclick="setColor('orange')">
-        <i class="fa-solid fa-circle"></i>
-      </button>
-      <button class="tool-btn red" onclick="setColor('red')">
-        <i class="fa-solid fa-circle"></i>
-      </button>
+      <button class="tool-btn" onclick="formatText('bold')"><i class="fa-solid fa-bold"></i></button>
+      <button class="tool-btn green" onclick="setColor('green')"><i class="fa-solid fa-circle"></i></button>
+      <button class="tool-btn yellow" onclick="setColor('orange')"><i class="fa-solid fa-circle"></i></button>
+      <button class="tool-btn red" onclick="setColor('red')"><i class="fa-solid fa-circle"></i></button>
     </div>
 
     <div id="note" class="note-area" contenteditable="true"></div>
@@ -238,18 +269,51 @@ const db = getDatabase(app);
 let fila = [];
 let tipo = "";
 
+/* LOGIN COM PERSISTÊNCIA */
+window.login = async function () {
+
+  const resp = await fetch("https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com/senhaOperador.json");
+  const senha = await resp.json();
+
+  const input = document.getElementById("senhaInput").value;
+
+  if (input == senha) {
+    sessionStorage.setItem("logado", "true");
+
+    document.getElementById("loginOverlay").style.display = "none";
+    document.getElementById("painelOperador").style.display = "block";
+    document.getElementById("logoutBtn").style.display = "block";
+  } else {
+    alert("Senha errada");
+  }
+};
+
+window.logout = function () {
+  sessionStorage.removeItem("logado");
+  location.reload();
+};
+
+/* manter login após refresh */
+window.onload = function () {
+  if (sessionStorage.getItem("logado") === "true") {
+    document.getElementById("loginOverlay").style.display = "none";
+    document.getElementById("painelOperador").style.display = "block";
+    document.getElementById("logoutBtn").style.display = "block";
+  }
+};
+
 /* PRIORIDADE */
-window.setPriority = function(e,t){
+window.setPriority = function (e, t) {
   tipo = t;
-  document.querySelectorAll(".priority-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".priority-btn").forEach(b => b.classList.remove("active"));
   e.currentTarget.classList.add("active");
 };
 
-/* ENTRAR FILA */
-document.getElementById("form").addEventListener("submit",(e)=>{
+/* RESTO IGUAL */
+document.getElementById("form").addEventListener("submit", (e) => {
   e.preventDefault();
 
-  push(ref(db,"fila"),{
+  push(ref(db, "fila"), {
     nome: nome.value,
     apelido: apelido.value,
     tipo: tipo || "normal",
@@ -261,9 +325,8 @@ document.getElementById("form").addEventListener("submit",(e)=>{
   tipo = "";
 });
 
-/* FUNÇÕES */
-function getIcon(t){
-  switch(t){
+function getIcon(t) {
+  switch (t) {
     case "gestante": return '<i class="fa-solid fa-person-pregnant icon-yellow"></i>';
     case "pmr": return '<i class="fa-solid fa-wheelchair icon-yellow"></i>';
     case "bebe": return '<i class="fa-solid fa-baby icon-yellow"></i>';
@@ -272,12 +335,12 @@ function getIcon(t){
   }
 }
 
-function tempo(ts){
+function tempo(ts) {
   return Math.floor((Date.now() - ts) / 60000) + " min";
 }
 
-function tipoTexto(t){
-  switch(t){
+function tipoTexto(t) {
+  switch (t) {
     case "gestante": return "GESTANTE";
     case "pmr": return "PMR";
     case "bebe": return "BEBÉ";
@@ -286,8 +349,8 @@ function tipoTexto(t){
   }
 }
 
-function prioridadeNivel(t){
-  switch(t){
+function prioridadeNivel(t) {
+  switch (t) {
     case "gestante": return 1;
     case "pmr": return 2;
     case "bebe": return 3;
@@ -296,87 +359,61 @@ function prioridadeNivel(t){
   }
 }
 
-/* ATUALIZA FILA */
-onValue(ref(db,"fila"),snap=>{
-  const data=snap.val();
-  fila=[];
+onValue(ref(db, "fila"), snap => {
+  const data = snap.val();
+  fila = [];
 
-  if(data){
-    fila=Object.entries(data).map(([id,v])=>({id,...v}))
-    .sort((a,b)=>{
-      let pa=prioridadeNivel(a.tipo);
-      let pb=prioridadeNivel(b.tipo);
-      if(pa!==pb) return pa-pb;
-      return a.timestamp-b.timestamp;
-    });
+  if (data) {
+    fila = Object.entries(data).map(([id, v]) => ({ id, ...v }))
+      .sort((a, b) => {
+        let pa = prioridadeNivel(a.tipo);
+        let pb = prioridadeNivel(b.tipo);
+        return pa - pb || a.timestamp - b.timestamp;
+      });
   }
 
   render();
 });
 
-/* RENDER */
-function render(){
-  lista.innerHTML="";
+function render() {
+  lista.innerHTML = "";
 
-  fila.forEach((p,i)=>{
-    const li=document.createElement("li");
+  fila.forEach((p, i) => {
+    const li = document.createElement("li");
 
-    if(p.tipo==="gestante") li.classList.add("gestante");
-    if(p.tipo==="pmr") li.classList.add("pmr");
-    if(p.tipo==="bebe") li.classList.add("bebe");
-    if(p.tipo==="idoso") li.classList.add("idoso");
+    if (p.tipo === "gestante") li.classList.add("gestante");
+    if (p.tipo === "pmr") li.classList.add("pmr");
+    if (p.tipo === "bebe") li.classList.add("bebe");
+    if (p.tipo === "idoso") li.classList.add("idoso");
 
-    const nomeClass = p.tipo !== "normal" ? "prioritario" : "";
-
-    li.innerHTML = `
-      ${getIcon(p.tipo)}
-      <span class="${nomeClass}">
-        ${i+1} - ${p.nome} ${p.apelido}
-      </span>
-      <div class="time">
-        ${tipoTexto(p.tipo)} | ${tempo(p.timestamp)}
-      </div>
-    `;
+    li.innerHTML = `${getIcon(p.tipo)} ${i + 1} - ${p.nome} ${p.apelido}
+    <div class="time">${tipoTexto(p.tipo)} | ${tempo(p.timestamp)}</div>`;
 
     lista.appendChild(li);
   });
 }
 
-/* CHAMAR */
-window.chamarProximo=()=>{
-  if(!fila.length) return;
-  const p=fila[0];
-  alert("Chamando: "+p.nome);
-  remove(ref(db,"fila/"+p.id));
+window.chamarProximo = () => {
+  if (!fila.length) return;
+  const p = fila[0];
+  alert("Chamando: " + p.nome);
+  remove(ref(db, "fila/" + p.id));
 };
 
-/* ===== STICK NOTE FIREBASE ===== */
 const note = document.getElementById("note");
-const noteRef = ref(db,"nota");
+const noteRef = ref(db, "nota");
 
-/* guardar */
-note.addEventListener("input", ()=>{
-  set(noteRef,{
-    texto: note.innerHTML
-  });
+note.addEventListener("input", () => {
+  set(noteRef, { texto: note.innerHTML });
 });
 
-/* carregar */
-onValue(noteRef,(snap)=>{
-  const data=snap.val();
-  if(data && data.texto !== note.innerHTML){
-    note.innerHTML = data.texto;
-  }
+onValue(noteRef, (snap) => {
+  const data = snap.val();
+  if (data) note.innerHTML = data.texto;
 });
 
-/* formatação */
-window.formatText = function(cmd){
-  document.execCommand(cmd,false,null);
-}
-
-window.setColor = function(color){
-  document.execCommand("foreColor",false,color);
-}
+window.formatText = cmd => document.execCommand(cmd, false, null);
+window.setColor = color => document.execCommand("foreColor", false, color);
 
 </script>
 
