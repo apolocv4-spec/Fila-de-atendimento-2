@@ -132,6 +132,7 @@ li {
 .tool-btn.green i { color:#22c55e; }
 .tool-btn.yellow i { color:#eab308; }
 .tool-btn.red i { color:#ef4444; }
+.tool-btn.black i { color:#000; }
 
 .note-area {
   min-height:100px;
@@ -140,6 +141,8 @@ li {
   padding:10px;
   outline:none;
   font-size:14px;
+  direction:ltr;
+  text-align:left;
 }
 
 /* LOGIN */
@@ -174,16 +177,11 @@ li {
   cursor:pointer;
   display:none;
 }
-
-@media (max-width:768px) {
-  .container { flex-direction:column; align-items:center; }
-}
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
 <div id="loginOverlay">
   <div class="login-box">
     <h3>Login Operador</h3>
@@ -195,12 +193,11 @@ li {
 <button class="logout-btn" id="logoutBtn" onclick="logout()">Logout</button>
 
 <header>
-  <h1><i class="fa-solid fa-id-card"></i> Sistema de Gestão de Fila e Controlo de Passaporte</h1>
+  <h1><i class="fa-solid fa-id-card"></i> Sistema de Gestão de Fila</h1>
 </header>
 
 <div class="container">
 
-<!-- CLIENTE -->
 <div class="card">
   <div class="icon"><i class="fa-solid fa-users"></i></div>
 
@@ -211,26 +208,20 @@ li {
     <input type="text" id="apelido" placeholder="Apelido" required>
 
     <div class="priority-grid">
-      <div class="priority-btn" onclick="setPriority(event,'idoso')"><i class="fa-solid fa-user"></i> +65</div>
-      <div class="priority-btn" onclick="setPriority(event,'gestante')"><i class="fa-solid fa-person-pregnant"></i> Gestante</div>
-      <div class="priority-btn" onclick="setPriority(event,'bebe')"><i class="fa-solid fa-baby"></i> Bebé</div>
-      <div class="priority-btn" onclick="setPriority(event,'pmr')"><i class="fa-solid fa-wheelchair"></i> PMR</div>
+      <div class="priority-btn" onclick="setPriority(event,'idoso')">+65</div>
+      <div class="priority-btn" onclick="setPriority(event,'gestante')">Gestante</div>
+      <div class="priority-btn" onclick="setPriority(event,'bebe')">Bebé</div>
+      <div class="priority-btn" onclick="setPriority(event,'pmr')">PMR</div>
     </div>
 
-    <button type="submit">Entrar na fila</button>
+    <button type="submit">Entrar</button>
   </form>
 
   <p id="msg"></p>
 </div>
 
-<!-- OPERADOR -->
 <div class="card" id="painelOperador" style="display:none;">
-  <div class="icon"><i class="fa-solid fa-passport"></i></div>
-
-  <h3>Painel do Operador</h3>
-
   <button onclick="chamarProximo()">Chamar Próximo</button>
-
   <ul id="lista"></ul>
 
   <div class="stick-note">
@@ -239,181 +230,138 @@ li {
       <button class="tool-btn green" onclick="setColor('green')"><i class="fa-solid fa-circle"></i></button>
       <button class="tool-btn yellow" onclick="setColor('orange')"><i class="fa-solid fa-circle"></i></button>
       <button class="tool-btn red" onclick="setColor('red')"><i class="fa-solid fa-circle"></i></button>
+      <button class="tool-btn black" onclick="setColor('black')"><i class="fa-solid fa-circle"></i></button>
     </div>
 
     <div id="note" class="note-area" contenteditable="true"></div>
   </div>
-
 </div>
 
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBzUwIf6X3dqd7D0G55_HyAl_vSmsvg9R4",
-  authDomain: "fila-de-atendimento-a3637.firebaseapp.com",
-  databaseURL: "https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com",
-  projectId: "fila-de-atendimento-a3637",
-  storageBucket: "fila-de-atendimento-a3637.appspot.com",
-  messagingSenderId: "469991078953",
-  appId: "1:469991078953:web:8eaf47cba1ed624d33f038"
-};
-
-const app = initializeApp(firebaseConfig);
+const app = initializeApp({
+  databaseURL:"https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com"
+});
 const db = getDatabase(app);
 
-let fila = [];
-let tipo = "";
+let fila=[]; let tipo="";
 
-/* LOGIN COM PERSISTÊNCIA */
-window.login = async function () {
+/* LOGIN */
+window.login=async()=>{
+  const s=await fetch("https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com/senhaOperador.json").then(r=>r.json());
+  if(senhaInput.value==s){
+    sessionStorage.setItem("logado","true");
+    loginOverlay.style.display="none";
+    painelOperador.style.display="block";
+    logoutBtn.style.display="block";
+  }else alert("Senha errada");
+}
 
-  const resp = await fetch("https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com/senhaOperador.json");
-  const senha = await resp.json();
-
-  const input = document.getElementById("senhaInput").value;
-
-  if (input == senha) {
-    sessionStorage.setItem("logado", "true");
-
-    document.getElementById("loginOverlay").style.display = "none";
-    document.getElementById("painelOperador").style.display = "block";
-    document.getElementById("logoutBtn").style.display = "block";
-  } else {
-    alert("Senha errada");
+window.onload=()=>{
+  if(sessionStorage.getItem("logado")){
+    loginOverlay.style.display="none";
+    painelOperador.style.display="block";
+    logoutBtn.style.display="block";
   }
-};
+}
 
-window.logout = function () {
+window.logout=()=>{
   sessionStorage.removeItem("logado");
   location.reload();
-};
-
-/* manter login após refresh */
-window.onload = function () {
-  if (sessionStorage.getItem("logado") === "true") {
-    document.getElementById("loginOverlay").style.display = "none";
-    document.getElementById("painelOperador").style.display = "block";
-    document.getElementById("logoutBtn").style.display = "block";
-  }
-};
+}
 
 /* PRIORIDADE */
-window.setPriority = function (e, t) {
-  tipo = t;
-  document.querySelectorAll(".priority-btn").forEach(b => b.classList.remove("active"));
+window.setPriority=(e,t)=>{
+  tipo=t;
+  document.querySelectorAll(".priority-btn").forEach(b=>b.classList.remove("active"));
   e.currentTarget.classList.add("active");
 };
 
-/* RESTO IGUAL */
-document.getElementById("form").addEventListener("submit", (e) => {
+/* FILA */
+form.onsubmit=e=>{
   e.preventDefault();
-
-  push(ref(db, "fila"), {
-    nome: nome.value,
-    apelido: apelido.value,
-    tipo: tipo || "normal",
-    timestamp: Date.now()
+  push(ref(db,"fila"),{
+    nome:nome.value,
+    apelido:apelido.value,
+    tipo:tipo||"normal",
+    timestamp:Date.now()
   });
+  msg.innerText="✔ Entraste na fila!";
+  form.reset(); tipo="";
+};
 
-  msg.innerText = "✔ Entraste na fila!";
-  form.reset();
-  tipo = "";
-});
-
-function getIcon(t) {
-  switch (t) {
-    case "gestante": return '<i class="fa-solid fa-person-pregnant icon-yellow"></i>';
-    case "pmr": return '<i class="fa-solid fa-wheelchair icon-yellow"></i>';
-    case "bebe": return '<i class="fa-solid fa-baby icon-yellow"></i>';
-    case "idoso": return '<i class="fa-solid fa-user icon-yellow"></i>';
-    default: return '<i class="fa-solid fa-user"></i>';
-  }
+function prioridadeNivel(t){
+  return {gestante:1,pmr:2,bebe:3,idoso:4}[t]||5;
 }
 
-function tempo(ts) {
-  return Math.floor((Date.now() - ts) / 60000) + " min";
-}
-
-function tipoTexto(t) {
-  switch (t) {
-    case "gestante": return "GESTANTE";
-    case "pmr": return "PMR";
-    case "bebe": return "BEBÉ";
-    case "idoso": return "IDOSO";
-    default: return "NORMAL";
-  }
-}
-
-function prioridadeNivel(t) {
-  switch (t) {
-    case "gestante": return 1;
-    case "pmr": return 2;
-    case "bebe": return 3;
-    case "idoso": return 4;
-    default: return 5;
-  }
-}
-
-onValue(ref(db, "fila"), snap => {
-  const data = snap.val();
-  fila = [];
-
-  if (data) {
-    fila = Object.entries(data).map(([id, v]) => ({ id, ...v }))
-      .sort((a, b) => {
-        let pa = prioridadeNivel(a.tipo);
-        let pb = prioridadeNivel(b.tipo);
-        return pa - pb || a.timestamp - b.timestamp;
-      });
-  }
-
+onValue(ref(db,"fila"),snap=>{
+  const d=snap.val();
+  fila=d?Object.entries(d).map(([id,v])=>({id,...v}))
+  .sort((a,b)=>prioridadeNivel(a.tipo)-prioridadeNivel(b.tipo)||a.timestamp-b.timestamp):[];
   render();
 });
 
-function render() {
-  lista.innerHTML = "";
+function render(){
+  lista.innerHTML="";
+  fila.forEach((p,i)=>{
+    const li=document.createElement("li");
 
-  fila.forEach((p, i) => {
-    const li = document.createElement("li");
+    if(p.tipo!=="normal") li.classList.add(p.tipo);
 
-    if (p.tipo === "gestante") li.classList.add("gestante");
-    if (p.tipo === "pmr") li.classList.add("pmr");
-    if (p.tipo === "bebe") li.classList.add("bebe");
-    if (p.tipo === "idoso") li.classList.add("idoso");
+    const nomeClass=p.tipo!=="normal"?"prioritario":"";
 
-    li.innerHTML = `${getIcon(p.tipo)} ${i + 1} - ${p.nome} ${p.apelido}
-    <div class="time">${tipoTexto(p.tipo)} | ${tempo(p.timestamp)}</div>`;
-
+    li.innerHTML=`
+      <span class="${nomeClass}">${i+1} - ${p.nome} ${p.apelido}</span>
+      <div class="time">${p.tipo.toUpperCase()} | ${Math.floor((Date.now()-p.timestamp)/60000)} min</div>
+    `;
     lista.appendChild(li);
   });
 }
 
-window.chamarProximo = () => {
-  if (!fila.length) return;
-  const p = fila[0];
-  alert("Chamando: " + p.nome);
-  remove(ref(db, "fila/" + p.id));
+window.chamarProximo=()=>{
+  if(!fila.length)return;
+  alert("Chamando: "+fila[0].nome);
+  remove(ref(db,"fila/"+fila[0].id));
 };
 
+/* ===== CORREÇÃO STICK NOTE ===== */
+
 const note = document.getElementById("note");
-const noteRef = ref(db, "nota");
+const noteRef = ref(db,"nota");
 
-note.addEventListener("input", () => {
-  set(noteRef, { texto: note.innerHTML });
+let escrevendo = false;
+
+note.addEventListener("focus", ()=> escrevendo = true);
+note.addEventListener("blur", ()=> escrevendo = false);
+
+/* ENTER normal (sem inverter) */
+note.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    e.preventDefault();
+    document.execCommand("insertLineBreak");
+  }
 });
 
-onValue(noteRef, (snap) => {
-  const data = snap.val();
-  if (data) note.innerHTML = data.texto;
+/* guardar */
+note.addEventListener("input",()=>{
+  set(noteRef,{texto:note.innerHTML});
 });
 
-window.formatText = cmd => document.execCommand(cmd, false, null);
-window.setColor = color => document.execCommand("foreColor", false, color);
+/* carregar sem mexer no cursor */
+onValue(noteRef,(snap)=>{
+  const data=snap.val();
+  if(data && !escrevendo && note.innerHTML !== data.texto){
+    note.innerHTML = data.texto;
+  }
+});
+
+/* formatação */
+window.formatText=c=>document.execCommand(c,false,null);
+window.setColor=c=>document.execCommand("foreColor",false,c);
 
 </script>
 
