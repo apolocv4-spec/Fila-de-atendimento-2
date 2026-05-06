@@ -3,365 +3,372 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistema de Gestão de Fila e Controlo de Passaporte</title>
+<title>Sistema de Gestão de Fila</title>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family:Arial, sans-serif; }
-body { background:#0f172a; color:white; }
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
+body{background:#0f172a;color:white;}
 
-header { text-align:center; padding:20px; background:#111827; }
-header h1 { font-size:22px; }
+header{text-align:center;padding:20px;background:#111827;}
 
-.container { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; padding:20px; }
-
-.card {
-  background:#1e293b;
-  border-radius:15px;
-  padding:20px;
-  width:100%;
-  max-width:420px;
-  box-shadow:0 10px 20px rgba(0,0,0,0.3);
+.container{
+display:flex;
+flex-wrap:wrap;
+gap:20px;
+justify-content:center;
+padding:20px;
 }
 
-input {
-  width:100%;
-  padding:15px;
-  margin:8px 0;
-  border-radius:10px;
-  border:none;
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:15px;
+width:100%;
+max-width:420px;
 }
 
-button {
-  width:100%;
-  padding:15px;
-  border:none;
-  border-radius:10px;
-  background:#38bdf8;
-  color:black;
-  font-weight:bold;
-  cursor:pointer;
+input{
+width:100%;
+padding:12px;
+margin:6px 0;
+border-radius:8px;
+border:none;
 }
 
-ul { list-style:none; margin-top:10px; }
-
-li {
-  background:#334155;
-  padding:10px;
-  margin:5px 0;
-  border-radius:8px;
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:8px;
+background:#38bdf8;
+font-weight:bold;
+cursor:pointer;
 }
 
-.icon {
-  font-size:35px;
-  text-align:center;
-  margin-bottom:10px;
-  color:#38bdf8;
+ul{list-style:none;margin-top:10px;}
+
+li{
+background:#334155;
+padding:10px;
+margin:5px 0;
+border-radius:8px;
 }
 
-.icon-yellow { color:#facc15; margin-right:6px; }
+/* PRIORIDADES (BARRA LATERAL) */
+.prio-idoso{border-left:6px solid #eab308;}
+.prio-gestante{border-left:6px solid #ec4899;}
+.prio-bebe{border-left:6px solid #f97316;}
+.prio-pmr{border-left:6px solid #3b82f6;}
 
-.gestante { border-left:5px solid #ec4899; }
-.pmr { border-left:5px solid #3b82f6; }
-.bebe { border-left:5px solid #f97316; }
-.idoso { border-left:5px solid #eab308; }
+.time{font-size:12px;color:#cbd5e1;margin-top:4px;}
+.prioritario{font-weight:bold;color:#22c55e;}
 
-.prioritario { color:#22c55e; font-weight:bold; }
+.icon{font-size:30px;text-align:center;margin-bottom:10px;color:#38bdf8;}
 
-.priority-grid {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:15px;
-  margin-bottom:25px;
+.check-list li{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
 }
 
-.priority-btn {
-  background:white;
-  color:black;
-  padding:12px;
-  border-radius:10px;
-  cursor:pointer;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:8px;
-  font-weight:bold;
-  border:1px solid #cbd5e1;
+/* 🔥 CORREÇÃO BOTÃO REMOVER */
+.small-btn{
+background:#ef4444;
+color:white;
+border:none;
+border-radius:6px;
+font-size:11px;
+padding:4px 8px;
+cursor:pointer;
+width:auto !important;
+min-width:unset !important;
+max-width:unset !important;
+display:inline-block;
+white-space:nowrap;
+flex-shrink:0;
 }
 
-.priority-btn.active {
-  background:#22c55e;
-  color:white;
+.abandono{
+background:#b91c1c !important;
+color:white !important;
+font-weight:bold;
+display:flex;
+align-items:center;
+gap:6px;
 }
 
-.time {
-  font-size:12px;
-  color:#cbd5e1;
-  margin-top:3px;
+.badge{
+display:flex;
+align-items:center;
+gap:8px;
 }
 
-.stick-note {
-  background:#fef08a;
-  color:black;
-  padding:12px;
-  border-radius:12px;
-  margin-top:20px;
+.yellow{color:#eab308;}
+.blue{color:#3b82f6;}
+.orange{color:#f97316;}
+.pink{color:#ec4899;}
+
+.priority-btn{
+display:flex;
+gap:8px;
+padding:10px;
+margin:5px 0;
+border-radius:8px;
+border:none;
+cursor:pointer;
+background:#0f172a;
+color:white;
 }
 
-.stick-toolbar {
-  display:flex;
-  gap:6px;
-  margin-bottom:8px;
+.priority-btn.active{
+background:#22c55e;
+color:black;
 }
 
-.tool-btn {
-  width:26px;
-  height:26px;
-  border:none;
-  border-radius:6px;
-  background:#e5e7eb;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
+/* NOTES */
+.notes{margin-top:15px;}
+
+.toolbar{
+display:flex;
+gap:6px;
+margin-bottom:6px;
 }
 
-.tool-btn i { font-size:12px; color:#111; }
-.tool-btn.green i { color:#22c55e; }
-.tool-btn.yellow i { color:#eab308; }
-.tool-btn.red i { color:#ef4444; }
-.tool-btn.black i { color:#000; }
-
-.note-area {
-  min-height:100px;
-  background:white;
-  border-radius:8px;
-  padding:10px;
-  outline:none;
-  font-size:14px;
-  direction:ltr;
-  text-align:left;
+.tool-btn{
+flex:1;
+padding:8px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+background:#334155;
+color:white;
 }
 
-/* LOGIN */
-#loginOverlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.85);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
-}
-
-.login-box{
-  background:#1e293b;
-  padding:20px;
-  border-radius:12px;
-  width:300px;
-}
-
-.logout-btn{
-  position:fixed;
-  top:10px;
-  right:10px;
-  width:auto;
-  padding:6px 10px;
-  font-size:12px;
-  border:none;
-  border-radius:8px;
-  background:#ef4444;
-  color:white;
-  cursor:pointer;
-  display:none;
+.editor{
+min-height:100px;
+background:white;
+color:black;
+padding:10px;
+border-radius:8px;
+outline:none;
 }
 </style>
 </head>
 
 <body>
 
-<div id="loginOverlay">
-  <div class="login-box">
-    <h3>Login Operador</h3>
-    <input type="password" id="senhaInput" placeholder="Senha">
-    <button onclick="login()">Entrar</button>
-  </div>
-</div>
-
-<button class="logout-btn" id="logoutBtn" onclick="logout()">Logout</button>
-
 <header>
-  <h1><i class="fa-solid fa-id-card"></i> Sistema de Gestão de Fila</h1>
+<h2><i class="fa-solid fa-id-card"></i> Sistema de Gestão de Fila</h2>
 </header>
 
 <div class="container">
 
+<!-- PAINEL 1 -->
 <div class="card">
-  <div class="icon"><i class="fa-solid fa-users"></i></div>
+<div class="icon"><i class="fa-solid fa-users"></i></div>
 
-  <h2>Entrar na Fila</h2>
+<h3>Entrar na Fila</h3>
 
-  <form id="form">
-    <input type="text" id="nome" placeholder="Nome" required>
-    <input type="text" id="apelido" placeholder="Apelido" required>
+<form id="form">
+<input id="nome" placeholder="Nome">
+<input id="apelido" placeholder="Apelido">
 
-    <div class="priority-grid">
-      <div class="priority-btn" onclick="setPriority(event,'idoso')">+65</div>
-      <div class="priority-btn" onclick="setPriority(event,'gestante')">Gestante</div>
-      <div class="priority-btn" onclick="setPriority(event,'bebe')">Bebé</div>
-      <div class="priority-btn" onclick="setPriority(event,'pmr')">PMR</div>
-    </div>
+<button type="button" class="priority-btn" onclick="setPriority(event,'idoso')">
+<i class="fa-solid fa-user yellow"></i> Idoso +65
+</button>
 
-    <button type="submit">Entrar</button>
-  </form>
+<button type="button" class="priority-btn" onclick="setPriority(event,'gestante')">
+<i class="fa-solid fa-person-pregnant pink"></i> Gestante
+</button>
 
-  <p id="msg"></p>
+<button type="button" class="priority-btn" onclick="setPriority(event,'bebe')">
+<i class="fa-solid fa-baby orange"></i> Bebé
+</button>
+
+<button type="button" class="priority-btn" onclick="setPriority(event,'pmr')">
+<i class="fa-solid fa-wheelchair blue"></i> PMR
+</button>
+
+<button type="submit">Entrar</button>
+</form>
+
+<p id="msg"></p>
 </div>
 
-<div class="card" id="painelOperador" style="display:none;">
-  <button onclick="chamarProximo()">Chamar Próximo</button>
-  <ul id="lista"></ul>
+<!-- PAINEL 2 -->
+<div class="card">
+<h3>Lista Verificação</h3>
 
-  <div class="stick-note">
-    <div class="stick-toolbar">
-      <button class="tool-btn" onclick="formatText('bold')"><i class="fa-solid fa-bold"></i></button>
-      <button class="tool-btn green" onclick="setColor('green')"><i class="fa-solid fa-circle"></i></button>
-      <button class="tool-btn yellow" onclick="setColor('orange')"><i class="fa-solid fa-circle"></i></button>
-      <button class="tool-btn red" onclick="setColor('red')"><i class="fa-solid fa-circle"></i></button>
-      <button class="tool-btn black" onclick="setColor('black')"><i class="fa-solid fa-circle"></i></button>
-    </div>
+<input id="vnome" placeholder="Nome">
+<input id="vapelido" placeholder="Apelido">
+<input id="vdata" type="date">
 
-    <div id="note" class="note-area" contenteditable="true"></div>
-  </div>
+<button onclick="addVerificacao()">Adicionar</button>
+
+<ul id="vlista" class="check-list"></ul>
+</div>
+
+<!-- PAINEL 3 -->
+<div class="card">
+<div class="icon"><i class="fa-solid fa-passport"></i></div>
+
+<h3>Painel Operador</h3>
+
+<button onclick="chamarProximo()">
+<i class="fa-solid fa-bell"></i> Chamar Próximo
+</button>
+
+<ul id="lista"></ul>
+
+<!-- NOTES -->
+<div class="notes">
+<h4>Bloco de Notas</h4>
+
+<div class="toolbar">
+<button class="tool-btn" onclick="format('bold')"><i class="fa-solid fa-bold"></i></button>
+<button class="tool-btn" onclick="colorText('black')"><i class="fa-solid fa-circle"></i></button>
+<button class="tool-btn" onclick="colorText('#f97316')"><i class="fa-solid fa-circle" style="color:#f97316"></i></button>
+<button class="tool-btn" onclick="colorText('#22c55e')"><i class="fa-solid fa-circle" style="color:#22c55e"></i></button>
+<button class="tool-btn" onclick="colorText('#eab308')"><i class="fa-solid fa-circle" style="color:#eab308"></i></button>
+</div>
+
+<div id="editor" class="editor" contenteditable="true"></div>
+
+</div>
+
 </div>
 
 </div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const app = initializeApp({
-  databaseURL:"https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com"
+databaseURL:"https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com"
 });
+
 const db = getDatabase(app);
 
-let fila=[]; let tipo="";
+let fila=[];
+let tipo="";
+let verificacao=[];
 
-/* LOGIN */
-window.login=async()=>{
-  const s=await fetch("https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com/senhaOperador.json").then(r=>r.json());
-  if(senhaInput.value==s){
-    sessionStorage.setItem("logado","true");
-    loginOverlay.style.display="none";
-    painelOperador.style.display="block";
-    logoutBtn.style.display="block";
-  }else alert("Senha errada");
-}
-
-window.onload=()=>{
-  if(sessionStorage.getItem("logado")){
-    loginOverlay.style.display="none";
-    painelOperador.style.display="block";
-    logoutBtn.style.display="block";
-  }
-}
-
-window.logout=()=>{
-  sessionStorage.removeItem("logado");
-  location.reload();
-}
-
-/* PRIORIDADE */
 window.setPriority=(e,t)=>{
-  tipo=t;
-  document.querySelectorAll(".priority-btn").forEach(b=>b.classList.remove("active"));
-  e.currentTarget.classList.add("active");
+tipo=t;
+document.querySelectorAll(".priority-btn").forEach(b=>b.classList.remove("active"));
+e.currentTarget.classList.add("active");
 };
 
-/* FILA */
 form.onsubmit=e=>{
-  e.preventDefault();
-  push(ref(db,"fila"),{
-    nome:nome.value,
-    apelido:apelido.value,
-    tipo:tipo||"normal",
-    timestamp:Date.now()
-  });
-  msg.innerText="✔ Entraste na fila!";
-  form.reset(); tipo="";
+e.preventDefault();
+
+push(ref(db,"fila"),{
+nome:nome.value,
+apelido:apelido.value,
+tipo:tipo||"normal",
+timestamp:Date.now()
+});
+
+msg.innerText="✔ Entraste!";
+form.reset();
+tipo="";
 };
 
-function prioridadeNivel(t){
-  return {gestante:1,pmr:2,bebe:3,idoso:4}[t]||5;
+window.addVerificacao=()=>{
+push(ref(db,"verificacao"),{
+nome:vnome.value,
+apelido:vapelido.value,
+data:vdata.value
+});
+};
+
+onValue(ref(db,"verificacao"),snap=>{
+const data=snap.val();
+verificacao=data?Object.entries(data).map(([id,v])=>({id,...v})):[];
+
+vlista.innerHTML="";
+verificacao.forEach(p=>{
+vlista.innerHTML+=`
+<li>
+${p.nome} ${p.apelido} - ${p.data}
+<button class="small-btn" onclick="remove(ref(db,'verificacao/${p.id}'))">remover</button>
+</li>`;
+});
+});
+
+function iconTipo(t){
+switch(t){
+case "idoso": return '<i class="fa-solid fa-user yellow"></i>';
+case "pmr": return '<i class="fa-solid fa-wheelchair blue"></i>';
+case "bebe": return '<i class="fa-solid fa-baby orange"></i>';
+case "gestante": return '<i class="fa-solid fa-person-pregnant pink"></i>';
+default: return '<i class="fa-solid fa-user"></i>';
+}
+}
+
+function prioClass(t){
+switch(t){
+case "idoso": return "prio-idoso";
+case "gestante": return "prio-gestante";
+case "bebe": return "prio-bebe";
+case "pmr": return "prio-pmr";
+default: return "";
+}
 }
 
 onValue(ref(db,"fila"),snap=>{
-  const d=snap.val();
-  fila=d?Object.entries(d).map(([id,v])=>({id,...v}))
-  .sort((a,b)=>prioridadeNivel(a.tipo)-prioridadeNivel(b.tipo)||a.timestamp-b.timestamp):[];
-  render();
+const data=snap.val();
+fila=data?Object.entries(data).map(([id,v])=>({id,...v})):[];
+
+render();
 });
 
 function render(){
-  lista.innerHTML="";
-  fila.forEach((p,i)=>{
-    const li=document.createElement("li");
+lista.innerHTML="";
 
-    if(p.tipo!=="normal") li.classList.add(p.tipo);
+fila.forEach((p)=>{
 
-    const nomeClass=p.tipo!=="normal"?"prioritario":"";
+let abandono = verificacao.find(v=>v.nome===p.nome && v.apelido===p.apelido);
+let isPriority = ["idoso","gestante","bebe","pmr"].includes(p.tipo);
 
-    li.innerHTML=`
-      <span class="${nomeClass}">${i+1} - ${p.nome} ${p.apelido}</span>
-      <div class="time">${p.tipo.toUpperCase()} | ${Math.floor((Date.now()-p.timestamp)/60000)} min</div>
-    `;
-    lista.appendChild(li);
-  });
+if(abandono){
+lista.innerHTML+=`
+<li class="abandono">
+<i class="fa-solid fa-plane"></i>
+ABANDONO VOLUNTÁRIO - ${p.nome} ${p.apelido}
+</li>`;
+}else{
+lista.innerHTML+=`
+<li class="${prioClass(p.tipo)}">
+<div class="badge">
+${iconTipo(p.tipo)}
+<b class="${isPriority ? 'prioritario' : ''}">${p.nome} ${p.apelido}</b>
+</div>
+<div class="time">
+${p.tipo.toUpperCase()} | ${Math.floor((Date.now()-p.timestamp)/60000)} min
+</div>
+</li>`;
+}
+});
 }
 
 window.chamarProximo=()=>{
-  if(!fila.length)return;
-  alert("Chamando: "+fila[0].nome);
-  remove(ref(db,"fila/"+fila[0].id));
+if(!fila.length)return;
+remove(ref(db,"fila/"+fila[0].id));
 };
 
-/* ===== CORREÇÃO STICK NOTE ===== */
+window.format=(cmd)=>{
+document.execCommand(cmd,false,null);
+};
 
-const note = document.getElementById("note");
-const noteRef = ref(db,"nota");
-
-let escrevendo = false;
-
-note.addEventListener("focus", ()=> escrevendo = true);
-note.addEventListener("blur", ()=> escrevendo = false);
-
-/* ENTER normal (sem inverter) */
-note.addEventListener("keydown", (e)=>{
-  if(e.key === "Enter"){
-    e.preventDefault();
-    document.execCommand("insertLineBreak");
-  }
-});
-
-/* guardar */
-note.addEventListener("input",()=>{
-  set(noteRef,{texto:note.innerHTML});
-});
-
-/* carregar sem mexer no cursor */
-onValue(noteRef,(snap)=>{
-  const data=snap.val();
-  if(data && !escrevendo && note.innerHTML !== data.texto){
-    note.innerHTML = data.texto;
-  }
-});
-
-/* formatação */
-window.formatText=c=>document.execCommand(c,false,null);
-window.setColor=c=>document.execCommand("foreColor",false,c);
+window.colorText=(color)=>{
+document.execCommand("foreColor", false, color);
+};
 
 </script>
 
