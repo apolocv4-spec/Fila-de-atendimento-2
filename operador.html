@@ -74,7 +74,6 @@ align-items:center;
 gap:10px;
 }
 
-/* BOTÃO REMOVER */
 .small-btn{
 background:#ef4444;
 color:white;
@@ -277,7 +276,6 @@ form.reset();
 tipo="";
 };
 
-/* ✅ FUNÇÃO GLOBAL DE REMOÇÃO */
 window.removerVerificacao=(id)=>{
 remove(ref(db,"verificacao/"+id));
 };
@@ -364,6 +362,17 @@ window.chamarProximo=()=>{
 if(!fila.length)return;
 remove(ref(db,"fila/"+fila[0].id));
 };
+
+/* NOTES */
+const editor = document.getElementById("editor");
+
+/* carregar ao abrir */
+editor.innerHTML = localStorage.getItem("notes") || "";
+
+/* guardar automático */
+editor.addEventListener("input", ()=>{
+localStorage.setItem("notes", editor.innerHTML);
+});
 
 window.format=(cmd)=>{
 document.execCommand(cmd,false,null);
