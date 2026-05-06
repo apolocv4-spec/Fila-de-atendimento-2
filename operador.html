@@ -56,7 +56,7 @@ margin:5px 0;
 border-radius:8px;
 }
 
-/* PRIORIDADES (BARRA LATERAL) */
+/* PRIORIDADES */
 .prio-idoso{border-left:6px solid #eab308;}
 .prio-gestante{border-left:6px solid #ec4899;}
 .prio-bebe{border-left:6px solid #f97316;}
@@ -74,7 +74,7 @@ align-items:center;
 gap:10px;
 }
 
-/* 🔥 CORREÇÃO BOTÃO REMOVER */
+/* BOTÃO REMOVER */
 .small-btn{
 background:#ef4444;
 color:white;
@@ -84,8 +84,6 @@ font-size:11px;
 padding:4px 8px;
 cursor:pointer;
 width:auto !important;
-min-width:unset !important;
-max-width:unset !important;
 display:inline-block;
 white-space:nowrap;
 flex-shrink:0;
@@ -279,6 +277,11 @@ form.reset();
 tipo="";
 };
 
+/* ✅ FUNÇÃO GLOBAL DE REMOÇÃO */
+window.removerVerificacao=(id)=>{
+remove(ref(db,"verificacao/"+id));
+};
+
 window.addVerificacao=()=>{
 push(ref(db,"verificacao"),{
 nome:vnome.value,
@@ -296,7 +299,7 @@ verificacao.forEach(p=>{
 vlista.innerHTML+=`
 <li>
 ${p.nome} ${p.apelido} - ${p.data}
-<button class="small-btn" onclick="remove(ref(db,'verificacao/${p.id}'))">remover</button>
+<button class="small-btn" onclick="removerVerificacao('${p.id}')">remover</button>
 </li>`;
 });
 });
