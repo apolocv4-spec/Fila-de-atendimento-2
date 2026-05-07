@@ -65,7 +65,12 @@ border-radius:8px;
 .time{font-size:12px;color:#cbd5e1;margin-top:4px;}
 .prioritario{font-weight:bold;color:#22c55e;}
 
-.icon{font-size:30px;text-align:center;margin-bottom:10px;color:#38bdf8;}
+.icon{
+font-size:30px;
+text-align:center;
+margin-bottom:10px;
+color:#38bdf8;
+}
 
 .check-list li{
 display:flex;
@@ -145,12 +150,13 @@ color:white;
 }
 
 .editor{
-min-height:100px;
+min-height:120px;
 background:white;
 color:black;
 padding:10px;
 border-radius:8px;
 outline:none;
+overflow:auto;
 }
 </style>
 </head>
@@ -165,11 +171,15 @@ outline:none;
 
 <!-- PAINEL 1 -->
 <div class="card">
-<div class="icon"><i class="fa-solid fa-users"></i></div>
+
+<div class="icon">
+<i class="fa-solid fa-users"></i>
+</div>
 
 <h3>Entrar na Fila</h3>
 
 <form id="form">
+
 <input id="nome" placeholder="Nome">
 <input id="apelido" placeholder="Apelido">
 
@@ -190,13 +200,16 @@ outline:none;
 </button>
 
 <button type="submit">Entrar</button>
+
 </form>
 
 <p id="msg"></p>
+
 </div>
 
 <!-- PAINEL 2 -->
 <div class="card">
+
 <h3>Lista Verificação</h3>
 
 <input id="vnome" placeholder="Nome">
@@ -206,11 +219,15 @@ outline:none;
 <button onclick="addVerificacao()">Adicionar</button>
 
 <ul id="vlista" class="check-list"></ul>
+
 </div>
 
 <!-- PAINEL 3 -->
 <div class="card">
-<div class="icon"><i class="fa-solid fa-passport"></i></div>
+
+<div class="icon">
+<i class="fa-solid fa-passport"></i>
+</div>
 
 <h3>Painel Operador</h3>
 
@@ -222,14 +239,31 @@ outline:none;
 
 <!-- NOTES -->
 <div class="notes">
+
 <h4>Bloco de Notas</h4>
 
 <div class="toolbar">
-<button class="tool-btn" onclick="format('bold')"><i class="fa-solid fa-bold"></i></button>
-<button class="tool-btn" onclick="colorText('black')"><i class="fa-solid fa-circle"></i></button>
-<button class="tool-btn" onclick="colorText('#f97316')"><i class="fa-solid fa-circle" style="color:#f97316"></i></button>
-<button class="tool-btn" onclick="colorText('#22c55e')"><i class="fa-solid fa-circle" style="color:#22c55e"></i></button>
-<button class="tool-btn" onclick="colorText('#eab308')"><i class="fa-solid fa-circle" style="color:#eab308"></i></button>
+
+<button class="tool-btn" onclick="format('bold')">
+<i class="fa-solid fa-bold"></i>
+</button>
+
+<button class="tool-btn" onclick="colorText('black')">
+<i class="fa-solid fa-circle"></i>
+</button>
+
+<button class="tool-btn" onclick="colorText('#f97316')">
+<i class="fa-solid fa-circle" style="color:#f97316"></i>
+</button>
+
+<button class="tool-btn" onclick="colorText('#22c55e')">
+<i class="fa-solid fa-circle" style="color:#22c55e"></i>
+</button>
+
+<button class="tool-btn" onclick="colorText('#eab308')">
+<i class="fa-solid fa-circle" style="color:#eab308"></i>
+</button>
+
 </div>
 
 <div id="editor" class="editor" contenteditable="true"></div>
@@ -243,8 +277,17 @@ outline:none;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+import {
+getDatabase,
+ref,
+push,
+onValue,
+remove,
+set
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+/* FIREBASE */
 const app = initializeApp({
 databaseURL:"https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com"
 });
@@ -260,8 +303,8 @@ function normalizar(txt){
 return (txt || "")
 .toLowerCase()
 .normalize("NFD")
-.replace(/[\u0300-\u036f]/g,"") // remove acentos
-.replace(/\s+/g," ") // espaços duplicados
+.replace(/[\u0300-\u036f]/g,"")
+.replace(/\s+/g," ")
 .trim();
 }
 
@@ -269,13 +312,22 @@ function nomeCompleto(n,a){
 return normalizar(n+" "+a);
 }
 
+/* PRIORIDADE */
 window.setPriority=(e,t)=>{
+
 tipo=t;
-document.querySelectorAll(".priority-btn").forEach(b=>b.classList.remove("active"));
+
+document
+.querySelectorAll(".priority-btn")
+.forEach(b=>b.classList.remove("active"));
+
 e.currentTarget.classList.add("active");
+
 };
 
+/* FORM FILA */
 form.onsubmit=e=>{
+
 e.preventDefault();
 
 push(ref(db,"fila"),{
@@ -286,113 +338,252 @@ timestamp:Date.now()
 });
 
 msg.innerText="✔ Entraste!";
+
 form.reset();
+
 tipo="";
+
+document
+.querySelectorAll(".priority-btn")
+.forEach(b=>b.classList.remove("active"));
+
 };
 
+/* VERIFICAÇÃO */
 window.removerVerificacao=(id)=>{
 remove(ref(db,"verificacao/"+id));
 };
 
 window.addVerificacao=()=>{
+
 push(ref(db,"verificacao"),{
 nome:vnome.value,
 apelido:vapelido.value,
 data:vdata.value
 });
+
+vnome.value="";
+vapelido.value="";
+vdata.value="";
+
 };
 
 onValue(ref(db,"verificacao"),snap=>{
+
 const data=snap.val();
-verificacao=data?Object.entries(data).map(([id,v])=>({id,...v})):[];
+
+verificacao=data
+? Object.entries(data).map(([id,v])=>({id,...v}))
+: [];
 
 vlista.innerHTML="";
+
 verificacao.forEach(p=>{
+
 vlista.innerHTML+=`
 <li>
 ${p.nome} ${p.apelido} - ${p.data}
-<button class="small-btn" onclick="removerVerificacao('${p.id}')">remover</button>
+
+<button class="small-btn"
+onclick="removerVerificacao('${p.id}')">
+remover
+</button>
+
 </li>`;
-});
+
 });
 
+});
+
+/* ÍCONES */
 function iconTipo(t){
+
 switch(t){
-case "idoso": return '<i class="fa-solid fa-user yellow"></i>';
-case "pmr": return '<i class="fa-solid fa-wheelchair blue"></i>';
-case "bebe": return '<i class="fa-solid fa-baby orange"></i>';
-case "gestante": return '<i class="fa-solid fa-person-pregnant pink"></i>';
-default: return '<i class="fa-solid fa-user"></i>';
+
+case "idoso":
+return '<i class="fa-solid fa-user yellow"></i>';
+
+case "pmr":
+return '<i class="fa-solid fa-wheelchair blue"></i>';
+
+case "bebe":
+return '<i class="fa-solid fa-baby orange"></i>';
+
+case "gestante":
+return '<i class="fa-solid fa-person-pregnant pink"></i>';
+
+default:
+return '<i class="fa-solid fa-user"></i>';
+
 }
+
 }
 
 function prioClass(t){
+
 switch(t){
-case "idoso": return "prio-idoso";
-case "gestante": return "prio-gestante";
-case "bebe": return "prio-bebe";
-case "pmr": return "prio-pmr";
-default: return "";
-}
+
+case "idoso":
+return "prio-idoso";
+
+case "gestante":
+return "prio-gestante";
+
+case "bebe":
+return "prio-bebe";
+
+case "pmr":
+return "prio-pmr";
+
+default:
+return "";
+
 }
 
+}
+
+/* FILA */
 onValue(ref(db,"fila"),snap=>{
+
 const data=snap.val();
-fila=data?Object.entries(data).map(([id,v])=>({id,...v})):[];
+
+fila=data
+? Object.entries(data).map(([id,v])=>({id,...v}))
+: [];
 
 render();
+
 });
 
 function render(){
+
 lista.innerHTML="";
 
 fila.forEach((p)=>{
 
 let abandono = verificacao.find(v =>
-nomeCompleto(v.nome,v.apelido) === nomeCompleto(p.nome,p.apelido)
+nomeCompleto(v.nome,v.apelido)
+===
+nomeCompleto(p.nome,p.apelido)
 );
 
-let isPriority = ["idoso","gestante","bebe","pmr"].includes(p.tipo);
+let isPriority =
+["idoso","gestante","bebe","pmr"]
+.includes(p.tipo);
 
 if(abandono){
+
 lista.innerHTML+=`
 <li class="abandono">
+
 <i class="fa-solid fa-plane"></i>
-ABANDONO VOLUNTÁRIO - ${p.nome} ${p.apelido}
+
+ABANDONO VOLUNTÁRIO -
+${p.nome} ${p.apelido}
+
 </li>`;
+
 }else{
+
 lista.innerHTML+=`
 <li class="${prioClass(p.tipo)}">
+
 <div class="badge">
 ${iconTipo(p.tipo)}
-<b class="${isPriority ? 'prioritario' : ''}">${p.nome} ${p.apelido}</b>
+
+<b class="${isPriority ? 'prioritario' : ''}">
+${p.nome} ${p.apelido}
+</b>
+
 </div>
+
 <div class="time">
-${p.tipo.toUpperCase()} | ${Math.floor((Date.now()-p.timestamp)/60000)} min
+${p.tipo.toUpperCase()} |
+${Math.floor((Date.now()-p.timestamp)/60000)} min
 </div>
+
 </li>`;
-}
-});
+
 }
 
+});
+
+}
+
+/* CHAMAR PRÓXIMO */
 window.chamarProximo=()=>{
+
 if(!fila.length)return;
+
 remove(ref(db,"fila/"+fila[0].id));
+
 };
 
-/* NOTES */
+/* =========================================
+BLOCO DE NOTAS
+FIREBASE + LOCAL STORAGE
+========================================= */
+
 const editor = document.getElementById("editor");
-editor.innerHTML = localStorage.getItem("notes") || "";
-editor.addEventListener("input", ()=>{
-localStorage.setItem("notes", editor.innerHTML);
+
+/* carregar local primeiro */
+editor.innerHTML =
+localStorage.getItem("notes") || "";
+
+/* sincronização firebase */
+onValue(ref(db,"notes"), snap=>{
+
+const data = snap.val();
+
+if(data && data.conteudo){
+
+/* evita piscar conteúdo */
+if(editor.innerHTML !== data.conteudo){
+
+editor.innerHTML = data.conteudo;
+
+/* atualiza cache local */
+localStorage.setItem(
+"notes",
+data.conteudo
+);
+
+}
+
+}
+
 });
 
+/* guardar alterações */
+editor.addEventListener("input", ()=>{
+
+const conteudo = editor.innerHTML;
+
+/* LOCAL STORAGE */
+localStorage.setItem(
+"notes",
+conteudo
+);
+
+/* FIREBASE */
+set(ref(db,"notes"),{
+conteudo:conteudo,
+timestamp:Date.now()
+});
+
+});
+
+/* FORMATAÇÃO */
 window.format=(cmd)=>{
 document.execCommand(cmd,false,null);
 };
 
 window.colorText=(color)=>{
-document.execCommand("foreColor", false, color);
+document.execCommand(
+"foreColor",
+false,
+color
+);
 };
 
 </script>
