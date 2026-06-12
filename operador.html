@@ -4,589 +4,982 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sistema de Gestão de Fila</title>
-
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
-body{background:#0f172a;color:white;}
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-header{text-align:center;padding:20px;background:#111827;}
+  :root {
+    --bg-app: #0b1120;
+    --bg-card: #111827;
+    --bg-card2: #1a2336;
+    --bg-input: #0f1929;
+    --border: rgba(255,255,255,0.08);
+    --border-soft: rgba(255,255,255,0.05);
+    --accent: #38bdf8;
+    --accent-glow: rgba(56,189,248,0.15);
+    --text: #f1f5f9;
+    --text-muted: #64748b;
+    --text-soft: #94a3b8;
+    --yellow: #f59e0b;
+    --pink: #ec4899;
+    --orange: #f97316;
+    --blue: #60a5fa;
+    --green: #22c55e;
+    --red: #ef4444;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-xs: 6px;
+  }
 
-.container{
-display:flex;
-flex-wrap:wrap;
-gap:20px;
-justify-content:center;
-padding:20px;
-}
+  body {
+    background: var(--bg-app);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    line-height: 1.5;
+  }
 
-.card{
-background:#1e293b;
-padding:20px;
-border-radius:15px;
-width:100%;
-max-width:420px;
-}
+  /* HEADER */
+  header {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
 
-input{
-width:100%;
-padding:12px;
-margin:6px 0;
-border-radius:8px;
-border:none;
-}
+  header .logo-icon {
+    width: 38px;
+    height: 38px;
+    background: var(--accent-glow);
+    border: 1px solid rgba(56,189,248,0.3);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 17px;
+  }
 
-button{
-width:100%;
-padding:12px;
-border:none;
-border-radius:8px;
-background:#38bdf8;
-font-weight:bold;
-cursor:pointer;
-}
+  header h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
 
-ul{list-style:none;margin-top:10px;}
+  header .badge-live {
+    background: rgba(34,197,94,0.12);
+    border: 1px solid rgba(34,197,94,0.25);
+    color: var(--green);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-left: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
 
-li{
-background:#334155;
-padding:10px;
-margin:5px 0;
-border-radius:8px;
-}
+  header .badge-live::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
 
-/* PRIORIDADES */
-.prio-idoso{border-left:6px solid #eab308;}
-.prio-gestante{border-left:6px solid #ec4899;}
-.prio-bebe{border-left:6px solid #f97316;}
-.prio-pmr{border-left:6px solid #3b82f6;}
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
 
-.time{font-size:12px;color:#cbd5e1;margin-top:4px;}
-.prioritario{font-weight:bold;color:#22c55e;}
+  /* LAYOUT */
+  .container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 20px;
+    padding: 28px 24px;
+    max-width: 1340px;
+    margin: 0 auto;
+  }
 
-.icon{
-font-size:30px;
-text-align:center;
-margin-bottom:10px;
-color:#38bdf8;
-}
+  /* CARDS */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 
-.check-list li{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
-}
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-soft);
+  }
 
-.small-btn{
-background:#ef4444;
-color:white;
-border:none;
-border-radius:6px;
-font-size:11px;
-padding:4px 8px;
-cursor:pointer;
-width:auto !important;
-display:inline-block;
-white-space:nowrap;
-flex-shrink:0;
-}
+  .card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
 
-.abandono{
-background:#b91c1c !important;
-color:white !important;
-font-weight:bold;
-display:flex;
-align-items:center;
-gap:6px;
-}
+  .icon-blue { background: rgba(56,189,248,0.12); color: var(--accent); }
+  .icon-green { background: rgba(34,197,94,0.12); color: var(--green); }
+  .icon-orange { background: rgba(249,115,22,0.12); color: var(--orange); }
 
-.badge{
-display:flex;
-align-items:center;
-gap:8px;
-}
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
 
-.yellow{color:#eab308;}
-.blue{color:#3b82f6;}
-.orange{color:#f97316;}
-.pink{color:#ec4899;}
+  .card-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
 
-.priority-btn{
-display:flex;
-gap:8px;
-padding:10px;
-margin:5px 0;
-border-radius:8px;
-border:none;
-cursor:pointer;
-background:#0f172a;
-color:white;
-}
+  /* INPUTS */
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
-.priority-btn.active{
-background:#22c55e;
-color:black;
-}
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
 
-/* NOTES */
-.notes{margin-top:15px;}
+  input[type="text"], input[type="date"] {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
 
-.toolbar{
-display:flex;
-gap:6px;
-margin-bottom:6px;
-}
+  input::placeholder { color: var(--text-muted); }
 
-.tool-btn{
-flex:1;
-padding:8px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-background:#334155;
-color:white;
-}
+  input:focus {
+    border-color: rgba(56,189,248,0.4);
+    box-shadow: 0 0 0 3px rgba(56,189,248,0.08);
+  }
 
-.editor{
-min-height:120px;
-background:white;
-color:black;
-padding:10px;
-border-radius:8px;
-outline:none;
-overflow:auto;
-}
+  /* PRIORITY BUTTONS */
+  .priority-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .priority-btn {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    color: var(--text-soft);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.18s;
+    text-align: left;
+    font-family: inherit;
+    width: 100%;
+  }
+
+  .priority-btn:hover {
+    border-color: var(--border);
+    background: var(--bg-card2);
+    color: var(--text);
+  }
+
+  .priority-btn.active {
+    border-color: var(--green);
+    background: rgba(34,197,94,0.08);
+    color: var(--text);
+  }
+
+  .priority-btn.active .prio-dot {
+    box-shadow: 0 0 8px currentColor;
+  }
+
+  .prio-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-yellow { background: var(--yellow); color: var(--yellow); }
+  .dot-pink { background: var(--pink); color: var(--pink); }
+  .dot-orange { background: var(--orange); color: var(--orange); }
+  .dot-blue { background: var(--blue); color: var(--blue); }
+
+  /* BUTTONS */
+  .btn-primary {
+    width: 100%;
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 11px 16px;
+    color: #0b1120;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.01em;
+    transition: opacity 0.18s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:active { transform: scale(0.99); }
+
+  .btn-call {
+    width: 100%;
+    background: transparent;
+    border: 1px solid rgba(34,197,94,0.3);
+    border-radius: var(--radius-sm);
+    padding: 11px 16px;
+    color: var(--green);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-call:hover {
+    background: rgba(34,197,94,0.08);
+    border-color: var(--green);
+  }
+
+  /* FEEDBACK MSG */
+  .msg {
+    font-size: 13px;
+    color: var(--green);
+    text-align: center;
+    min-height: 18px;
+    font-weight: 500;
+  }
+
+  /* QUEUE LIST */
+  .queue-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 360px;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+
+  .queue-list::-webkit-scrollbar { width: 4px; }
+  .queue-list::-webkit-scrollbar-track { background: transparent; }
+  .queue-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .queue-item {
+    background: var(--bg-card2);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    transition: border-color 0.15s;
+  }
+
+  .queue-item:hover { border-color: var(--border); }
+
+  .queue-item.prio-idoso { border-left: 3px solid var(--yellow); }
+  .queue-item.prio-gestante { border-left: 3px solid var(--pink); }
+  .queue-item.prio-bebe { border-left: 3px solid var(--orange); }
+  .queue-item.prio-pmr { border-left: 3px solid var(--blue); }
+  .queue-item.abandono {
+    background: rgba(185,28,28,0.1);
+    border-color: rgba(185,28,28,0.3);
+    border-left: 3px solid var(--red);
+  }
+
+  .queue-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .queue-name.priority { color: var(--green); }
+
+  .queue-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .queue-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .queue-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .abandono-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--red);
+    letter-spacing: 0.03em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* VERIFICATION LIST */
+  .verify-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 280px;
+    overflow-y: auto;
+  }
+
+  .verify-list::-webkit-scrollbar { width: 4px; }
+  .verify-list::-webkit-scrollbar-track { background: transparent; }
+  .verify-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .verify-item {
+    background: var(--bg-card2);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .verify-info { color: var(--text); flex: 1; min-width: 0; }
+  .verify-date { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+  .btn-remove {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: var(--radius-xs);
+    color: var(--red);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+
+  .btn-remove:hover {
+    background: rgba(239,68,68,0.18);
+    border-color: var(--red);
+  }
+
+  /* NOTES */
+  .notes-section {
+    border-top: 1px solid var(--border-soft);
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .notes-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .notes-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .notes-toolbar {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .tool-btn {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    color: var(--text-soft);
+    font-size: 13px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .tool-btn:hover {
+    background: var(--bg-card2);
+    color: var(--text);
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  .tool-btn.active {
+    background: var(--accent-glow);
+    border-color: rgba(56,189,248,0.3);
+    color: var(--accent);
+  }
+
+  .font-size-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    padding: 2px 4px;
+  }
+
+  .font-size-controls button {
+    background: none;
+    border: none;
+    color: var(--text-soft);
+    font-size: 14px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-family: inherit;
+    transition: all 0.15s;
+    font-weight: 700;
+  }
+
+  .font-size-controls button:hover {
+    background: var(--bg-card2);
+    color: var(--text);
+  }
+
+  .font-size-display {
+    font-size: 12px;
+    color: var(--text-muted);
+    min-width: 28px;
+    text-align: center;
+  }
+
+  .color-dot-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .color-dot-btn:hover { transform: scale(1.2); }
+
+  .editor {
+    min-height: 130px;
+    max-height: 240px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    outline: none;
+    overflow-y: auto;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+
+  .editor:focus {
+    border-color: rgba(56,189,248,0.35);
+    box-shadow: 0 0 0 3px rgba(56,189,248,0.07);
+  }
+
+  .editor::-webkit-scrollbar { width: 4px; }
+  .editor::-webkit-scrollbar-track { background: transparent; }
+  .editor::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* DIVIDER */
+  .divider {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center;
+    padding: 24px 12px;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .empty i {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 8px;
+    opacity: 0.4;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 720px) {
+    .container { padding: 16px 12px; gap: 14px; }
+    header { padding: 14px 20px; }
+  }
 </style>
 </head>
 
 <body>
 
 <header>
-<h2><i class="fa-solid fa-id-card"></i> Sistema de Gestão de Fila</h2>
+  <div class="logo-icon"><i class="fa-solid fa-id-card"></i></div>
+  <h1>Sistema de Gestão de Fila</h1>
+  <div class="badge-live">Em linha</div>
 </header>
 
 <div class="container">
 
-<!-- PAINEL 1 -->
-<div class="card">
+  <!-- PAINEL 1: ENTRAR NA FILA -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-blue"><i class="fa-solid fa-user-plus"></i></div>
+      <div>
+        <div class="card-title">Entrar na Fila</div>
+        <div class="card-subtitle">Registe os seus dados</div>
+      </div>
+    </div>
 
-<div class="icon">
-<i class="fa-solid fa-users"></i>
-</div>
+    <form id="form" style="display:flex;flex-direction:column;gap:10px;">
+      <div class="input-row">
+        <input type="text" id="nome" placeholder="Nome">
+        <input type="text" id="apelido" placeholder="Apelido">
+      </div>
 
-<h3>Entrar na Fila</h3>
+      <div class="priority-grid">
+        <button type="button" class="priority-btn" onclick="setPriority(event,'idoso')">
+          <span class="prio-dot dot-yellow"></span>
+          <i class="fa-solid fa-user" style="color:var(--yellow);font-size:13px;"></i>
+          Idoso +65
+        </button>
+        <button type="button" class="priority-btn" onclick="setPriority(event,'gestante')">
+          <span class="prio-dot dot-pink"></span>
+          <i class="fa-solid fa-person-pregnant" style="color:var(--pink);font-size:13px;"></i>
+          Gestante
+        </button>
+        <button type="button" class="priority-btn" onclick="setPriority(event,'bebe')">
+          <span class="prio-dot dot-orange"></span>
+          <i class="fa-solid fa-baby" style="color:var(--orange);font-size:13px;"></i>
+          Bebé
+        </button>
+        <button type="button" class="priority-btn" onclick="setPriority(event,'pmr')">
+          <span class="prio-dot dot-blue"></span>
+          <i class="fa-solid fa-wheelchair" style="color:var(--blue);font-size:13px;"></i>
+          PMR
+        </button>
+      </div>
 
-<form id="form">
+      <button type="submit" class="btn-primary">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        Entrar na Fila
+      </button>
+    </form>
 
-<input id="nome" placeholder="Nome">
-<input id="apelido" placeholder="Apelido">
+    <p id="msg" class="msg"></p>
+  </div>
 
-<button type="button" class="priority-btn" onclick="setPriority(event,'idoso')">
-<i class="fa-solid fa-user yellow"></i> Idoso +65
-</button>
+  <!-- PAINEL 2: VERIFICAÇÃO -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-orange"><i class="fa-solid fa-clipboard-check"></i></div>
+      <div>
+        <div class="card-title">Lista de Verificação</div>
+        <div class="card-subtitle">Abandonos voluntários</div>
+      </div>
+    </div>
 
-<button type="button" class="priority-btn" onclick="setPriority(event,'gestante')">
-<i class="fa-solid fa-person-pregnant pink"></i> Gestante
-</button>
+    <div class="input-group">
+      <div class="input-row">
+        <input type="text" id="vnome" placeholder="Nome">
+        <input type="text" id="vapelido" placeholder="Apelido">
+      </div>
+      <input type="date" id="vdata">
+      <button class="btn-primary" onclick="addVerificacao()">
+        <i class="fa-solid fa-plus"></i>
+        Adicionar
+      </button>
+    </div>
 
-<button type="button" class="priority-btn" onclick="setPriority(event,'bebe')">
-<i class="fa-solid fa-baby orange"></i> Bebé
-</button>
+    <ul id="vlista" class="verify-list">
+      <li class="empty"><i class="fa-regular fa-folder-open"></i>Sem entradas</li>
+    </ul>
+  </div>
 
-<button type="button" class="priority-btn" onclick="setPriority(event,'pmr')">
-<i class="fa-solid fa-wheelchair blue"></i> PMR
-</button>
+  <!-- PAINEL 3: OPERADOR -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-green"><i class="fa-solid fa-headset"></i></div>
+      <div>
+        <div class="card-title">Painel Operador</div>
+        <div class="card-subtitle">Gestão da fila em tempo real</div>
+      </div>
+    </div>
 
-<button type="submit">Entrar</button>
+    <button class="btn-call" onclick="chamarProximo()">
+      <i class="fa-solid fa-bell"></i>
+      Chamar Próximo
+    </button>
 
-</form>
+    <ul id="lista" class="queue-list">
+      <li class="empty"><i class="fa-regular fa-clock"></i>Fila vazia</li>
+    </ul>
 
-<p id="msg"></p>
+    <!-- BLOCO DE NOTAS -->
+    <div class="notes-section">
+      <div class="notes-header">
+        <span class="notes-label">Bloco de Notas</span>
+      </div>
 
-</div>
+      <div class="notes-toolbar">
+        <button class="tool-btn" onclick="format('bold')" title="Negrito">
+          <i class="fa-solid fa-bold"></i>
+        </button>
+        <button class="tool-btn" onclick="format('italic')" title="Itálico">
+          <i class="fa-solid fa-italic"></i>
+        </button>
+        <button class="tool-btn" onclick="format('underline')" title="Sublinhar">
+          <i class="fa-solid fa-underline"></i>
+        </button>
 
-<!-- PAINEL 2 -->
-<div class="card">
+        <div class="divider"></div>
 
-<h3>Lista Verificação</h3>
+        <!-- FONT SIZE CONTROLS -->
+        <div class="font-size-controls">
+          <button onclick="decreaseFontSize()" title="Diminuir texto">−</button>
+          <span class="font-size-display" id="fontSize-display">14px</span>
+          <button onclick="increaseFontSize()" title="Aumentar texto">+</button>
+        </div>
 
-<input id="vnome" placeholder="Nome">
-<input id="vapelido" placeholder="Apelido">
-<input id="vdata" type="date">
+        <div class="divider"></div>
 
-<button onclick="addVerificacao()">Adicionar</button>
+        <button class="color-dot-btn" style="background:#f1f5f9;border-color:#334155;" onclick="colorText('#f1f5f9')" title="Branco"></button>
+        <button class="color-dot-btn" style="background:var(--accent);" onclick="colorText('#38bdf8')" title="Azul"></button>
+        <button class="color-dot-btn" style="background:var(--orange);" onclick="colorText('#f97316')" title="Laranja"></button>
+        <button class="color-dot-btn" style="background:var(--green);" onclick="colorText('#22c55e')" title="Verde"></button>
+        <button class="color-dot-btn" style="background:var(--yellow);" onclick="colorText('#f59e0b')" title="Amarelo"></button>
+        <button class="color-dot-btn" style="background:var(--red);" onclick="colorText('#ef4444')" title="Vermelho"></button>
+      </div>
 
-<ul id="vlista" class="check-list"></ul>
-
-</div>
-
-<!-- PAINEL 3 -->
-<div class="card">
-
-<div class="icon">
-<i class="fa-solid fa-passport"></i>
-</div>
-
-<h3>Painel Operador</h3>
-
-<button onclick="chamarProximo()">
-<i class="fa-solid fa-bell"></i> Chamar Próximo
-</button>
-
-<ul id="lista"></ul>
-
-<!-- NOTES -->
-<div class="notes">
-
-<h4>Bloco de Notas</h4>
-
-<div class="toolbar">
-
-<button class="tool-btn" onclick="format('bold')">
-<i class="fa-solid fa-bold"></i>
-</button>
-
-<button class="tool-btn" onclick="colorText('black')">
-<i class="fa-solid fa-circle"></i>
-</button>
-
-<button class="tool-btn" onclick="colorText('#f97316')">
-<i class="fa-solid fa-circle" style="color:#f97316"></i>
-</button>
-
-<button class="tool-btn" onclick="colorText('#22c55e')">
-<i class="fa-solid fa-circle" style="color:#22c55e"></i>
-</button>
-
-<button class="tool-btn" onclick="colorText('#eab308')">
-<i class="fa-solid fa-circle" style="color:#eab308"></i>
-</button>
-
-</div>
-
-<div id="editor" class="editor" contenteditable="true"></div>
-
-</div>
-
-</div>
+      <div id="editor" class="editor" contenteditable="true" spellcheck="true"></div>
+    </div>
+  </div>
 
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-
 import {
-getDatabase,
-ref,
-push,
-onValue,
-remove,
-set
+  getDatabase, ref, push, onValue, remove, set
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-/* FIREBASE */
 const app = initializeApp({
-databaseURL:"https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com"
+  databaseURL: "https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com"
 });
 
 const db = getDatabase(app);
 
-let fila=[];
-let tipo="";
-let verificacao=[];
+let fila = [];
+let tipo = "";
+let verificacao = [];
+let editorFontSize = 14;
 
-/* NORMALIZAR TEXTO */
-function normalizar(txt){
-return (txt || "")
-.toLowerCase()
-.normalize("NFD")
-.replace(/[\u0300-\u036f]/g,"")
-.replace(/\s+/g," ")
-.trim();
+function normalizar(txt) {
+  return (txt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
 }
 
-function nomeCompleto(n,a){
-return normalizar(n+" "+a);
+function nomeCompleto(n, a) {
+  return normalizar(n + " " + a);
 }
 
-/* PRIORIDADE */
-window.setPriority=(e,t)=>{
-
-tipo=t;
-
-document
-.querySelectorAll(".priority-btn")
-.forEach(b=>b.classList.remove("active"));
-
-e.currentTarget.classList.add("active");
-
+window.setPriority = (e, t) => {
+  tipo = t;
+  document.querySelectorAll(".priority-btn").forEach(b => b.classList.remove("active"));
+  e.currentTarget.classList.add("active");
 };
 
-/* FORM FILA */
-form.onsubmit=e=>{
-
-e.preventDefault();
-
-push(ref(db,"fila"),{
-nome:nome.value,
-apelido:apelido.value,
-tipo:tipo||"normal",
-timestamp:Date.now()
-});
-
-msg.innerText="✔ Entraste!";
-
-form.reset();
-
-tipo="";
-
-document
-.querySelectorAll(".priority-btn")
-.forEach(b=>b.classList.remove("active"));
-
+document.getElementById("form").onsubmit = e => {
+  e.preventDefault();
+  push(ref(db, "fila"), {
+    nome: nome.value,
+    apelido: apelido.value,
+    tipo: tipo || "normal",
+    timestamp: Date.now()
+  });
+  const msg = document.getElementById("msg");
+  msg.innerText = "✔ Registado com sucesso!";
+  setTimeout(() => msg.innerText = "", 3000);
+  e.target.reset();
+  tipo = "";
+  document.querySelectorAll(".priority-btn").forEach(b => b.classList.remove("active"));
 };
 
-/* VERIFICAÇÃO */
-window.removerVerificacao=(id)=>{
-remove(ref(db,"verificacao/"+id));
+window.removerVerificacao = (id) => {
+  remove(ref(db, "verificacao/" + id));
 };
 
-window.addVerificacao=()=>{
-
-push(ref(db,"verificacao"),{
-nome:vnome.value,
-apelido:vapelido.value,
-data:vdata.value
-});
-
-vnome.value="";
-vapelido.value="";
-vdata.value="";
-
+window.addVerificacao = () => {
+  const n = document.getElementById("vnome").value;
+  const a = document.getElementById("vapelido").value;
+  const d = document.getElementById("vdata").value;
+  if (!n || !a) return;
+  push(ref(db, "verificacao"), { nome: n, apelido: a, data: d });
+  document.getElementById("vnome").value = "";
+  document.getElementById("vapelido").value = "";
+  document.getElementById("vdata").value = "";
 };
 
-onValue(ref(db,"verificacao"),snap=>{
-
-const data=snap.val();
-
-verificacao=data
-? Object.entries(data).map(([id,v])=>({id,...v}))
-: [];
-
-vlista.innerHTML="";
-
-verificacao.forEach(p=>{
-
-vlista.innerHTML+=`
-<li>
-${p.nome} ${p.apelido} - ${p.data}
-
-<button class="small-btn"
-onclick="removerVerificacao('${p.id}')">
-remover
-</button>
-
-</li>`;
-
+onValue(ref(db, "verificacao"), snap => {
+  const data = snap.val();
+  verificacao = data ? Object.entries(data).map(([id, v]) => ({ id, ...v })) : [];
+  const vlista = document.getElementById("vlista");
+  if (!verificacao.length) {
+    vlista.innerHTML = '<li class="empty"><i class="fa-regular fa-folder-open"></i>Sem entradas</li>';
+    return;
+  }
+  vlista.innerHTML = "";
+  verificacao.forEach(p => {
+    vlista.innerHTML += `
+      <li class="verify-item">
+        <div>
+          <div class="verify-info">${p.nome} ${p.apelido}</div>
+          <div class="verify-date"><i class="fa-regular fa-calendar" style="margin-right:4px;"></i>${p.data || "—"}</div>
+        </div>
+        <button class="btn-remove" onclick="removerVerificacao('${p.id}')">Remover</button>
+      </li>`;
+  });
 });
 
+function iconTipo(t) {
+  const icons = {
+    idoso: `<i class="fa-solid fa-user" style="color:var(--yellow);"></i>`,
+    pmr: `<i class="fa-solid fa-wheelchair" style="color:var(--blue);"></i>`,
+    bebe: `<i class="fa-solid fa-baby" style="color:var(--orange);"></i>`,
+    gestante: `<i class="fa-solid fa-person-pregnant" style="color:var(--pink);"></i>`,
+  };
+  return icons[t] || `<i class="fa-solid fa-user" style="color:var(--text-muted);"></i>`;
+}
+
+function iconBgTipo(t) {
+  const bgs = {
+    idoso: "rgba(245,158,11,0.12)",
+    pmr: "rgba(96,165,250,0.12)",
+    bebe: "rgba(249,115,22,0.12)",
+    gestante: "rgba(236,72,153,0.12)",
+  };
+  return bgs[t] || "var(--bg-card)";
+}
+
+function prioClass(t) {
+  const cls = { idoso: "prio-idoso", gestante: "prio-gestante", bebe: "prio-bebe", pmr: "prio-pmr" };
+  return cls[t] || "";
+}
+
+onValue(ref(db, "fila"), snap => {
+  const data = snap.val();
+  fila = data ? Object.entries(data).map(([id, v]) => ({ id, ...v })) : [];
+  render();
 });
 
-/* ÍCONES */
-function iconTipo(t){
+function render() {
+  const lista = document.getElementById("lista");
+  if (!fila.length) {
+    lista.innerHTML = '<li class="empty"><i class="fa-regular fa-clock"></i>Fila vazia</li>';
+    return;
+  }
+  lista.innerHTML = "";
+  fila.forEach(p => {
+    const abandono = verificacao.find(v => nomeCompleto(v.nome, v.apelido) === nomeCompleto(p.nome, p.apelido));
+    const isPriority = ["idoso", "gestante", "bebe", "pmr"].includes(p.tipo);
+    const mins = Math.floor((Date.now() - p.timestamp) / 60000);
 
-switch(t){
-
-case "idoso":
-return '<i class="fa-solid fa-user yellow"></i>';
-
-case "pmr":
-return '<i class="fa-solid fa-wheelchair blue"></i>';
-
-case "bebe":
-return '<i class="fa-solid fa-baby orange"></i>';
-
-case "gestante":
-return '<i class="fa-solid fa-person-pregnant pink"></i>';
-
-default:
-return '<i class="fa-solid fa-user"></i>';
-
+    if (abandono) {
+      lista.innerHTML += `
+        <li class="queue-item abandono">
+          <div class="queue-left">
+            <div class="queue-icon" style="background:rgba(239,68,68,0.12);">
+              <i class="fa-solid fa-plane-departure" style="color:var(--red);font-size:13px;"></i>
+            </div>
+            <div>
+              <div class="abandono-label"><i class="fa-solid fa-triangle-exclamation"></i> Abandono Voluntário</div>
+              <div class="queue-meta">${p.nome} ${p.apelido}</div>
+            </div>
+          </div>
+        </li>`;
+    } else {
+      lista.innerHTML += `
+        <li class="queue-item ${prioClass(p.tipo)}">
+          <div class="queue-left">
+            <div class="queue-icon" style="background:${iconBgTipo(p.tipo)}; font-size:14px;">
+              ${iconTipo(p.tipo)}
+            </div>
+            <div>
+              <div class="queue-name ${isPriority ? 'priority' : ''}">${p.nome} ${p.apelido}</div>
+              <div class="queue-meta">
+                <span>${p.tipo.toUpperCase()}</span>
+                <span>·</span>
+                <i class="fa-regular fa-clock" style="font-size:10px;"></i>
+                <span>${mins} min</span>
+              </div>
+            </div>
+          </div>
+        </li>`;
+    }
+  });
 }
 
-}
-
-function prioClass(t){
-
-switch(t){
-
-case "idoso":
-return "prio-idoso";
-
-case "gestante":
-return "prio-gestante";
-
-case "bebe":
-return "prio-bebe";
-
-case "pmr":
-return "prio-pmr";
-
-default:
-return "";
-
-}
-
-}
-
-/* FILA */
-onValue(ref(db,"fila"),snap=>{
-
-const data=snap.val();
-
-fila=data
-? Object.entries(data).map(([id,v])=>({id,...v}))
-: [];
-
-render();
-
-});
-
-function render(){
-
-lista.innerHTML="";
-
-fila.forEach((p)=>{
-
-let abandono = verificacao.find(v =>
-nomeCompleto(v.nome,v.apelido)
-===
-nomeCompleto(p.nome,p.apelido)
-);
-
-let isPriority =
-["idoso","gestante","bebe","pmr"]
-.includes(p.tipo);
-
-if(abandono){
-
-lista.innerHTML+=`
-<li class="abandono">
-
-<i class="fa-solid fa-plane"></i>
-
-ABANDONO VOLUNTÁRIO -
-${p.nome} ${p.apelido}
-
-</li>`;
-
-}else{
-
-lista.innerHTML+=`
-<li class="${prioClass(p.tipo)}">
-
-<div class="badge">
-${iconTipo(p.tipo)}
-
-<b class="${isPriority ? 'prioritario' : ''}">
-${p.nome} ${p.apelido}
-</b>
-
-</div>
-
-<div class="time">
-${p.tipo.toUpperCase()} |
-${Math.floor((Date.now()-p.timestamp)/60000)} min
-</div>
-
-</li>`;
-
-}
-
-});
-
-}
-
-/* CHAMAR PRÓXIMO */
-window.chamarProximo=()=>{
-
-if(!fila.length)return;
-
-remove(ref(db,"fila/"+fila[0].id));
-
+window.chamarProximo = () => {
+  if (!fila.length) return;
+  remove(ref(db, "fila/" + fila[0].id));
 };
 
-/* =========================================
-BLOCO DE NOTAS
-FIREBASE + LOCAL STORAGE
-========================================= */
-
+/* ===== BLOCO DE NOTAS ===== */
 const editor = document.getElementById("editor");
+const fontDisplay = document.getElementById("fontSize-display");
 
-/* carregar local primeiro */
-editor.innerHTML =
-localStorage.getItem("notes") || "";
+editor.innerHTML = localStorage.getItem("notes") || "";
 
-/* sincronização firebase */
-onValue(ref(db,"notes"), snap=>{
-
-const data = snap.val();
-
-if(data && data.conteudo){
-
-/* evita piscar conteúdo */
-if(editor.innerHTML !== data.conteudo){
-
-editor.innerHTML = data.conteudo;
-
-/* atualiza cache local */
-localStorage.setItem(
-"notes",
-data.conteudo
-);
-
-}
-
-}
-
+onValue(ref(db, "notes"), snap => {
+  const data = snap.val();
+  if (data && data.conteudo && editor.innerHTML !== data.conteudo) {
+    editor.innerHTML = data.conteudo;
+    localStorage.setItem("notes", data.conteudo);
+  }
 });
 
-/* guardar alterações */
-editor.addEventListener("input", ()=>{
-
-const conteudo = editor.innerHTML;
-
-/* LOCAL STORAGE */
-localStorage.setItem(
-"notes",
-conteudo
-);
-
-/* FIREBASE */
-set(ref(db,"notes"),{
-conteudo:conteudo,
-timestamp:Date.now()
+editor.addEventListener("input", () => {
+  const conteudo = editor.innerHTML;
+  localStorage.setItem("notes", conteudo);
+  set(ref(db, "notes"), { conteudo, timestamp: Date.now() });
 });
 
-});
-
-/* FORMATAÇÃO */
-window.format=(cmd)=>{
-document.execCommand(cmd,false,null);
+window.format = (cmd) => {
+  document.execCommand(cmd, false, null);
+  editor.focus();
 };
 
-window.colorText=(color)=>{
-document.execCommand(
-"foreColor",
-false,
-color
-);
+window.colorText = (color) => {
+  document.execCommand("foreColor", false, color);
+  editor.focus();
+};
+
+/* FONT SIZE — aplica apenas ao texto selecionado */
+const fontSizes = [10, 12, 14, 16, 18, 20, 24, 28, 32];
+
+function getSelectionFontSize() {
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return editorFontSize;
+  const node = sel.getRangeAt(0).startContainer;
+  const el = node.nodeType === 3 ? node.parentElement : node;
+  return parseInt(window.getComputedStyle(el).fontSize) || editorFontSize;
+}
+
+function applyFontSizeToSelection(px) {
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+    // sem seleção: muda o tamanho base do editor inteiro
+    editor.style.fontSize = px + "px";
+    editorFontSize = px;
+    fontDisplay.textContent = px + "px";
+    return;
+  }
+  // tem seleção: envolve só o texto selecionado num <span> com o tamanho
+  const range = sel.getRangeAt(0);
+  const span = document.createElement("span");
+  span.style.fontSize = px + "px";
+  range.surroundContents(span);
+  fontDisplay.textContent = px + "px";
+  editor.dispatchEvent(new Event("input"));
+}
+
+window.increaseFontSize = () => {
+  const current = getSelectionFontSize();
+  const next = fontSizes.find(s => s > current) || fontSizes[fontSizes.length - 1];
+  applyFontSizeToSelection(next);
+  editor.focus();
+};
+
+window.decreaseFontSize = () => {
+  const current = getSelectionFontSize();
+  const prev = [...fontSizes].reverse().find(s => s < current) || fontSizes[0];
+  applyFontSizeToSelection(prev);
+  editor.focus();
 };
 
 </script>
-
 </body>
 </html>
