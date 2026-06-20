@@ -4,239 +4,502 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fila de Atendimento</title>
-
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif;}
+
+body{
+  background:linear-gradient(135deg,#0f2550 0%,#1a3a6e 50%,#0f2550 100%);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
 }
 
-body {
-  background: linear-gradient(135deg, #007bff, #00c6ff);
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Fundo de pontos subtil */
+body::after{
+  content:'';
+  position:fixed;inset:0;
+  background-image:radial-gradient(circle,rgba(240,192,64,0.07) 1px,transparent 1px);
+  background-size:28px 28px;
+  pointer-events:none;
+  z-index:0;
 }
 
-.container {
-  background: white;
-  padding: 30px;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
+.card{
+  position:relative;z-index:1;
+  background:#fff;
+  padding:32px 28px 28px;
+  border-radius:18px;
+  width:100%;
+  max-width:420px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.35);
 }
 
-.icon {
-  font-size: 50px;
-  color: #007bff;
-  margin-bottom: 10px;
+/* ── HEADER INSTITUCIONAL ── */
+.inst-header{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  margin-bottom:22px;
+  padding-bottom:18px;
+  border-bottom:2px solid #f0f2f8;
 }
 
-input {
-  width: 100%;
-  padding: 15px;
-  margin: 10px 0;
-  border-radius: 10px;
-  border: 1px solid #ccc;
+.logo-stars{font-size:9px;letter-spacing:6px;color:#d4a82a;font-weight:700;}
+
+.logo-pn{
+  font-size:32px;font-weight:900;
+  color:#0f2550;letter-spacing:.12em;line-height:1;
 }
 
-button.submit {
-  width: 100%;
-  padding: 15px;
-  background: #007bff;
-  color: white;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
+.logo-rule{
+  width:40px;height:2px;
+  background:linear-gradient(90deg,#d4a82a,#f0c040);
+  border-radius:2px;margin:3px 0;
 }
 
-.priority-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 10px;
+.logo-sub{
+  font-size:9px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:#d4a82a;
 }
 
-.priority {
-  background: #f1f1f1;
-  color: black;
-  border: 1px solid #ccc;
-  padding: 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 6px;
+.inst-title{
+  font-size:15px;font-weight:700;
+  color:#0f2550;text-transform:uppercase;
+  letter-spacing:.06em;margin-top:6px;
+  text-align:center;
 }
 
-.priority i {
-  color: black;
+.inst-sub{
+  font-size:11px;color:#7a8fb5;
+  margin-top:2px;text-align:center;
 }
 
-.priority.active {
-  background: #22c55e;
-  color: white;
+/* ── FILA INFO ── */
+.fila-info{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:#f0f4ff;
+  border:1px solid #d8dfef;
+  border-radius:10px;
+  padding:10px 14px;
+  margin-bottom:16px;
+  font-size:13px;
+  color:#0f2550;
+  font-weight:500;
 }
 
-.priority.active i {
-  color: white;
+.fila-info i{color:#1a3a6e;font-size:15px;}
+
+/* ── FILA ENCERRADA ── */
+.fila-fechada{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  background:#fff5f5;
+  border:1px solid #fca5a5;
+  border-radius:12px;
+  padding:22px 18px;
+  text-align:center;
+  margin-bottom:16px;
 }
 
-.warning {
-  font-size: 12px;
-  color: #666;
-  margin-top: 14px;
-  margin-bottom: 18px;
+.fila-fechada i{font-size:36px;color:#dc2626;}
+.fila-fechada h3{font-size:16px;font-weight:700;color:#dc2626;}
+.fila-fechada p{font-size:12px;color:#7a8fb5;line-height:1.5;}
+
+/* ── INPUTS ── */
+.input-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;
 }
 
-#msg {
-  margin-top: 10px;
-  color: green;
+input[type=text]{
+  width:100%;
+  padding:11px 13px;
+  border:1px solid #d8dfef;
+  border-radius:9px;
+  font-size:14px;
+  color:#0f2550;
+  background:#f8f9fc;
+  outline:none;
+  transition:border-color .2s,box-shadow .2s;
 }
 
-/* NOVO: INFO FILA */
-#filaInfo {
-  font-size: 14px;
-  margin-bottom: 10px;
-  color: #333;
+input:focus{
+  border-color:#1a3a6e;
+  box-shadow:0 0 0 3px rgba(26,58,110,.1);
+  background:#fff;
 }
+
+input::placeholder{color:#a0b4d0;}
+
+/* ── SECÇÃO TIPO ── */
+.section-label{
+  font-size:10px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:#7a8fb5;margin:14px 0 8px;
+}
+
+/* ── PRIORIDADES ── */
+.priority-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;
+}
+
+.priority-btn{
+  background:#f8f9fc;
+  border:1px solid #d8dfef;
+  border-radius:9px;
+  padding:10px 11px;
+  color:#5a7099;
+  font-size:12px;font-weight:500;
+  cursor:pointer;
+  display:flex;align-items:center;gap:7px;
+  transition:all .18s;
+  font-family:inherit;width:100%;
+}
+
+.priority-btn:hover{background:#fff;border-color:#1a3a6e;color:#0f2550;}
+
+.priority-btn.active{
+  background:rgba(26,58,110,.07);
+  border-color:#1a3a6e;
+  color:#0f2550;
+}
+
+.pdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.dy{background:#c07010;}
+.dp{background:#a0186a;}
+.do{background:#b03010;}
+.db{background:#1a50c0;}
+
+/* ── SEPARADOR ── */
+.or-sep{
+  display:flex;align-items:center;gap:10px;
+  margin:14px 0 10px;
+  color:#a0b4d0;font-size:11px;
+}
+.or-sep::before,.or-sep::after{
+  content:'';flex:1;height:1px;background:#e8ecf5;
+}
+
+/* ── TIPO SERVIÇO ── */
+.service-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;
+}
+
+.service-btn{
+  background:#f8f9fc;
+  border:1px solid #d8dfef;
+  border-radius:9px;
+  padding:11px 10px;
+  color:#5a7099;
+  font-size:12px;font-weight:600;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:all .18s;
+  font-family:inherit;width:100%;
+  flex-direction:column;
+  text-align:center;
+  line-height:1.3;
+}
+
+.service-btn i{font-size:18px;margin-bottom:2px;}
+
+.service-btn:hover{background:#fff;border-color:#1a3a6e;color:#0f2550;}
+
+.service-btn.active-atend{
+  background:rgba(26,58,110,.07);
+  border-color:#1a3a6e;
+  color:#0f2550;
+}
+
+.service-btn.active-cad{
+  background:rgba(212,168,42,.1);
+  border-color:#d4a82a;
+  color:#a07830;
+}
+
+.service-btn.active-pass{
+  background:rgba(39,118,74,.08);
+  border-color:#27764a;
+  color:#155a30;
+}
+
+/* ── AVISO ── */
+.warning{
+  font-size:11px;color:#7a8fb5;
+  text-align:center;
+  margin:10px 0 14px;
+  line-height:1.5;
+}
+
+/* ── SUBMIT ── */
+.btn-submit{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,#1a3a6e,#2a4f8f);
+  color:#fff;border:none;border-radius:10px;
+  font-size:14px;font-weight:700;
+  cursor:pointer;font-family:inherit;
+  letter-spacing:.04em;text-transform:uppercase;
+  transition:opacity .18s,transform .1s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+
+.btn-submit:hover{opacity:.9;}
+.btn-submit:active{transform:scale(.99);}
+.btn-submit:disabled{opacity:.45;cursor:not-allowed;}
+
+/* ── MSG ── */
+#msg{
+  text-align:center;font-size:13px;font-weight:600;
+  margin-top:12px;min-height:18px;
+  color:#155a30;
+}
+
+/* ── HORÁRIO ── */
+.horario-badge{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:10px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:#7a8fb5;margin-top:16px;
+}
+
+.horario-badge .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#22c55e;animation:pulse 2s infinite;
+}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 </style>
 </head>
-
 <body>
 
-<div class="container">
+<div class="card">
 
-<div class="icon">
-  <i class="fa-solid fa-users"></i>
-</div>
+  <!-- Logo institucional -->
+  <div class="inst-header">
+    <div class="logo-stars">★ ★ ★</div>
+    <div class="logo-pn">PN</div>
+    <div class="logo-rule"></div>
+    <div class="logo-sub">Cabo Verde</div>
+    <div class="inst-title">Fila de Atendimento</div>
+    <div class="inst-sub">Polícia Nacional · Controlo de Fronteiras</div>
+  </div>
 
-<h2>Fila de Atendimento</h2>
+  <!-- Info fila -->
+  <div class="fila-info" id="filaInfo">
+    <i class="fa-solid fa-users"></i>
+    <span id="filaInfoText">A carregar…</span>
+  </div>
 
-<!-- NOVO: INFO FILA -->
-<p id="filaInfo">A carregar fila...</p>
+  <!-- Fila encerrada (hidden por defeito) -->
+  <div class="fila-fechada" id="filaFechada">
+    <i class="fa-solid fa-lock"></i>
+    <h3>Fila Encerrada</h3>
+    <p>O atendimento foi encerrado.<br>Por favor, regresse amanhã no horário de serviço<br><strong>08h00 – 16h00 (Seg – Sex)</strong></p>
+  </div>
 
-<form id="form">
+  <!-- Formulário -->
+  <form id="form">
 
-<input type="text" id="nome" placeholder="Nome" required>
-<input type="text" id="apelido" placeholder="Apelido" required>
+    <div class="input-row">
+      <input type="text" id="nome" placeholder="Nome" required>
+      <input type="text" id="apelido" placeholder="Apelido" required>
+    </div>
 
-<div class="priority-buttons">
+    <!-- Tipo de serviço -->
+    <div class="section-label">Motivo da deslocação</div>
 
-<button type="button" class="priority" onclick="setPriority(event,'idoso')">
-  <i class="fa-solid fa-user"></i> +65
-</button>
+    <div class="service-grid">
+      <button type="button" class="service-btn" id="btn-atend" onclick="setServico('atendimento')">
+        <i class="fa-solid fa-id-card" style="color:#1a3a6e;"></i>
+        Atendimento Geral
+      </button>
+      <button type="button" class="service-btn" id="btn-cad" onclick="setServico('cadastro')">
+        <i class="fa-solid fa-user-plus" style="color:#d4a82a;"></i>
+        Levantamento de Cadastro
+      </button>
+      <button type="button" class="service-btn" id="btn-pass" onclick="setServico('passaporte')">
+        <i class="fa-solid fa-passport" style="color:#27764a;"></i>
+        Levantamento de Passaporte
+      </button>
+    </div>
 
-<button type="button" class="priority" onclick="setPriority(event,'gestante')">
-  <i class="fa-solid fa-person-pregnant"></i> Gestante
-</button>
+    <!-- Prioridade (opcional) -->
+    <div class="section-label">Prioridade (opcional)</div>
 
-<button type="button" class="priority" onclick="setPriority(event,'bebe')">
-  <i class="fa-solid fa-baby"></i> Bebê
-</button>
+    <div class="priority-grid">
+      <button type="button" class="priority-btn" onclick="setPriority(event,'idoso')">
+        <span class="pdot dy"></span>
+        <i class="fa-solid fa-user" style="color:#c07010;font-size:12px;"></i>Idoso +65
+      </button>
+      <button type="button" class="priority-btn" onclick="setPriority(event,'gestante')">
+        <span class="pdot dp"></span>
+        <i class="fa-solid fa-person-pregnant" style="color:#a0186a;font-size:12px;"></i>Gestante
+      </button>
+      <button type="button" class="priority-btn" onclick="setPriority(event,'bebe')">
+        <span class="pdot do"></span>
+        <i class="fa-solid fa-baby" style="color:#b03010;font-size:12px;"></i>Bebé
+      </button>
+      <button type="button" class="priority-btn" onclick="setPriority(event,'pmr')">
+        <span class="pdot db"></span>
+        <i class="fa-solid fa-wheelchair" style="color:#1a50c0;font-size:12px;"></i>PMR
+      </button>
+    </div>
 
-<button type="button" class="priority" onclick="setPriority(event,'pmr')">
-  <i class="fa-solid fa-wheelchair"></i> PMR
-</button>
+    <p class="warning">⚠️ Seleccione prioridade apenas se aplicável.</p>
 
-</div>
+    <button class="btn-submit" type="submit" id="btnSubmit">
+      <i class="fa-solid fa-arrow-right-to-bracket"></i>
+      Entrar na Fila
+    </button>
 
-<p class="warning">
-⚠️ Utilize prioridade apenas se aplicável.
-</p>
+  </form>
 
-<button class="submit" type="submit">Entrar na Fila</button>
+  <p id="msg"></p>
 
-</form>
-
-<p id="msg"></p>
+  <div class="horario-badge">
+    <span class="dot" id="statusDot"></span>
+    <span id="statusText">Seg – Sex · 08h00 – 16h00</span>
+  </div>
 
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const app = initializeApp({
-  apiKey: "AIzaSy...",
-  authDomain: "fila-de-atendimento-a3637.firebaseapp.com",
-  databaseURL: "https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com",
-  projectId: "fila-de-atendimento-a3637"
+  databaseURL: "https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com"
 });
 
 const db = getDatabase(app);
 
-let prioridade = false;
-let tipo = "";
-let totalFila = 0;
+let tipo = "";        // prioridade
+let servico = "";     // atendimento | cadastro | passaporte
+let filaAberta = true;
 
-/* PRIORIDADE */
-window.setPriority = function(e, t) {
-  prioridade = true;
-  tipo = t;
-
-  document.querySelectorAll(".priority").forEach(b => b.classList.remove("active"));
-  e.currentTarget.classList.add("active");
+/* ── TIPO DE SERVIÇO ── */
+window.setServico = (s) => {
+  servico = s;
+  ['btn-atend','btn-cad','btn-pass'].forEach(id => {
+    document.getElementById(id).classList.remove('active-atend','active-cad','active-pass');
+  });
+  const map = { atendimento:'active-atend', cadastro:'active-cad', passaporte:'active-pass' };
+  document.getElementById('btn-' + (s==='atendimento'?'atend':s==='cadastro'?'cad':'pass'))
+    .classList.add(map[s]);
 };
 
-/* 🔄 LER FILA EM TEMPO REAL */
-onValue(ref(db,"fila"), snapshot => {
-  const data = snapshot.val();
+/* ── PRIORIDADE ── */
+window.setPriority = (e, t) => {
+  tipo = tipo === t ? "" : t; // toggle
+  document.querySelectorAll(".priority-btn").forEach(b => b.classList.remove("active"));
+  if(tipo) e.currentTarget.classList.add("active");
+};
 
-  if (data) {
-    totalFila = Object.keys(data).length;
-  } else {
-    totalFila = 0;
-  }
-
-  document.getElementById("filaInfo").innerText =
-    `👥 Pessoas na fila à sua frente: ${totalFila}`;
+/* ── FILA INFO ── */
+onValue(ref(db, "fila"), snap => {
+  const data = snap.val();
+  const total = data ? Object.keys(data).length : 0;
+  document.getElementById("filaInfoText").textContent =
+    total === 0
+      ? "Não há pessoas à sua frente na fila"
+      : `${total} pessoa${total>1?'s':''} na fila à sua frente`;
 });
 
-/* ⛔ CONTROLO DE HORÁRIO */
-function dentroHorario() {
-  const hora = new Date().getHours();
-  return hora >= 8 && hora < 16;
+/* ── ESTADO DA FILA (encerramento manual) ── */
+onValue(ref(db, "filaConfig"), snap => {
+  const cfg = snap.val() || {};
+  const encerrada = cfg.encerrada === true;
+  const dentroHorario_ = dentroHorario();
+
+  filaAberta = (cfg.forceOpen === true) || (!encerrada && dentroHorario_);
+  updateUI();
+});
+
+function updateUI() {
+  const form = document.getElementById("form");
+  const fechada = document.getElementById("filaFechada");
+  const btnSubmit = document.getElementById("btnSubmit");
+  const dot = document.getElementById("statusDot");
+  const statusText = document.getElementById("statusText");
+
+  if(filaAberta) {
+    form.style.display = "block";
+    fechada.style.display = "none";
+    btnSubmit.disabled = false;
+    dot.style.background = "#22c55e";
+    statusText.textContent = "Fila aberta · Seg – Sex 08h – 16h";
+  } else {
+    form.style.display = "none";
+    fechada.style.display = "flex";
+    dot.style.background = "#dc2626";
+    dot.style.animation = "none";
+    statusText.textContent = "Fila encerrada";
+  }
 }
 
-/* SUBMIT */
-document.getElementById("form").addEventListener("submit", (e) => {
+/* ── HORÁRIO ── */
+function dentroHorario() {
+  const agora = new Date();
+  const dia = agora.getDay(); // 0=Dom, 6=Sáb
+  const hora = agora.getHours();
+  return dia >= 1 && dia <= 5 && hora >= 8 && hora < 16;
+}
+
+/* ── SUBMIT ── */
+document.getElementById("form").addEventListener("submit", e => {
   e.preventDefault();
 
-  if (!dentroHorario()) {
-    alert("⛔ Fora de serviço");
-    msg.style.color = "red";
-    msg.innerText = "⛔ Fora de serviço (08h - 16h)";
+  if(!filaAberta) {
+    document.getElementById("msg").style.color = "#dc2626";
+    document.getElementById("msg").textContent = "⛔ Fila encerrada";
     return;
   }
 
-  push(ref(db,"fila"),{
-    nome: nome.value.trim(),
-    apelido: apelido.value.trim(),
-    prioridade,
-    tipo: prioridade ? tipo : "normal",
+  if(!servico) {
+    document.getElementById("msg").style.color = "#dc2626";
+    document.getElementById("msg").textContent = "⚠️ Seleccione o motivo da deslocação";
+    return;
+  }
+
+  const nome = document.getElementById("nome").value.trim();
+  const apelido = document.getElementById("apelido").value.trim();
+
+  push(ref(db, "fila"), {
+    nome,
+    apelido,
+    tipo: tipo || "normal",
+    servico,                     // ← NOVO campo
     timestamp: Date.now()
   });
 
-  msg.style.color = "green";
-  msg.innerText = "✔ Entraste na fila! Aguarde a sua vez, em breve será chamado.";
+  const msg = document.getElementById("msg");
+  msg.style.color = "#155a30";
+  msg.textContent = "✔ Registado! Aguarde a sua vez.";
+  setTimeout(() => msg.textContent = "", 4000);
 
-  form.reset();
-  prioridade = false;
+  document.getElementById("form").reset();
   tipo = "";
-
-  document.querySelectorAll(".priority").forEach(b => b.classList.remove("active"));
+  servico = "";
+  document.querySelectorAll(".priority-btn").forEach(b => b.classList.remove("active"));
+  ['btn-atend','btn-cad','btn-pass'].forEach(id => {
+    document.getElementById(id).classList.remove('active-atend','active-cad','active-pass');
+  });
 });
 
+// verifica horário na abertura
+if(!dentroHorario()) {
+  filaAberta = false;
+  updateUI();
+}
 </script>
-
 </body>
 </html>
