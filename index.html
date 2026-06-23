@@ -18,7 +18,6 @@ body{
   padding:20px;
 }
 
-/* Fundo de pontos subtil */
 body::after{
   content:'';
   position:fixed;inset:0;
@@ -38,7 +37,6 @@ body::after{
   box-shadow:0 20px 60px rgba(0,0,0,0.35);
 }
 
-/* ── HEADER INSTITUCIONAL ── */
 .inst-header{
   display:flex;
   flex-direction:column;
@@ -80,7 +78,6 @@ body::after{
   margin-top:2px;text-align:center;
 }
 
-/* ── FILA INFO ── */
 .fila-info{
   display:flex;
   align-items:center;
@@ -97,7 +94,6 @@ body::after{
 
 .fila-info i{color:#1a3a6e;font-size:15px;}
 
-/* ── FILA ENCERRADA ── */
 .fila-fechada{
   display:none;
   flex-direction:column;
@@ -115,7 +111,6 @@ body::after{
 .fila-fechada h3{font-size:16px;font-weight:700;color:#dc2626;}
 .fila-fechada p{font-size:12px;color:#7a8fb5;line-height:1.5;}
 
-/* ── INPUTS ── */
 .input-row{
   display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;
 }
@@ -140,14 +135,12 @@ input:focus{
 
 input::placeholder{color:#a0b4d0;}
 
-/* ── SECÇÃO TIPO ── */
 .section-label{
   font-size:10px;font-weight:700;
   letter-spacing:.12em;text-transform:uppercase;
   color:#7a8fb5;margin:14px 0 8px;
 }
 
-/* ── PRIORIDADES ── */
 .priority-grid{
   display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;
 }
@@ -179,7 +172,6 @@ input::placeholder{color:#a0b4d0;}
 .do{background:#b03010;}
 .db{background:#1a50c0;}
 
-/* ── SEPARADOR ── */
 .or-sep{
   display:flex;align-items:center;gap:10px;
   margin:14px 0 10px;
@@ -189,7 +181,6 @@ input::placeholder{color:#a0b4d0;}
   content:'';flex:1;height:1px;background:#e8ecf5;
 }
 
-/* ── TIPO SERVIÇO ── */
 .service-grid{
   display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;
 }
@@ -232,7 +223,18 @@ input::placeholder{color:#a0b4d0;}
   color:#155a30;
 }
 
-/* ── AVISO ── */
+.service-btn.active-emis-cad{
+  background:rgba(139,92,246,.08);
+  border-color:#7c3aed;
+  color:#5b21b6;
+}
+
+.service-btn.active-emis-dec{
+  background:rgba(6,182,212,.08);
+  border-color:#0891b2;
+  color:#164e63;
+}
+
 .warning{
   font-size:11px;color:#7a8fb5;
   text-align:center;
@@ -240,7 +242,6 @@ input::placeholder{color:#a0b4d0;}
   line-height:1.5;
 }
 
-/* ── SUBMIT ── */
 .btn-submit{
   width:100%;padding:13px;
   background:linear-gradient(135deg,#1a3a6e,#2a4f8f);
@@ -256,14 +257,12 @@ input::placeholder{color:#a0b4d0;}
 .btn-submit:active{transform:scale(.99);}
 .btn-submit:disabled{opacity:.45;cursor:not-allowed;}
 
-/* ── MSG ── */
 #msg{
   text-align:center;font-size:13px;font-weight:600;
   margin-top:12px;min-height:18px;
   color:#155a30;
 }
 
-/* ── HORÁRIO ── */
 .horario-badge{
   display:flex;align-items:center;justify-content:center;gap:6px;
   font-size:10px;font-weight:600;
@@ -356,27 +355,121 @@ input#nif::placeholder{
 
 .nif-error.show{display:flex;}
 
-/* Botão emissão de cadastro */
-.service-btn.active-emis-cad{
-  background:rgba(139,92,246,.08);
+/* ── CAMPO FINALIDADE ── */
+.finalidade-wrap{
+  display:none;
+  flex-direction:column;
+  gap:6px;
+  border-radius:10px;
+  padding:12px 14px;
+  margin-top:6px;
+  animation:fadeIn .25s ease;
+}
+
+.finalidade-wrap.show{display:flex;}
+
+.finalidade-wrap.mode-cad{
+  background:rgba(139,92,246,.05);
+  border:1px solid rgba(139,92,246,.3);
+}
+
+.finalidade-wrap.mode-dec{
+  background:rgba(6,182,212,.05);
+  border:1px solid rgba(6,182,212,.3);
+}
+
+.finalidade-label{
+  font-size:10px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  display:flex;align-items:center;gap:6px;
+}
+
+.finalidade-label.lbl-cad{color:#5b21b6;}
+.finalidade-label.lbl-dec{color:#0e7490;}
+
+input#finalidade{
+  width:100%;
+  padding:10px 13px;
+  border-radius:9px;
+  font-size:13px;
+  font-weight:500;
+  color:#0f2550;
+  background:#fff;
+  outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  overflow:hidden;
+  white-space:nowrap;
+  cursor:text;
+}
+
+input#finalidade.mode-cad{
+  border:1.5px solid rgba(139,92,246,.4);
+}
+input#finalidade.mode-cad:focus{
   border-color:#7c3aed;
-  color:#5b21b6;
+  box-shadow:0 0 0 3px rgba(139,92,246,.1);
 }
 
-/* Botão emissão de declaração */
-.service-btn.active-emis-dec{
-  background:rgba(6,182,212,.08);
+input#finalidade.mode-dec{
+  border:1.5px solid rgba(6,182,212,.4);
+}
+input#finalidade.mode-dec:focus{
   border-color:#0891b2;
-  color:#164e63;
+  box-shadow:0 0 0 3px rgba(6,182,212,.1);
 }
 
+.finalidade-hint{
+  font-size:10px;
+  display:flex;align-items:center;gap:5px;
+}
+.finalidade-hint.hint-cad{color:#6d28d9;}
+.finalidade-hint.hint-dec{color:#0e7490;}
+
+/* Sliding placeholder via keyframes */
+.placeholder-ticker{
+  font-size:11px;
+  height:18px;
+  overflow:hidden;
+  position:relative;
+  border-radius:4px;
+  padding:0 4px;
+}
+
+.ticker-track{
+  display:flex;
+  flex-direction:column;
+  animation:tickerScroll 12s linear infinite;
+}
+
+.ticker-track span{
+  height:18px;
+  line-height:18px;
+  white-space:nowrap;
+  font-style:italic;
+}
+
+.placeholder-ticker.mode-cad .ticker-track span{color:#7c3aed;opacity:.8;}
+.placeholder-ticker.mode-dec .ticker-track span{color:#0891b2;opacity:.8;}
+
+@keyframes tickerScroll{
+  0%   {transform:translateY(0);}
+  14%  {transform:translateY(0);}
+  20%  {transform:translateY(-18px);}
+  34%  {transform:translateY(-18px);}
+  40%  {transform:translateY(-36px);}
+  54%  {transform:translateY(-36px);}
+  60%  {transform:translateY(-54px);}
+  74%  {transform:translateY(-54px);}
+  80%  {transform:translateY(-72px);}
+  94%  {transform:translateY(-72px);}
+  100% {transform:translateY(-90px);}
+}
 </style>
 </head>
 <body>
 
 <div class="card">
 
-  <!-- Logo institucional -->
   <div class="inst-header">
     <div class="logo-stars">★ ★ ★</div>
     <div class="logo-pn">PN</div>
@@ -386,20 +479,17 @@ input#nif::placeholder{
     <div class="inst-sub">Polícia Nacional · Controlo de Fronteiras</div>
   </div>
 
-  <!-- Info fila -->
   <div class="fila-info" id="filaInfo">
     <i class="fa-solid fa-users"></i>
     <span id="filaInfoText">A carregar…</span>
   </div>
 
-  <!-- Fila encerrada (hidden por defeito) -->
   <div class="fila-fechada" id="filaFechada">
     <i class="fa-solid fa-lock"></i>
     <h3>Fila Encerrada</h3>
     <p>O atendimento foi encerrado.<br>Por favor, regresse amanhã no horário de serviço<br><strong>08h00 – 16h00 (Seg – Sex)</strong></p>
   </div>
 
-  <!-- Formulário -->
   <form id="form">
 
     <div class="input-row">
@@ -407,7 +497,6 @@ input#nif::placeholder{
       <input type="text" id="apelido" placeholder="Apelido" required>
     </div>
 
-    <!-- Tipo de serviço -->
     <div class="section-label">Motivo da deslocação</div>
 
     <div class="service-grid" style="grid-template-columns:1fr 1fr;">
@@ -433,7 +522,7 @@ input#nif::placeholder{
       </button>
     </div>
 
-    <!-- CAMPO NIF — aparece ao seleccionar Emissão de Cadastro ou Declaração -->
+    <!-- CAMPO NIF -->
     <div class="nif-wrap" id="nif-wrap">
       <div class="nif-label">
         <i class="fa-solid fa-hashtag"></i>
@@ -453,7 +542,22 @@ input#nif::placeholder{
       </div>
     </div>
 
-    <!-- Prioridade (opcional) -->
+    <!-- CAMPO FINALIDADE -->
+    <div class="finalidade-wrap" id="finalidade-wrap">
+      <div class="finalidade-label" id="finalidade-label">
+        <i class="fa-solid fa-circle-question" id="finalidade-icon"></i>
+        <span id="finalidade-label-text">Finalidade / Para que efeito</span>
+      </div>
+      <input type="text" id="finalidade" placeholder="" maxlength="120" autocomplete="off">
+      <div class="placeholder-ticker" id="ticker-wrap">
+        <div class="ticker-track" id="ticker-track"></div>
+      </div>
+      <div class="finalidade-hint" id="finalidade-hint">
+        <i class="fa-solid fa-circle-info"></i>
+        <span id="finalidade-hint-text">Indique o motivo ou finalidade do pedido</span>
+      </div>
+    </div>
+
     <div class="section-label">Prioridade (opcional)</div>
 
     <div class="priority-grid">
@@ -503,23 +607,56 @@ const app = initializeApp({
 
 const db = getDatabase(app);
 
-let tipo = "";        // prioridade
-let servico = "";     // atendimento | cadastro | passaporte
+let tipo = "";
+let servico = "";
 let filaAberta = true;
 
-/* ── TIPO DE SERVIÇO ── */
 const EMISSAO_SERVICOS = ['emissao-cadastro', 'emissao-declaracao'];
+
+const EXEMPLOS_CAD = [
+  'Concurso público',
+  'Pedido de emprego',
+  'Pedido de residência',
+  'Inscrição em concurso',
+  'Pedido de visto',
+  'Regularização documental',
+];
+
+const EXEMPLOS_DEC = [
+  'Declaração de extravio',
+  'Declaração de denúncia',
+  'Declaração de residência',
+  'Declaração para banco',
+  'Declaração para entidade patronal',
+  'Declaração para fins académicos',
+];
+
+function buildTicker(exemplos, mode){
+  const track = document.getElementById('ticker-track');
+  const wrapEl = document.getElementById('ticker-wrap');
+  track.innerHTML = '';
+  // duplicate for infinite loop
+  const all = [...exemplos, ...exemplos];
+  all.forEach(ex => {
+    const sp = document.createElement('span');
+    sp.textContent = 'Ex: ' + ex;
+    track.appendChild(sp);
+  });
+  wrapEl.className = 'placeholder-ticker mode-' + mode;
+  // reset animation
+  track.style.animation = 'none';
+  void track.offsetWidth;
+  track.style.animation = '';
+}
 
 window.setServico = (s) => {
   servico = s;
 
-  // remove todos os estados activos
   ['btn-atend','btn-cad','btn-pass','btn-emis-cad','btn-emis-dec'].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.classList.remove('active-atend','active-cad','active-pass','active-emis-cad','active-emis-dec');
   });
 
-  // activa o botão certo
   const map = {
     'atendimento'        : ['btn-atend',    'active-atend'],
     'cadastro'           : ['btn-cad',      'active-cad'],
@@ -530,42 +667,72 @@ window.setServico = (s) => {
   const [btnId, cls] = map[s] || [];
   if(btnId) document.getElementById(btnId)?.classList.add(cls);
 
-  // mostra/esconde campo NIF
   const nifWrap = document.getElementById('nif-wrap');
+  const finWrap = document.getElementById('finalidade-wrap');
+  const finLabel = document.getElementById('finalidade-label');
+  const finLabelText = document.getElementById('finalidade-label-text');
+  const finIcon = document.getElementById('finalidade-icon');
+  const finInput = document.getElementById('finalidade');
+  const finHint = document.getElementById('finalidade-hint');
+  const finHintText = document.getElementById('finalidade-hint-text');
+
   if(EMISSAO_SERVICOS.includes(s)){
     nifWrap.classList.add('show');
+
+    // Finalidade
+    finWrap.classList.add('show');
+    finInput.value = '';
+
+    if(s === 'emissao-cadastro'){
+      finWrap.className = 'finalidade-wrap show mode-cad';
+      finLabel.className = 'finalidade-label lbl-cad';
+      finLabelText.textContent = 'Finalidade / Para que efeito';
+      finIcon.className = 'fa-solid fa-circle-question';
+      finInput.className = 'mode-cad';
+      finHint.className = 'finalidade-hint hint-cad';
+      finHintText.textContent = 'Indique a finalidade do cadastro (obrigatório)';
+      buildTicker(EXEMPLOS_CAD, 'cad');
+    } else {
+      finWrap.className = 'finalidade-wrap show mode-dec';
+      finLabel.className = 'finalidade-label lbl-dec';
+      finLabelText.textContent = 'Tipo / Motivo da declaração';
+      finIcon.className = 'fa-solid fa-file-circle-question';
+      finInput.className = 'mode-dec';
+      finHint.className = 'finalidade-hint hint-dec';
+      finHintText.textContent = 'Indique o tipo ou motivo da declaração (obrigatório)';
+      buildTicker(EXEMPLOS_DEC, 'dec');
+    }
+
     document.getElementById('nif').focus();
   } else {
     nifWrap.classList.remove('show');
+    finWrap.classList.remove('show');
+    finWrap.classList.remove('mode-cad','mode-dec');
     document.getElementById('nif').value = '';
     document.getElementById('nif-counter').textContent = '0/9';
     document.getElementById('nif-error').classList.remove('show');
+    finInput.value = '';
   }
 };
 
-/* ── VALIDAÇÃO NIF ── */
 document.addEventListener('DOMContentLoaded', () => {
   const nifInput = document.getElementById('nif');
   if(nifInput){
     nifInput.addEventListener('input', () => {
-      // só permite dígitos
       nifInput.value = nifInput.value.replace(/\D/g, '').slice(0, 9);
       document.getElementById('nif-counter').textContent = nifInput.value.length + '/9';
-      // esconde erro enquanto digita
       if(nifInput.value.length > 0)
         document.getElementById('nif-error').classList.remove('show');
     });
   }
 });
 
-/* ── PRIORIDADE ── */
 window.setPriority = (e, t) => {
-  tipo = tipo === t ? "" : t; // toggle
+  tipo = tipo === t ? "" : t;
   document.querySelectorAll(".priority-btn").forEach(b => b.classList.remove("active"));
   if(tipo) e.currentTarget.classList.add("active");
 };
 
-/* ── FILA INFO ── */
 onValue(ref(db, "fila"), snap => {
   const data = snap.val();
   const total = data ? Object.keys(data).length : 0;
@@ -575,13 +742,10 @@ onValue(ref(db, "fila"), snap => {
       : `${total} pessoa${total>1?'s':''} na fila à sua frente`;
 });
 
-/* ── ESTADO DA FILA (encerramento / abertura manual) ── */
 onValue(ref(db, "filaConfig"), snap => {
   const cfg = snap.val() || {};
   const encerrada = cfg.encerrada === true;
-  const forcado   = cfg.forcado === true;   // iniciado manualmente pelo operador
-
-  // Se forcado=true, ignora horário e abre sempre; senão respeita horário
+  const forcado   = cfg.forcado === true;
   filaAberta = !encerrada && (forcado || dentroHorario());
   updateUI();
 });
@@ -609,15 +773,13 @@ function updateUI() {
   }
 }
 
-/* ── HORÁRIO ── */
 function dentroHorario() {
   const agora = new Date();
-  const dia = agora.getDay(); // 0=Dom, 6=Sáb
+  const dia = agora.getDay();
   const hora = agora.getHours();
   return dia >= 1 && dia <= 5 && hora >= 8 && hora < 16;
 }
 
-/* ── SUBMIT ── */
 document.getElementById("form").addEventListener("submit", e => {
   e.preventDefault();
 
@@ -633,7 +795,6 @@ document.getElementById("form").addEventListener("submit", e => {
     return;
   }
 
-  // Validação NIF para emissão
   const precisaNIF = EMISSAO_SERVICOS.includes(servico);
   const nifVal = document.getElementById('nif').value.trim();
   if(precisaNIF){
@@ -652,6 +813,16 @@ document.getElementById("form").addEventListener("submit", e => {
       return;
     }
     nifErrEl.classList.remove('show');
+
+    // Validar finalidade
+    const finalVal = document.getElementById('finalidade').value.trim();
+    if(!finalVal){
+      document.getElementById("msg").style.color = "#dc2626";
+      const label = servico === 'emissao-cadastro' ? 'finalidade do cadastro' : 'tipo/motivo da declaração';
+      document.getElementById("msg").textContent = `⚠️ Indique a ${label}`;
+      document.getElementById('finalidade').focus();
+      return;
+    }
   }
 
   const nome = document.getElementById("nome").value.trim();
@@ -665,7 +836,10 @@ document.getElementById("form").addEventListener("submit", e => {
     timestamp: Date.now()
   };
 
-  if(precisaNIF) dadosFila.nif = nifVal;
+  if(precisaNIF){
+    dadosFila.nif = nifVal;
+    dadosFila.finalidade = document.getElementById('finalidade').value.trim();
+  }
 
   push(ref(db, "fila"), dadosFila);
 
@@ -678,6 +852,7 @@ document.getElementById("form").addEventListener("submit", e => {
   tipo = "";
   servico = "";
   document.getElementById('nif-wrap').classList.remove('show');
+  document.getElementById('finalidade-wrap').classList.remove('show');
   document.getElementById('nif-counter').textContent = '0/9';
   document.getElementById('nif-error').classList.remove('show');
   document.querySelectorAll(".priority-btn").forEach(b => b.classList.remove("active"));
@@ -686,10 +861,6 @@ document.getElementById("form").addEventListener("submit", e => {
     if(el) el.classList.remove('active-atend','active-cad','active-pass','active-emis-cad','active-emis-dec');
   });
 });
-
-// Estado inicial: aguarda o Firebase (onValue já trata de tudo)
-// Enquanto carrega, mostra estado neutro
-
 </script>
 </body>
 </html>
