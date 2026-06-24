@@ -37,47 +37,33 @@ body::after{
   box-shadow:0 20px 60px rgba(0,0,0,0.35);
 }
 
+/* ── HEADER ── */
 .inst-header{
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:4px;
+  gap:10px;
   margin-bottom:22px;
   padding-bottom:18px;
   border-bottom:2px solid #f0f2f8;
 }
 
-.logo-stars{font-size:9px;letter-spacing:6px;color:#d4a82a;font-weight:700;}
-
-.logo-pn{
-  font-size:32px;font-weight:900;
-  color:#0f2550;letter-spacing:.12em;line-height:1;
-}
-
-.logo-rule{
-  width:40px;height:2px;
-  background:linear-gradient(90deg,#d4a82a,#f0c040);
-  border-radius:2px;margin:3px 0;
-}
-
-.logo-sub{
-  font-size:9px;font-weight:700;
-  letter-spacing:.2em;text-transform:uppercase;
-  color:#d4a82a;
+.queue-icon-wrap{
+  width:56px;height:56px;border-radius:16px;
+  background:linear-gradient(135deg,#1a3a6e,#2a4f8f);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;color:#fff;
+  box-shadow:0 6px 20px rgba(26,58,110,.25);
 }
 
 .inst-title{
-  font-size:15px;font-weight:700;
+  font-size:17px;font-weight:800;
   color:#0f2550;text-transform:uppercase;
-  letter-spacing:.06em;margin-top:6px;
+  letter-spacing:.08em;
   text-align:center;
 }
 
-.inst-sub{
-  font-size:11px;color:#7a8fb5;
-  margin-top:2px;text-align:center;
-}
-
+/* ── FILA INFO ── */
 .fila-info{
   display:flex;
   align-items:center;
@@ -91,9 +77,9 @@ body::after{
   color:#0f2550;
   font-weight:500;
 }
-
 .fila-info i{color:#1a3a6e;font-size:15px;}
 
+/* ── FILA ENCERRADA ── */
 .fila-fechada{
   display:none;
   flex-direction:column;
@@ -106,11 +92,11 @@ body::after{
   text-align:center;
   margin-bottom:16px;
 }
-
 .fila-fechada i{font-size:36px;color:#dc2626;}
 .fila-fechada h3{font-size:16px;font-weight:700;color:#dc2626;}
 .fila-fechada p{font-size:12px;color:#7a8fb5;line-height:1.5;}
 
+/* ── INPUTS ── */
 .input-row{
   display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;
 }
@@ -135,12 +121,14 @@ input:focus{
 
 input::placeholder{color:#a0b4d0;}
 
+/* ── LABELS ── */
 .section-label{
   font-size:10px;font-weight:700;
   letter-spacing:.12em;text-transform:uppercase;
   color:#7a8fb5;margin:14px 0 8px;
 }
 
+/* ── PRIORIDADES ── */
 .priority-grid{
   display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;
 }
@@ -157,14 +145,8 @@ input::placeholder{color:#a0b4d0;}
   transition:all .18s;
   font-family:inherit;width:100%;
 }
-
 .priority-btn:hover{background:#fff;border-color:#1a3a6e;color:#0f2550;}
-
-.priority-btn.active{
-  background:rgba(26,58,110,.07);
-  border-color:#1a3a6e;
-  color:#0f2550;
-}
+.priority-btn.active{background:rgba(26,58,110,.07);border-color:#1a3a6e;color:#0f2550;}
 
 .pdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .dy{background:#c07010;}
@@ -172,15 +154,7 @@ input::placeholder{color:#a0b4d0;}
 .do{background:#b03010;}
 .db{background:#1a50c0;}
 
-.or-sep{
-  display:flex;align-items:center;gap:10px;
-  margin:14px 0 10px;
-  color:#a0b4d0;font-size:11px;
-}
-.or-sep::before,.or-sep::after{
-  content:'';flex:1;height:1px;background:#e8ecf5;
-}
-
+/* ── SERVIÇOS ── */
 .service-grid{
   display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;
 }
@@ -200,41 +174,17 @@ input::placeholder{color:#a0b4d0;}
   text-align:center;
   line-height:1.3;
 }
-
 .service-btn i{font-size:18px;margin-bottom:2px;}
-
 .service-btn:hover{background:#fff;border-color:#1a3a6e;color:#0f2550;}
 
-.service-btn.active-atend{
-  background:rgba(26,58,110,.07);
-  border-color:#1a3a6e;
-  color:#0f2550;
-}
+.service-btn.active-atend{background:rgba(26,58,110,.07);border-color:#1a3a6e;color:#0f2550;}
+.service-btn.active-cad{background:rgba(212,168,42,.1);border-color:#d4a82a;color:#a07830;}
+.service-btn.active-pass{background:rgba(39,118,74,.08);border-color:#27764a;color:#155a30;}
+.service-btn.active-emis-cad{background:rgba(139,92,246,.08);border-color:#7c3aed;color:#5b21b6;}
+.service-btn.active-emis-dec{background:rgba(6,182,212,.08);border-color:#0891b2;color:#164e63;}
+.service-btn.active-emis-vis{background:rgba(5,150,105,.08);border-color:#059669;color:#065f46;}
 
-.service-btn.active-cad{
-  background:rgba(212,168,42,.1);
-  border-color:#d4a82a;
-  color:#a07830;
-}
-
-.service-btn.active-pass{
-  background:rgba(39,118,74,.08);
-  border-color:#27764a;
-  color:#155a30;
-}
-
-.service-btn.active-emis-cad{
-  background:rgba(139,92,246,.08);
-  border-color:#7c3aed;
-  color:#5b21b6;
-}
-
-.service-btn.active-emis-dec{
-  background:rgba(6,182,212,.08);
-  border-color:#0891b2;
-  color:#164e63;
-}
-
+/* ── WARNING ── */
 .warning{
   font-size:11px;color:#7a8fb5;
   text-align:center;
@@ -242,6 +192,7 @@ input::placeholder{color:#a0b4d0;}
   line-height:1.5;
 }
 
+/* ── SUBMIT ── */
 .btn-submit{
   width:100%;padding:13px;
   background:linear-gradient(135deg,#1a3a6e,#2a4f8f);
@@ -252,7 +203,6 @@ input::placeholder{color:#a0b4d0;}
   transition:opacity .18s,transform .1s;
   display:flex;align-items:center;justify-content:center;gap:8px;
 }
-
 .btn-submit:hover{opacity:.9;}
 .btn-submit:active{transform:scale(.99);}
 .btn-submit:disabled{opacity:.45;cursor:not-allowed;}
@@ -263,21 +213,23 @@ input::placeholder{color:#a0b4d0;}
   color:#155a30;
 }
 
+/* ── HORARIO ── */
 .horario-badge{
   display:flex;align-items:center;justify-content:center;gap:6px;
   font-size:10px;font-weight:600;
   letter-spacing:.08em;text-transform:uppercase;
   color:#7a8fb5;margin-top:16px;
 }
-
 .horario-badge .dot{
   width:6px;height:6px;border-radius:50%;
   background:#22c55e;animation:pulse 2s infinite;
 }
-
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* ── CAMPO NIF ── */
+/* ── ANIMAÇÃO ── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CAMPO NIF (partilhado) ── */
 .nif-wrap{
   display:none;
   flex-direction:column;
@@ -289,19 +241,21 @@ input::placeholder{color:#a0b4d0;}
   margin-top:2px;
   animation:fadeIn .25s ease;
 }
-
-@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-
 .nif-wrap.show{display:flex;}
+
+/* cores do nif-wrap conforme serviço */
+.nif-wrap.nif-cad{background:rgba(212,168,42,.06);border-color:rgba(212,168,42,.35);}
+.nif-wrap.nif-dec{background:rgba(6,182,212,.05);border-color:rgba(6,182,212,.35);}
+.nif-wrap.nif-vis{background:rgba(5,150,105,.06);border-color:rgba(5,150,105,.35);}
 
 .nif-label{
   font-size:10px;font-weight:700;
   letter-spacing:.12em;text-transform:uppercase;
-  color:#a07830;
   display:flex;align-items:center;gap:6px;
 }
-
-.nif-label i{font-size:12px;}
+.nif-label.lbl-cad{color:#a07830;}
+.nif-label.lbl-dec{color:#0e7490;}
+.nif-label.lbl-vis{color:#065f46;}
 
 .nif-input-row{
   display:flex;align-items:center;gap:8px;
@@ -310,7 +264,6 @@ input::placeholder{color:#a0b4d0;}
 input#nif{
   flex:1;
   padding:11px 13px;
-  border:1.5px solid rgba(212,168,42,.4);
   border-radius:9px;
   font-size:16px;
   font-weight:700;
@@ -321,29 +274,34 @@ input#nif{
   font-family:'Courier New',monospace;
   transition:border-color .2s,box-shadow .2s;
 }
-
-input#nif:focus{
-  border-color:#d4a82a;
-  box-shadow:0 0 0 3px rgba(212,168,42,.15);
-  background:#fff;
-}
+input#nif.nif-cad{border:1.5px solid rgba(212,168,42,.4);}
+input#nif.nif-cad:focus{border-color:#d4a82a;box-shadow:0 0 0 3px rgba(212,168,42,.15);background:#fff;}
+input#nif.nif-dec{border:1.5px solid rgba(6,182,212,.4);background:#f0fdfe;}
+input#nif.nif-dec:focus{border-color:#0891b2;box-shadow:0 0 0 3px rgba(6,182,212,.12);background:#fff;}
+input#nif.nif-vis{border:1.5px solid rgba(5,150,105,.4);background:#f0fdf4;}
+input#nif.nif-vis:focus{border-color:#059669;box-shadow:0 0 0 3px rgba(5,150,105,.12);background:#fff;}
 
 input#nif::placeholder{
-  color:#c8a84b;font-weight:400;letter-spacing:.05em;
+  color:#a0b4d0;font-weight:400;letter-spacing:.05em;
   font-family:'Segoe UI',sans-serif;font-size:13px;
 }
 
 .nif-counter{
   font-size:11px;font-weight:700;
-  color:#a07830;
   font-family:'Courier New',monospace;
   white-space:nowrap;
 }
+.nif-counter.lbl-cad{color:#a07830;}
+.nif-counter.lbl-dec{color:#0e7490;}
+.nif-counter.lbl-vis{color:#065f46;}
 
 .nif-hint{
-  font-size:10px;color:#b8941a;
+  font-size:10px;
   display:flex;align-items:center;gap:5px;
 }
+.nif-hint.lbl-cad{color:#b8941a;}
+.nif-hint.lbl-dec{color:#0e7490;}
+.nif-hint.lbl-vis{color:#065f46;}
 
 .nif-error{
   display:none;
@@ -352,10 +310,9 @@ input#nif::placeholder{
   border-radius:6px;padding:7px 10px;
   align-items:center;gap:6px;
 }
-
 .nif-error.show{display:flex;}
 
-/* ── CAMPO FINALIDADE ── */
+/* ── CAMPO FINALIDADE (cadastro / declaração) ── */
 .finalidade-wrap{
   display:none;
   flex-direction:column;
@@ -365,25 +322,15 @@ input#nif::placeholder{
   margin-top:6px;
   animation:fadeIn .25s ease;
 }
-
 .finalidade-wrap.show{display:flex;}
-
-.finalidade-wrap.mode-cad{
-  background:rgba(139,92,246,.05);
-  border:1px solid rgba(139,92,246,.3);
-}
-
-.finalidade-wrap.mode-dec{
-  background:rgba(6,182,212,.05);
-  border:1px solid rgba(6,182,212,.3);
-}
+.finalidade-wrap.mode-cad{background:rgba(139,92,246,.05);border:1px solid rgba(139,92,246,.3);}
+.finalidade-wrap.mode-dec{background:rgba(6,182,212,.05);border:1px solid rgba(6,182,212,.3);}
 
 .finalidade-label{
   font-size:10px;font-weight:700;
   letter-spacing:.12em;text-transform:uppercase;
   display:flex;align-items:center;gap:6px;
 }
-
 .finalidade-label.lbl-cad{color:#5b21b6;}
 .finalidade-label.lbl-dec{color:#0e7490;}
 
@@ -391,41 +338,63 @@ input#finalidade{
   width:100%;
   padding:10px 13px;
   border-radius:9px;
-  font-size:13px;
-  font-weight:500;
-  color:#0f2550;
-  background:#fff;
+  font-size:13px;font-weight:500;
+  color:#0f2550;background:#fff;
   outline:none;
   transition:border-color .2s,box-shadow .2s;
-  overflow:hidden;
-  white-space:nowrap;
   cursor:text;
 }
+input#finalidade.mode-cad{border:1.5px solid rgba(139,92,246,.4);}
+input#finalidade.mode-cad:focus{border-color:#7c3aed;box-shadow:0 0 0 3px rgba(139,92,246,.1);}
+input#finalidade.mode-dec{border:1.5px solid rgba(6,182,212,.4);}
+input#finalidade.mode-dec:focus{border-color:#0891b2;box-shadow:0 0 0 3px rgba(6,182,212,.1);}
 
-input#finalidade.mode-cad{
-  border:1.5px solid rgba(139,92,246,.4);
-}
-input#finalidade.mode-cad:focus{
-  border-color:#7c3aed;
-  box-shadow:0 0 0 3px rgba(139,92,246,.1);
-}
-
-input#finalidade.mode-dec{
-  border:1.5px solid rgba(6,182,212,.4);
-}
-input#finalidade.mode-dec:focus{
-  border-color:#0891b2;
-  box-shadow:0 0 0 3px rgba(6,182,212,.1);
-}
-
-.finalidade-hint{
-  font-size:10px;
-  display:flex;align-items:center;gap:5px;
-}
+.finalidade-hint{font-size:10px;display:flex;align-items:center;gap:5px;}
 .finalidade-hint.hint-cad{color:#6d28d9;}
 .finalidade-hint.hint-dec{color:#0e7490;}
 
-/* Sliding placeholder via keyframes */
+/* ── CAMPO VISTO ── */
+.visto-wrap{
+  display:none;
+  flex-direction:column;
+  gap:6px;
+  background:rgba(5,150,105,.05);
+  border:1px solid rgba(5,150,105,.3);
+  border-radius:10px;
+  padding:12px 14px;
+  margin-top:6px;
+  animation:fadeIn .25s ease;
+}
+.visto-wrap.show{display:flex;}
+
+.visto-label{
+  font-size:10px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:#065f46;
+  display:flex;align-items:center;gap:6px;
+}
+
+input#tipo-visto{
+  width:100%;
+  padding:10px 13px;
+  border:1.5px solid rgba(5,150,105,.4);
+  border-radius:9px;
+  font-size:13px;font-weight:500;
+  color:#0f2550;background:#f0fdf4;
+  outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  cursor:text;
+}
+input#tipo-visto:focus{
+  border-color:#059669;
+  box-shadow:0 0 0 3px rgba(5,150,105,.12);
+  background:#fff;
+}
+input#tipo-visto::placeholder{color:#a0b4d0;}
+
+.visto-hint{font-size:10px;color:#065f46;display:flex;align-items:center;gap:5px;}
+
+/* ── TICKER (animação de exemplos) ── */
 .placeholder-ticker{
   font-size:11px;
   height:18px;
@@ -434,22 +403,16 @@ input#finalidade.mode-dec:focus{
   border-radius:4px;
   padding:0 4px;
 }
-
 .ticker-track{
   display:flex;
   flex-direction:column;
   animation:tickerScroll 12s linear infinite;
 }
-
-.ticker-track span{
-  height:18px;
-  line-height:18px;
-  white-space:nowrap;
-  font-style:italic;
-}
+.ticker-track span{height:18px;line-height:18px;white-space:nowrap;font-style:italic;}
 
 .placeholder-ticker.mode-cad .ticker-track span{color:#7c3aed;opacity:.8;}
 .placeholder-ticker.mode-dec .ticker-track span{color:#0891b2;opacity:.8;}
+.placeholder-ticker.mode-vis .ticker-track span{color:#059669;opacity:.9;}
 
 @keyframes tickerScroll{
   0%   {transform:translateY(0);}
@@ -470,26 +433,28 @@ input#finalidade.mode-dec:focus{
 
 <div class="card">
 
+  <!-- HEADER -->
   <div class="inst-header">
-    <div class="logo-stars">★ ★ ★</div>
-    <div class="logo-pn">PN</div>
-    <div class="logo-rule"></div>
-    <div class="logo-sub">Cabo Verde</div>
+    <div class="queue-icon-wrap">
+      <i class="fa-solid fa-people-line"></i>
+    </div>
     <div class="inst-title">Fila de Atendimento</div>
-    <div class="inst-sub">Polícia Nacional · Controlo de Fronteiras</div>
   </div>
 
+  <!-- INFO FILA -->
   <div class="fila-info" id="filaInfo">
     <i class="fa-solid fa-users"></i>
     <span id="filaInfoText">A carregar…</span>
   </div>
 
+  <!-- FILA ENCERRADA -->
   <div class="fila-fechada" id="filaFechada">
     <i class="fa-solid fa-lock"></i>
     <h3>Fila Encerrada</h3>
     <p>O atendimento foi encerrado.<br>Por favor, regresse amanhã no horário de serviço<br><strong>08h00 – 16h00 (Seg – Sex)</strong></p>
   </div>
 
+  <!-- FORMULÁRIO -->
   <form id="form">
 
     <div class="input-row">
@@ -499,6 +464,7 @@ input#finalidade.mode-dec:focus{
 
     <div class="section-label">Motivo da deslocação</div>
 
+    <!-- BOTÕES DE SERVIÇO — grelha 2 colunas, último centrado sozinho -->
     <div class="service-grid" style="grid-template-columns:1fr 1fr;">
       <button type="button" class="service-btn" id="btn-atend" onclick="setServico('atendimento')">
         <i class="fa-solid fa-id-card" style="color:#1a3a6e;"></i>
@@ -520,11 +486,16 @@ input#finalidade.mode-dec:focus{
         <i class="fa-solid fa-file-signature" style="color:#0891b2;"></i>
         Emissão de Declaração
       </button>
+      <!-- NOVO: Emissão de Visto — ocupa a segunda coluna, centrado -->
+      <button type="button" class="service-btn" id="btn-emis-vis" onclick="setServico('emissao-visto')">
+        <i class="fa-solid fa-stamp" style="color:#059669;"></i>
+        Emissão de Visto
+      </button>
     </div>
 
-    <!-- CAMPO NIF -->
+    <!-- ── CAMPO NIF (partilhado por emissão de cadastro, declaração e visto) ── -->
     <div class="nif-wrap" id="nif-wrap">
-      <div class="nif-label">
+      <div class="nif-label" id="nif-label">
         <i class="fa-solid fa-hashtag"></i>
         Número de Identificação Fiscal (NIF)
       </div>
@@ -532,7 +503,7 @@ input#finalidade.mode-dec:focus{
         <input type="text" id="nif" placeholder="Ex: 123456789" maxlength="9" inputmode="numeric" autocomplete="off">
         <span class="nif-counter" id="nif-counter">0/9</span>
       </div>
-      <div class="nif-hint">
+      <div class="nif-hint" id="nif-hint">
         <i class="fa-solid fa-circle-info"></i>
         Introduza os 9 dígitos do seu NIF
       </div>
@@ -542,7 +513,7 @@ input#finalidade.mode-dec:focus{
       </div>
     </div>
 
-    <!-- CAMPO FINALIDADE -->
+    <!-- ── CAMPO FINALIDADE (cadastro / declaração) ── -->
     <div class="finalidade-wrap" id="finalidade-wrap">
       <div class="finalidade-label" id="finalidade-label">
         <i class="fa-solid fa-circle-question" id="finalidade-icon"></i>
@@ -558,6 +529,23 @@ input#finalidade.mode-dec:focus{
       </div>
     </div>
 
+    <!-- ── CAMPO TIPO DE VISTO (emissão de visto) ── -->
+    <div class="visto-wrap" id="visto-wrap">
+      <div class="visto-label">
+        <i class="fa-solid fa-stamp"></i>
+        Tipo de Visto
+      </div>
+      <input type="text" id="tipo-visto" placeholder="" maxlength="80" autocomplete="off">
+      <div class="placeholder-ticker" id="ticker-visto-wrap">
+        <div class="ticker-track" id="ticker-visto-track"></div>
+      </div>
+      <div class="visto-hint">
+        <i class="fa-solid fa-circle-info"></i>
+        Indique o tipo de visto pretendido (obrigatório)
+      </div>
+    </div>
+
+    <!-- PRIORIDADE -->
     <div class="section-label">Prioridade (opcional)</div>
 
     <div class="priority-grid">
@@ -601,18 +589,18 @@ input#finalidade.mode-dec:focus{
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const app = initializeApp({
+const db = getDatabase(initializeApp({
   databaseURL: "https://fila-de-atendimento-a3637-default-rtdb.firebaseio.com"
-});
-
-const db = getDatabase(app);
+}));
 
 let tipo = "";
 let servico = "";
 let filaAberta = true;
 
-const EMISSAO_SERVICOS = ['emissao-cadastro', 'emissao-declaracao'];
+/* Serviços que requerem NIF */
+const EMISSAO_SERVICOS = ['emissao-cadastro', 'emissao-declaracao', 'emissao-visto'];
 
+/* Exemplos para ticker */
 const EXEMPLOS_CAD = [
   'Concurso público',
   'Pedido de emprego',
@@ -631,90 +619,138 @@ const EXEMPLOS_DEC = [
   'Declaração para fins académicos',
 ];
 
-function buildTicker(exemplos, mode){
-  const track = document.getElementById('ticker-track');
-  const wrapEl = document.getElementById('ticker-wrap');
+const EXEMPLOS_VIS = [
+  'Visto de Residência 6M',
+  'Visto Temporário 3M',
+  'Visto de Trabalho',
+  'Visto de Estudo',
+  'Visto de Reagrupamento Familiar',
+  'Visto de Trânsito',
+];
+
+/* Constrói o ticker vertical de exemplos */
+function buildTicker(exemplos, mode, trackId, wrapId) {
+  const track = document.getElementById(trackId);
+  const wrapEl = document.getElementById(wrapId);
+  if(!track || !wrapEl) return;
   track.innerHTML = '';
-  // duplicate for infinite loop
-  const all = [...exemplos, ...exemplos];
-  all.forEach(ex => {
+  [...exemplos, ...exemplos].forEach(ex => {
     const sp = document.createElement('span');
     sp.textContent = 'Ex: ' + ex;
     track.appendChild(sp);
   });
   wrapEl.className = 'placeholder-ticker mode-' + mode;
-  // reset animation
   track.style.animation = 'none';
   void track.offsetWidth;
   track.style.animation = '';
 }
 
+/* Esconde todos os campos extras e reseta */
+function hideAllExtras() {
+  const nifWrap   = document.getElementById('nif-wrap');
+  const finWrap   = document.getElementById('finalidade-wrap');
+  const visWrap   = document.getElementById('visto-wrap');
+
+  nifWrap.classList.remove('show','nif-cad','nif-dec','nif-vis');
+  finWrap.classList.remove('show','mode-cad','mode-dec');
+  visWrap.classList.remove('show');
+
+  document.getElementById('nif').value = '';
+  document.getElementById('nif').className = '';
+  document.getElementById('nif-counter').textContent = '0/9';
+  document.getElementById('nif-counter').className = 'nif-counter';
+  document.getElementById('nif-error').classList.remove('show');
+  document.getElementById('finalidade').value = '';
+  document.getElementById('tipo-visto').value = '';
+}
+
 window.setServico = (s) => {
   servico = s;
 
-  ['btn-atend','btn-cad','btn-pass','btn-emis-cad','btn-emis-dec'].forEach(id => {
+  /* Remove activos */
+  ['btn-atend','btn-cad','btn-pass','btn-emis-cad','btn-emis-dec','btn-emis-vis'].forEach(id => {
     const el = document.getElementById(id);
-    if(el) el.classList.remove('active-atend','active-cad','active-pass','active-emis-cad','active-emis-dec');
+    if(el) el.classList.remove('active-atend','active-cad','active-pass','active-emis-cad','active-emis-dec','active-emis-vis');
   });
 
   const map = {
-    'atendimento'        : ['btn-atend',    'active-atend'],
-    'cadastro'           : ['btn-cad',      'active-cad'],
-    'passaporte'         : ['btn-pass',     'active-pass'],
-    'emissao-cadastro'   : ['btn-emis-cad', 'active-emis-cad'],
-    'emissao-declaracao' : ['btn-emis-dec', 'active-emis-dec'],
+    'atendimento'       : ['btn-atend',    'active-atend'],
+    'cadastro'          : ['btn-cad',      'active-cad'],
+    'passaporte'        : ['btn-pass',     'active-pass'],
+    'emissao-cadastro'  : ['btn-emis-cad', 'active-emis-cad'],
+    'emissao-declaracao': ['btn-emis-dec', 'active-emis-dec'],
+    'emissao-visto'     : ['btn-emis-vis', 'active-emis-vis'],
   };
   const [btnId, cls] = map[s] || [];
   if(btnId) document.getElementById(btnId)?.classList.add(cls);
 
-  const nifWrap = document.getElementById('nif-wrap');
-  const finWrap = document.getElementById('finalidade-wrap');
+  hideAllExtras();
+
+  const nifWrap  = document.getElementById('nif-wrap');
+  const nifLbl   = document.getElementById('nif-label');
+  const nifInp   = document.getElementById('nif');
+  const nifCnt   = document.getElementById('nif-counter');
+  const nifHint  = document.getElementById('nif-hint');
+  const finWrap  = document.getElementById('finalidade-wrap');
   const finLabel = document.getElementById('finalidade-label');
-  const finLabelText = document.getElementById('finalidade-label-text');
-  const finIcon = document.getElementById('finalidade-icon');
+  const finLabelT= document.getElementById('finalidade-label-text');
+  const finIcon  = document.getElementById('finalidade-icon');
   const finInput = document.getElementById('finalidade');
-  const finHint = document.getElementById('finalidade-hint');
-  const finHintText = document.getElementById('finalidade-hint-text');
+  const finHint  = document.getElementById('finalidade-hint');
+  const finHintT = document.getElementById('finalidade-hint-text');
+  const visWrap  = document.getElementById('visto-wrap');
 
-  if(EMISSAO_SERVICOS.includes(s)){
-    nifWrap.classList.add('show');
+  if(s === 'emissao-cadastro'){
+    nifWrap.classList.add('show','nif-cad');
+    nifLbl.className = 'nif-label lbl-cad';
+    nifInp.className = 'nif-cad';
+    nifCnt.className = 'nif-counter lbl-cad';
+    nifHint.className = 'nif-hint lbl-cad';
 
-    // Finalidade
-    finWrap.classList.add('show');
-    finInput.value = '';
-
-    if(s === 'emissao-cadastro'){
-      finWrap.className = 'finalidade-wrap show mode-cad';
-      finLabel.className = 'finalidade-label lbl-cad';
-      finLabelText.textContent = 'Finalidade / Para que efeito';
-      finIcon.className = 'fa-solid fa-circle-question';
-      finInput.className = 'mode-cad';
-      finHint.className = 'finalidade-hint hint-cad';
-      finHintText.textContent = 'Indique a finalidade do cadastro (obrigatório)';
-      buildTicker(EXEMPLOS_CAD, 'cad');
-    } else {
-      finWrap.className = 'finalidade-wrap show mode-dec';
-      finLabel.className = 'finalidade-label lbl-dec';
-      finLabelText.textContent = 'Tipo / Motivo da declaração';
-      finIcon.className = 'fa-solid fa-file-circle-question';
-      finInput.className = 'mode-dec';
-      finHint.className = 'finalidade-hint hint-dec';
-      finHintText.textContent = 'Indique o tipo ou motivo da declaração (obrigatório)';
-      buildTicker(EXEMPLOS_DEC, 'dec');
-    }
+    finWrap.className = 'finalidade-wrap show mode-cad';
+    finLabel.className = 'finalidade-label lbl-cad';
+    finLabelT.textContent = 'Finalidade / Para que efeito';
+    finIcon.className = 'fa-solid fa-circle-question';
+    finInput.className = 'mode-cad';
+    finHint.className = 'finalidade-hint hint-cad';
+    finHintT.textContent = 'Indique a finalidade do cadastro (obrigatório)';
+    buildTicker(EXEMPLOS_CAD, 'cad', 'ticker-track', 'ticker-wrap');
 
     document.getElementById('nif').focus();
-  } else {
-    nifWrap.classList.remove('show');
-    finWrap.classList.remove('show');
-    finWrap.classList.remove('mode-cad','mode-dec');
-    document.getElementById('nif').value = '';
-    document.getElementById('nif-counter').textContent = '0/9';
-    document.getElementById('nif-error').classList.remove('show');
-    finInput.value = '';
+
+  } else if(s === 'emissao-declaracao'){
+    nifWrap.classList.add('show','nif-dec');
+    nifLbl.className = 'nif-label lbl-dec';
+    nifInp.className = 'nif-dec';
+    nifCnt.className = 'nif-counter lbl-dec';
+    nifHint.className = 'nif-hint lbl-dec';
+
+    finWrap.className = 'finalidade-wrap show mode-dec';
+    finLabel.className = 'finalidade-label lbl-dec';
+    finLabelT.textContent = 'Tipo / Motivo da declaração';
+    finIcon.className = 'fa-solid fa-file-circle-question';
+    finInput.className = 'mode-dec';
+    finHint.className = 'finalidade-hint hint-dec';
+    finHintT.textContent = 'Indique o tipo ou motivo da declaração (obrigatório)';
+    buildTicker(EXEMPLOS_DEC, 'dec', 'ticker-track', 'ticker-wrap');
+
+    document.getElementById('nif').focus();
+
+  } else if(s === 'emissao-visto'){
+    nifWrap.classList.add('show','nif-vis');
+    nifLbl.className = 'nif-label lbl-vis';
+    nifInp.className = 'nif-vis';
+    nifCnt.className = 'nif-counter lbl-vis';
+    nifHint.className = 'nif-hint lbl-vis';
+
+    visWrap.classList.add('show');
+    buildTicker(EXEMPLOS_VIS, 'vis', 'ticker-visto-track', 'ticker-visto-wrap');
+
+    document.getElementById('nif').focus();
   }
 };
 
+/* Contador NIF */
 document.addEventListener('DOMContentLoaded', () => {
   const nifInput = document.getElementById('nif');
   if(nifInput){
@@ -733,6 +769,7 @@ window.setPriority = (e, t) => {
   if(tipo) e.currentTarget.classList.add("active");
 };
 
+/* Fila — contador em tempo real */
 onValue(ref(db, "fila"), snap => {
   const data = snap.val();
   const total = data ? Object.keys(data).length : 0;
@@ -742,19 +779,18 @@ onValue(ref(db, "fila"), snap => {
       : `${total} pessoa${total>1?'s':''} na fila à sua frente`;
 });
 
+/* Estado da fila */
 onValue(ref(db, "filaConfig"), snap => {
   const cfg = snap.val() || {};
-  const encerrada = cfg.encerrada === true;
-  const forcado   = cfg.forcado === true;
-  filaAberta = !encerrada && (forcado || dentroHorario());
+  filaAberta = !(cfg.encerrada === true) && ((cfg.forcado === true) || dentroHorario());
   updateUI();
 });
 
 function updateUI() {
-  const form = document.getElementById("form");
-  const fechada = document.getElementById("filaFechada");
-  const btnSubmit = document.getElementById("btnSubmit");
-  const dot = document.getElementById("statusDot");
+  const form     = document.getElementById("form");
+  const fechada  = document.getElementById("filaFechada");
+  const btnSubmit= document.getElementById("btnSubmit");
+  const dot      = document.getElementById("statusDot");
   const statusText = document.getElementById("statusText");
 
   if(filaAberta) {
@@ -780,6 +816,7 @@ function dentroHorario() {
   return dia >= 1 && dia <= 5 && hora >= 8 && hora < 16;
 }
 
+/* Submit */
 document.getElementById("form").addEventListener("submit", e => {
   e.preventDefault();
 
@@ -797,8 +834,10 @@ document.getElementById("form").addEventListener("submit", e => {
 
   const precisaNIF = EMISSAO_SERVICOS.includes(servico);
   const nifVal = document.getElementById('nif').value.trim();
+  const msgEl  = document.getElementById("msg");
+
   if(precisaNIF){
-    const nifErrEl = document.getElementById('nif-error');
+    const nifErrEl  = document.getElementById('nif-error');
     const nifErrMsg = document.getElementById('nif-error-msg');
     if(nifVal.length === 0){
       nifErrMsg.textContent = "O NIF é obrigatório para este serviço.";
@@ -814,18 +853,29 @@ document.getElementById("form").addEventListener("submit", e => {
     }
     nifErrEl.classList.remove('show');
 
-    // Validar finalidade
-    const finalVal = document.getElementById('finalidade').value.trim();
-    if(!finalVal){
-      document.getElementById("msg").style.color = "#dc2626";
-      const label = servico === 'emissao-cadastro' ? 'finalidade do cadastro' : 'tipo/motivo da declaração';
-      document.getElementById("msg").textContent = `⚠️ Indique a ${label}`;
-      document.getElementById('finalidade').focus();
-      return;
+    /* Validar campo extra conforme serviço */
+    if(servico === 'emissao-cadastro' || servico === 'emissao-declaracao'){
+      const finalVal = document.getElementById('finalidade').value.trim();
+      if(!finalVal){
+        msgEl.style.color = "#dc2626";
+        const lbl = servico === 'emissao-cadastro' ? 'finalidade do cadastro' : 'tipo/motivo da declaração';
+        msgEl.textContent = `⚠️ Indique a ${lbl}`;
+        document.getElementById('finalidade').focus();
+        return;
+      }
+    }
+    if(servico === 'emissao-visto'){
+      const vistoVal = document.getElementById('tipo-visto').value.trim();
+      if(!vistoVal){
+        msgEl.style.color = "#dc2626";
+        msgEl.textContent = "⚠️ Indique o tipo de visto pretendido";
+        document.getElementById('tipo-visto').focus();
+        return;
+      }
     }
   }
 
-  const nome = document.getElementById("nome").value.trim();
+  const nome    = document.getElementById("nome").value.trim();
   const apelido = document.getElementById("apelido").value.trim();
 
   const dadosFila = {
@@ -838,27 +888,27 @@ document.getElementById("form").addEventListener("submit", e => {
 
   if(precisaNIF){
     dadosFila.nif = nifVal;
-    dadosFila.finalidade = document.getElementById('finalidade').value.trim();
+    if(servico === 'emissao-cadastro' || servico === 'emissao-declaracao')
+      dadosFila.finalidade = document.getElementById('finalidade').value.trim();
+    if(servico === 'emissao-visto')
+      dadosFila.tipoVisto = document.getElementById('tipo-visto').value.trim();
   }
 
   push(ref(db, "fila"), dadosFila);
 
-  const msg = document.getElementById("msg");
-  msg.style.color = "#155a30";
-  msg.textContent = "✔ Registado! Aguarde a sua vez.";
-  setTimeout(() => msg.textContent = "", 4000);
+  msgEl.style.color = "#155a30";
+  msgEl.textContent = "✔ Registado! Aguarde a sua vez.";
+  setTimeout(() => msgEl.textContent = "", 4000);
 
+  /* Reset completo */
   document.getElementById("form").reset();
   tipo = "";
   servico = "";
-  document.getElementById('nif-wrap').classList.remove('show');
-  document.getElementById('finalidade-wrap').classList.remove('show');
-  document.getElementById('nif-counter').textContent = '0/9';
-  document.getElementById('nif-error').classList.remove('show');
+  hideAllExtras();
   document.querySelectorAll(".priority-btn").forEach(b => b.classList.remove("active"));
-  ['btn-atend','btn-cad','btn-pass','btn-emis-cad','btn-emis-dec'].forEach(id => {
+  ['btn-atend','btn-cad','btn-pass','btn-emis-cad','btn-emis-dec','btn-emis-vis'].forEach(id => {
     const el = document.getElementById(id);
-    if(el) el.classList.remove('active-atend','active-cad','active-pass','active-emis-cad','active-emis-dec');
+    if(el) el.classList.remove('active-atend','active-cad','active-pass','active-emis-cad','active-emis-dec','active-emis-vis');
   });
 });
 </script>
