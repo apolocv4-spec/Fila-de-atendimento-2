@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Painel Operador — PN Controlo de Fronteiras</title>
+<title>Painel de Gestão Operacional</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
@@ -85,22 +85,16 @@ header{
   padding:0 24px;gap:0;
 }
 
-.logo{
-  padding:11px 20px 11px 0;
-  border-right:1px solid var(--b0);
-  margin-right:20px;
-  display:flex;flex-direction:column;align-items:center;gap:1px;
-  flex-shrink:0;
+.op-icon-wrap{
+  width:42px;height:42px;border-radius:10px;
+  background:var(--cyan-d);border:1px solid rgba(0,212,255,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;color:var(--cyan);flex-shrink:0;
+  margin-right:14px;
 }
-.logo-stars{font-size:8px;letter-spacing:5px;color:var(--gold);}
-.logo-main{font-size:22px;font-weight:900;color:var(--t0);letter-spacing:.1em;line-height:1;text-shadow:0 0 20px rgba(0,212,255,.3);}
-.logo-rule{width:30px;height:1.5px;background:linear-gradient(90deg,var(--gold),var(--cyan));border-radius:2px;margin:2px 0;}
-.logo-sub{font-size:7px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);white-space:nowrap;}
 
 .h-text{flex:1;}
-.h-eye{font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);margin-bottom:2px;font-family:'Courier New',monospace;}
-.h-title{font-size:16px;font-weight:800;color:var(--t0);text-transform:uppercase;}
-.h-sub{font-size:11px;color:var(--t2);margin-top:1px;}
+.h-title{font-size:16px;font-weight:800;color:var(--t0);text-transform:uppercase;letter-spacing:.06em;}
 
 .h-right{
   display:flex;align-items:center;gap:10px;
@@ -650,8 +644,39 @@ footer{
 .emis-finalidade-val.fc-cad{color:#c4b5fd;}
 .emis-finalidade-val.fc-dec{color:#7dd3fc;}
 
-/* contador emissão */
-.counter-pill.cp-purple .counter-val{color:var(--purple);}
+/* ── BOTÃO COPIAR NIF ── */
+.btn-copy-nif{
+  background:rgba(167,139,250,.12);
+  border:1px solid rgba(167,139,250,.3);
+  border-radius:6px;
+  color:var(--purple);
+  font-size:11px;
+  padding:3px 8px;
+  cursor:pointer;
+  display:flex;align-items:center;gap:4px;
+  transition:all .15s;
+  white-space:nowrap;
+  flex-shrink:0;
+  font-family:'Courier New',monospace;
+  font-weight:700;
+}
+.btn-copy-nif:hover{
+  background:rgba(167,139,250,.22);
+  border-color:rgba(167,139,250,.5);
+  color:#c4b5fd;
+}
+.btn-copy-nif.copied{
+  background:rgba(52,211,153,.15);
+  border-color:rgba(52,211,153,.4);
+  color:var(--green);
+}
+
+/* ── VISTO ── */
+.emis-item.tipo-vis{border-left:2px solid #34d399;}
+.ett-vis{background:rgba(52,211,153,.12);color:#34d399;}
+.emis-finalidade-ico.fc-vis{color:#34d399;}
+.emis-finalidade-row.fc-vis{border-color:rgba(52,211,153,.25);background:rgba(52,211,153,.06);}
+.emis-finalidade-val.fc-vis{color:#6ee7b7;}
 </style>
 </head>
 <body>
@@ -681,16 +706,11 @@ footer{
 <header>
   <div class="scan-line"></div>
   <div class="h-inner">
-    <div class="logo">
-      <div class="logo-stars">★ ★ ★</div>
-      <div class="logo-main">PN</div>
-      <div class="logo-rule"></div>
-      <div class="logo-sub">Cabo Verde</div>
+    <div class="op-icon-wrap">
+      <i class="fa-solid fa-headset"></i>
     </div>
     <div class="h-text">
-      <div class="h-eye">// Painel de gestão operacional</div>
-      <div class="h-title">Controlo de Fronteiras — Fila</div>
-      <div class="h-sub">Polícia Nacional · Gestão em tempo real</div>
+      <div class="h-title">Painel de Gestão Operacional</div>
     </div>
     <div class="h-right">
       <div class="badge badge-live" id="badgeLive"><span class="dot"></span>Fila aberta</div>
@@ -807,14 +827,23 @@ footer{
             <i class="fa-solid fa-file-signature" style="color:var(--sky);font-size:14px;margin-bottom:3px;"></i>
             Emis. Declaração
           </button>
+          <button type="button" class="prio-btn" id="op-emis-vis" onclick="opSetServico('emissao-visto')" style="flex-direction:column;font-size:10px;padding:8px 6px;">
+            <i class="fa-solid fa-stamp" style="color:#34d399;font-size:14px;margin-bottom:3px;"></i>
+            Emis. Visto
+          </button>
         </div>
 
         <!-- NIF operador -->
         <div id="op-nif-wrap" style="display:none;flex-direction:column;gap:5px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.3);border-radius:8px;padding:10px 12px;">
           <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);font-family:'Courier New',monospace;"><i class="fa-solid fa-hashtag"></i> NIF (9 dígitos)</div>
-          <input type="text" id="op-nif" placeholder="Ex: 123456789" maxlength="9" inputmode="numeric"
-            style="font-family:'Courier New',monospace;letter-spacing:.15em;font-size:14px;font-weight:700;color:var(--t0);border-color:rgba(167,139,250,.4);"
-            oninput="this.value=this.value.replace(/\D/g,'').slice(0,9)">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <input type="text" id="op-nif" placeholder="Ex: 123456789" maxlength="9" inputmode="numeric"
+              style="flex:1;font-family:'Courier New',monospace;letter-spacing:.15em;font-size:14px;font-weight:700;color:var(--t0);border-color:rgba(167,139,250,.4);"
+              oninput="this.value=this.value.replace(/\D/g,'').slice(0,9)">
+            <button type="button" class="btn-copy-nif" id="btn-copy-op-nif" onclick="copyNif('op-nif','btn-copy-op-nif')" title="Copiar NIF">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
         </div>
 
         <!-- Finalidade operador -->
@@ -823,6 +852,12 @@ footer{
             <i class="fa-solid fa-circle-question"></i> Finalidade / Para que efeito
           </div>
           <input type="text" id="op-finalidade" placeholder="" maxlength="120" autocomplete="off">
+        </div>
+
+        <!-- Tipo de Visto operador -->
+        <div id="op-visto-wrap" style="display:none;flex-direction:column;gap:5px;background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.3);border-radius:8px;padding:10px 12px;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#34d399;font-family:'Courier New',monospace;"><i class="fa-solid fa-stamp"></i> Tipo de Visto</div>
+          <input type="text" id="op-visto" placeholder="Ex: Visto de Residência 6M, Visto Temporário 3M…" maxlength="80" autocomplete="off" style="border-color:rgba(52,211,153,.4);">
         </div>
 
         <div class="prio-grid">
@@ -917,6 +952,9 @@ footer{
         <button class="stab" id="stab-emis-dec" onclick="setFiltro('emissao-declaracao')">
           <i class="fa-solid fa-file-signature"></i> Emis. Declaração
         </button>
+        <button class="stab" id="stab-emis-vis" onclick="setFiltro('emissao-visto')">
+          <i class="fa-solid fa-stamp"></i> Emis. Visto
+        </button>
       </div>
 
       <button class="btn btn-outline" id="btnChamar" onclick="chamar()">
@@ -974,6 +1012,9 @@ footer{
         <button class="stab" id="etab-dec" onclick="setEmisFilter('emissao-declaracao')">
           <i class="fa-solid fa-file-signature"></i> Emissão de Declaração
         </button>
+        <button class="stab" id="etab-vis" onclick="setEmisFilter('emissao-visto')">
+          <i class="fa-solid fa-stamp"></i> Emissão de Visto
+        </button>
       </div>
 
       <ul id="emis-lista" class="emis-list">
@@ -986,7 +1027,7 @@ footer{
 </div>
 
 <footer>
-  Polícia Nacional de Cabo Verde · Controlo de Fronteiras · Uso Interno Restrito
+  Painel de Gestão Operacional · Uso Interno Restrito
 </footer>
 
 <script>
@@ -1038,17 +1079,17 @@ let filaForcada = false;
 const norm = t => (t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim();
 const full = (n,a) => norm(n+" "+a);
 
-const EMIS_SERVICOS = ['emissao-cadastro','emissao-declaracao'];
+const EMIS_SERVICOS = ['emissao-cadastro','emissao-declaracao','emissao-visto'];
 
 /* ── FILTRO FILA PRINCIPAL ── */
 window.setFiltro = (f) => {
   filtroAtual = f;
-  ['all','atend','cad','pass','emis-cad','emis-dec'].forEach(s => {
+  ['all','atend','cad','pass','emis-cad','emis-dec','emis-vis'].forEach(s => {
     const el = document.getElementById('stab-'+s);
     if(el) el.className = 'stab';
   });
-  const activeClass = {all:'active-all',atendimento:'active-all',cadastro:'active-cad',passaporte:'active-pass','emissao-cadastro':'active-cad','emissao-declaracao':'active-pass'}[f]||'active-all';
-  const tabId = {all:'stab-all',atendimento:'stab-atend',cadastro:'stab-cad',passaporte:'stab-pass','emissao-cadastro':'stab-emis-cad','emissao-declaracao':'stab-emis-dec'}[f];
+  const activeClass = {all:'active-all',atendimento:'active-all',cadastro:'active-cad',passaporte:'active-pass','emissao-cadastro':'active-cad','emissao-declaracao':'active-pass','emissao-visto':'active-pass'}[f]||'active-all';
+  const tabId = {all:'stab-all',atendimento:'stab-atend',cadastro:'stab-cad',passaporte:'stab-pass','emissao-cadastro':'stab-emis-cad','emissao-declaracao':'stab-emis-dec','emissao-visto':'stab-emis-vis'}[f];
   if(tabId) document.getElementById(tabId).classList.add(activeClass);
   render();
 };
@@ -1056,12 +1097,12 @@ window.setFiltro = (f) => {
 /* ── FILTRO PAINEL EMISSÃO ── */
 window.setEmisFilter = (f) => {
   emisFilter = f;
-  ['etab-all','etab-cad','etab-dec'].forEach(id => {
+  ['etab-all','etab-cad','etab-dec','etab-vis'].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.className = 'stab';
   });
   const cls = 'active-all';
-  const tid = {all:'etab-all','emissao-cadastro':'etab-cad','emissao-declaracao':'etab-dec'}[f];
+  const tid = {all:'etab-all','emissao-cadastro':'etab-cad','emissao-declaracao':'etab-dec','emissao-visto':'etab-vis'}[f];
   if(tid) document.getElementById(tid).classList.add(cls);
   renderEmis();
 };
@@ -1076,24 +1117,33 @@ window.setPrio = (e, t) => {
 /* ── SERVIÇO OPERADOR ── */
 window.opSetServico = (s) => {
   opServico = s;
-  ['op-atend','op-cad','op-pass','op-emis-cad','op-emis-dec'].forEach(id => document.getElementById(id)?.classList.remove("active"));
+  ['op-atend','op-cad','op-pass','op-emis-cad','op-emis-dec','op-emis-vis'].forEach(id => document.getElementById(id)?.classList.remove("active"));
   const idMap = {
     atendimento:'op-atend',
     cadastro:'op-cad',
     passaporte:'op-pass',
     'emissao-cadastro':'op-emis-cad',
-    'emissao-declaracao':'op-emis-dec'
+    'emissao-declaracao':'op-emis-dec',
+    'emissao-visto':'op-emis-vis'
   };
   document.getElementById(idMap[s])?.classList.add("active");
 
-  const nifWrap = document.getElementById('op-nif-wrap');
-  const finWrap = document.getElementById('op-finalidade-wrap');
-  const finLbl  = document.getElementById('op-finalidade-label-el');
-  const finInp  = document.getElementById('op-finalidade');
+  const nifWrap  = document.getElementById('op-nif-wrap');
+  const finWrap  = document.getElementById('op-finalidade-wrap');
+  const finLbl   = document.getElementById('op-finalidade-label-el');
+  const finInp   = document.getElementById('op-finalidade');
+  const visWrap  = document.getElementById('op-visto-wrap');
+
+  // reset all extra fields
+  if(nifWrap) nifWrap.style.display = 'none';
+  if(finWrap) finWrap.style.display = 'none';
+  if(visWrap) visWrap.style.display = 'none';
+  if(finInp)  finInp.value = '';
+  const visInp = document.getElementById('op-visto');
+  if(visInp) visInp.value = '';
 
   if(EMIS_SERVICOS.includes(s)){
     nifWrap.style.display = 'flex';
-    finWrap.style.display = 'flex';
     if(s === 'emissao-cadastro'){
       finWrap.style.background = 'rgba(167,139,250,.07)';
       finWrap.style.border = '1px solid rgba(167,139,250,.3)';
@@ -1101,18 +1151,18 @@ window.opSetServico = (s) => {
       finLbl.innerHTML = '<i class="fa-solid fa-circle-question"></i> Finalidade / Para que efeito';
       finInp.placeholder = 'Ex: Concurso público, Pedido de emprego…';
       finInp.style.borderColor = 'rgba(167,139,250,.4)';
-    } else {
+      finWrap.style.display = 'flex';
+    } else if(s === 'emissao-declaracao'){
       finWrap.style.background = 'rgba(56,189,248,.07)';
       finWrap.style.border = '1px solid rgba(56,189,248,.3)';
       finLbl.style.color = 'var(--sky)';
       finLbl.innerHTML = '<i class="fa-solid fa-file-circle-question"></i> Tipo / Motivo da declaração';
       finInp.placeholder = 'Ex: Decl. de extravio, Decl. de denúncia…';
       finInp.style.borderColor = 'rgba(56,189,248,.4)';
+      finWrap.style.display = 'flex';
+    } else if(s === 'emissao-visto'){
+      visWrap.style.display = 'flex';
     }
-  } else {
-    nifWrap.style.display = 'none';
-    finWrap.style.display = 'none';
-    finInp.value = '';
   }
 };
 
@@ -1127,14 +1177,19 @@ document.getElementById("form").onsubmit = e => {
   const opNifEl = document.getElementById('op-nif');
   const opNifVal = opNifEl ? opNifEl.value.trim() : '';
   const opFinVal = document.getElementById('op-finalidade')?.value.trim() || '';
+  const opVisVal = document.getElementById('op-visto')?.value.trim() || '';
 
   if(EMIS_SERVICOS.includes(opServico)){
     if(opNifVal.length !== 9){
       msgEl.textContent = "⚠️ NIF inválido — 9 dígitos obrigatórios";
       return;
     }
-    if(!opFinVal){
+    if((opServico === 'emissao-cadastro' || opServico === 'emissao-declaracao') && !opFinVal){
       msgEl.textContent = "⚠️ Indique a finalidade / motivo";
+      return;
+    }
+    if(opServico === 'emissao-visto' && !opVisVal){
+      msgEl.textContent = "⚠️ Indique o tipo de visto";
       return;
     }
   }
@@ -1148,7 +1203,10 @@ document.getElementById("form").onsubmit = e => {
   };
   if(EMIS_SERVICOS.includes(opServico)){
     dadosOp.nif = opNifVal;
-    dadosOp.finalidade = opFinVal;
+    if(opServico === 'emissao-cadastro' || opServico === 'emissao-declaracao')
+      dadosOp.finalidade = opFinVal;
+    if(opServico === 'emissao-visto')
+      dadosOp.tipoVisto = opVisVal;
   }
 
   push(ref(db,"fila"), dadosOp);
@@ -1156,9 +1214,10 @@ document.getElementById("form").onsubmit = e => {
   setTimeout(()=>msgEl.textContent="",2500);
   e.target.reset(); tipo=""; opServico="";
   document.querySelectorAll(".prio-btn").forEach(b=>b.classList.remove("active"));
-  ['op-atend','op-cad','op-pass','op-emis-cad','op-emis-dec'].forEach(id=>document.getElementById(id)?.classList.remove("active"));
+  ['op-atend','op-cad','op-pass','op-emis-cad','op-emis-dec','op-emis-vis'].forEach(id=>document.getElementById(id)?.classList.remove("active"));
   document.getElementById('op-nif-wrap').style.display='none';
   document.getElementById('op-finalidade-wrap').style.display='none';
+  document.getElementById('op-visto-wrap').style.display='none';
 };
 
 /* ── VERIFICAÇÃO ── */
@@ -1208,12 +1267,13 @@ function sTag(s){
     passaporte:        ['st-pass','PASSAPORTE'],
     'emissao-cadastro':['st-cad','EMIS.CAD'],
     'emissao-declaracao':['st-pass','EMIS.DEC'],
+    'emissao-visto':['st-pass','EMIS.VISTO'],
   };
   const v=map[s]||['',''];
   return v[1]?`<span class="service-tag ${v[0]}">${v[1]}</span>`:'';
 }
 
-function sCls(s){return s==='cadastro'||s==='emissao-cadastro'?'s-cadastro':s==='passaporte'||s==='emissao-declaracao'?'s-passaporte':'';}
+function sCls(s){return s==='cadastro'||s==='emissao-cadastro'?'s-cadastro':s==='passaporte'||s==='emissao-declaracao'||s==='emissao-visto'?'s-passaporte':'';}
 
 /* ── FILA ── */
 onValue(ref(db,"fila"), snap => {
@@ -1282,15 +1342,20 @@ function renderEmis(){
 
   l.innerHTML = "";
   lista.forEach(p => {
-    const isPrio = ["idoso","gestante","bebe","pmr"].includes(p.tipo);
-    const mins   = Math.floor((Date.now() - p.timestamp) / 60000);
-    const isCad  = p.servico === 'emissao-cadastro';
-    const tipoCls = isCad ? 'tipo-cad' : 'tipo-dec';
-    const colorClass = isCad ? 'fc-cad' : 'fc-dec';
+    const isPrio  = ["idoso","gestante","bebe","pmr"].includes(p.tipo);
+    const mins    = Math.floor((Date.now() - p.timestamp) / 60000);
+    const isCad   = p.servico === 'emissao-cadastro';
+    const isDec   = p.servico === 'emissao-declaracao';
+    const isVis   = p.servico === 'emissao-visto';
+
+    const tipoCls   = isCad ? 'tipo-cad' : isDec ? 'tipo-dec' : 'tipo-vis';
+    const colorClass = isCad ? 'fc-cad' : isDec ? 'fc-dec' : 'fc-vis';
 
     const tipoTag = isCad
       ? '<span class="emis-type-tag ett-cad"><i class="fa-solid fa-file-circle-plus"></i> Emissão Cadastro</span>'
-      : '<span class="emis-type-tag ett-dec"><i class="fa-solid fa-file-signature"></i> Emissão Declaração</span>';
+      : isDec
+        ? '<span class="emis-type-tag ett-dec"><i class="fa-solid fa-file-signature"></i> Emissão Declaração</span>'
+        : '<span class="emis-type-tag ett-vis"><i class="fa-solid fa-stamp"></i> Emissão Visto</span>';
 
     const prioBadge = isPrio
       ? `<span class="emis-prio-tag"><i class="fa-solid fa-star"></i> ${p.tipo.toUpperCase()}</span>`
@@ -1299,31 +1364,56 @@ function renderEmis(){
     const nifDisplay = p.nif
       ? `<div class="emis-detail">
            <div class="emis-detail-label"><i class="fa-solid fa-hashtag"></i> NIF</div>
-           <div class="emis-detail-val nif-val">${p.nif}</div>
+           <div style="display:flex;align-items:center;gap:6px;">
+             <div class="emis-detail-val nif-val" id="nif-${p.id}">${p.nif}</div>
+             <button type="button" class="btn-copy-nif" id="btn-copy-${p.id}" onclick="copyNif('nif-${p.id}','btn-copy-${p.id}')" title="Copiar NIF">
+               <i class="fa-regular fa-copy"></i>
+             </button>
+           </div>
          </div>`
       : `<div class="emis-detail">
            <div class="emis-detail-label">NIF</div>
            <div class="emis-detail-val" style="color:var(--t2)">—</div>
          </div>`;
 
-    const finalidadeLabel = isCad ? 'Finalidade' : 'Tipo / Motivo';
-    const finalidadeIco   = isCad ? 'fa-circle-question' : 'fa-file-circle-question';
-
-    const finalidadeBlock = p.finalidade
-      ? `<div class="emis-finalidade-row ${colorClass}">
-           <i class="fa-solid ${finalidadeIco} emis-finalidade-ico ${colorClass}"></i>
-           <div class="emis-finalidade-body">
-             <div class="emis-finalidade-lbl">${finalidadeLabel}</div>
-             <div class="emis-finalidade-val ${colorClass}">${p.finalidade}</div>
-           </div>
-         </div>`
-      : `<div class="emis-finalidade-row" style="opacity:.5">
-           <i class="fa-solid fa-circle-question emis-finalidade-ico" style="color:var(--t2)"></i>
-           <div class="emis-finalidade-body">
-             <div class="emis-finalidade-lbl">${finalidadeLabel}</div>
-             <div class="emis-finalidade-val" style="color:var(--t2)">Não indicado</div>
-           </div>
-         </div>`;
+    /* Bloco de detalhe extra conforme tipo */
+    let extraBlock = '';
+    if(isVis){
+      const vistoVal = p.tipoVisto || '';
+      extraBlock = vistoVal
+        ? `<div class="emis-finalidade-row fc-vis">
+             <i class="fa-solid fa-stamp emis-finalidade-ico fc-vis"></i>
+             <div class="emis-finalidade-body">
+               <div class="emis-finalidade-lbl">Tipo de Visto</div>
+               <div class="emis-finalidade-val fc-vis">${vistoVal}</div>
+             </div>
+           </div>`
+        : `<div class="emis-finalidade-row" style="opacity:.5">
+             <i class="fa-solid fa-stamp emis-finalidade-ico" style="color:var(--t2)"></i>
+             <div class="emis-finalidade-body">
+               <div class="emis-finalidade-lbl">Tipo de Visto</div>
+               <div class="emis-finalidade-val" style="color:var(--t2)">Não indicado</div>
+             </div>
+           </div>`;
+    } else {
+      const finalidadeLabel = isCad ? 'Finalidade' : 'Tipo / Motivo';
+      const finalidadeIco   = isCad ? 'fa-circle-question' : 'fa-file-circle-question';
+      extraBlock = p.finalidade
+        ? `<div class="emis-finalidade-row ${colorClass}">
+             <i class="fa-solid ${finalidadeIco} emis-finalidade-ico ${colorClass}"></i>
+             <div class="emis-finalidade-body">
+               <div class="emis-finalidade-lbl">${finalidadeLabel}</div>
+               <div class="emis-finalidade-val ${colorClass}">${p.finalidade}</div>
+             </div>
+           </div>`
+        : `<div class="emis-finalidade-row" style="opacity:.5">
+             <i class="fa-solid fa-circle-question emis-finalidade-ico" style="color:var(--t2)"></i>
+             <div class="emis-finalidade-body">
+               <div class="emis-finalidade-lbl">${finalidadeLabel}</div>
+               <div class="emis-finalidade-val" style="color:var(--t2)">Não indicado</div>
+             </div>
+           </div>`;
+    }
 
     l.innerHTML += `<li class="emis-item ${tipoCls}">
       <div class="emis-header">
@@ -1333,7 +1423,7 @@ function renderEmis(){
           ${prioBadge}
         </div>
       </div>
-      ${finalidadeBlock}
+      ${extraBlock}
       <div class="emis-details" style="grid-template-columns:1fr 1fr 1fr;">
         ${nifDisplay}
         <div class="emis-detail">
@@ -1348,6 +1438,36 @@ function renderEmis(){
     </li>`;
   });
 }
+
+/* ── COPIAR NIF ── */
+window.copyNif = (sourceId, btnId) => {
+  const el  = document.getElementById(sourceId);
+  const btn = document.getElementById(btnId);
+  if(!el || !btn) return;
+  const val = el.value !== undefined ? el.value.trim() : el.textContent.trim();
+  if(!val) return;
+  navigator.clipboard.writeText(val).then(() => {
+    btn.classList.add('copied');
+    btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+    }, 2000);
+  }).catch(() => {
+    /* fallback */
+    const ta = document.createElement('textarea');
+    ta.value = val; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.classList.add('copied');
+    btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+    }, 2000);
+  });
+};
 
 /* ── CHAMAR PRÓXIMO ── */
 window.chamar = () => {
