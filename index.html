@@ -183,6 +183,51 @@ input::placeholder{color:#a0b4d0;}
 .service-btn.active-emis-cad{background:rgba(139,92,246,.08);border-color:#7c3aed;color:#5b21b6;}
 .service-btn.active-emis-dec{background:rgba(6,182,212,.08);border-color:#0891b2;color:#164e63;}
 .service-btn.active-emis-vis{background:rgba(5,150,105,.08);border-color:#059669;color:#065f46;}
+.service-btn.active-coima{background:rgba(220,38,38,.07);border-color:#dc2626;color:#991b1b;}
+
+/* ── CAMPO COIMA ── */
+.coima-wrap{
+  display:none;
+  flex-direction:column;
+  gap:6px;
+  background:rgba(220,38,38,.04);
+  border:1px solid rgba(220,38,38,.28);
+  border-radius:10px;
+  padding:12px 14px;
+  margin-top:6px;
+  animation:fadeIn .25s ease;
+}
+.coima-wrap.show{display:flex;}
+
+.coima-label{
+  font-size:10px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:#991b1b;
+  display:flex;align-items:center;gap:6px;
+}
+
+.coima-row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+input.coima-input{
+  width:100%;
+  padding:10px 13px;
+  border:1.5px solid rgba(220,38,38,.35);
+  border-radius:9px;
+  font-size:13px;font-weight:500;
+  color:#0f2550;background:#fff5f5;
+  outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  cursor:text;
+  font-family:'Segoe UI',Arial,sans-serif;
+}
+input.coima-input:focus{
+  border-color:#dc2626;
+  box-shadow:0 0 0 3px rgba(220,38,38,.1);
+  background:#fff;
+}
+input.coima-input::placeholder{color:#a0b4d0;}
+
+.coima-hint{font-size:10px;color:#991b1b;display:flex;align-items:center;gap:5px;}
 
 /* ── WARNING ── */
 .warning{
@@ -486,10 +531,13 @@ input#tipo-visto::placeholder{color:#a0b4d0;}
         <i class="fa-solid fa-file-signature" style="color:#0891b2;"></i>
         Emissão de Declaração
       </button>
-      <!-- NOVO: Emissão de Visto — ocupa a segunda coluna, centrado -->
       <button type="button" class="service-btn" id="btn-emis-vis" onclick="setServico('emissao-visto')">
         <i class="fa-solid fa-stamp" style="color:#059669;"></i>
         Emissão de Visto
+      </button>
+      <button type="button" class="service-btn" id="btn-coima" onclick="setServico('pagamento-coima')">
+        <i class="fa-solid fa-car-burst" style="color:#dc2626;"></i>
+        Pagamento de Coima
       </button>
     </div>
 
@@ -542,6 +590,30 @@ input#tipo-visto::placeholder{color:#a0b4d0;}
       <div class="visto-hint">
         <i class="fa-solid fa-circle-info"></i>
         Indique o tipo de visto pretendido (obrigatório)
+      </div>
+    </div>
+
+    <!-- ── CAMPO PAGAMENTO DE COIMA ── -->
+    <div class="coima-wrap" id="coima-wrap">
+      <div class="coima-label">
+        <i class="fa-solid fa-car-burst"></i>
+        Pagamento de Coima
+      </div>
+      <!-- NIF -->
+      <div class="nif-input-row" style="margin-top:2px;">
+        <input type="text" id="coima-nif" class="coima-input" placeholder="NIF (9 dígitos)" maxlength="9" inputmode="numeric" autocomplete="off">
+        <span style="font-size:11px;font-weight:700;color:#991b1b;font-family:'Courier New',monospace;white-space:nowrap;" id="coima-nif-counter">0/9</span>
+      </div>
+      <!-- Notificação + Valor -->
+      <div class="coima-row2">
+        <input type="text" id="coima-notificacao" class="coima-input" placeholder="Nº Notificação" maxlength="30" autocomplete="off">
+        <input type="text" id="coima-valor" class="coima-input" placeholder="Valor (ex: 50€)" maxlength="20" autocomplete="off">
+      </div>
+      <!-- Matrícula -->
+      <input type="text" id="coima-matricula" class="coima-input" placeholder="Chapa / Matrícula (ex: AA-00-AA)" maxlength="20" autocomplete="off" style="text-transform:uppercase;">
+      <div class="coima-hint">
+        <i class="fa-solid fa-circle-info"></i>
+        Preencha todos os campos para continuar (obrigatório)
       </div>
     </div>
 
@@ -650,10 +722,12 @@ function hideAllExtras() {
   const nifWrap   = document.getElementById('nif-wrap');
   const finWrap   = document.getElementById('finalidade-wrap');
   const visWrap   = document.getElementById('visto-wrap');
+  const coimaWrap = document.getElementById('coima-wrap');
 
   nifWrap.classList.remove('show','nif-cad','nif-dec','nif-vis');
   finWrap.classList.remove('show','mode-cad','mode-dec');
   visWrap.classList.remove('show');
+  coimaWrap.classList.remove('show');
 
   document.getElementById('nif').value = '';
   document.getElementById('nif').className = '';
@@ -662,15 +736,20 @@ function hideAllExtras() {
   document.getElementById('nif-error').classList.remove('show');
   document.getElementById('finalidade').value = '';
   document.getElementById('tipo-visto').value = '';
+  document.getElementById('coima-nif').value = '';
+  document.getElementById('coima-nif-counter').textContent = '0/9';
+  document.getElementById('coima-notificacao').value = '';
+  document.getElementById('coima-valor').value = '';
+  document.getElementById('coima-matricula').value = '';
 }
 
 window.setServico = (s) => {
   servico = s;
 
   /* Remove activos */
-  ['btn-atend','btn-cad','btn-pass','btn-emis-cad','btn-emis-dec','btn-emis-vis'].forEach(id => {
+  ['btn-atend','btn-cad','btn-pass','btn-emis-cad','btn-emis-dec','btn-emis-vis','btn-coima'].forEach(id => {
     const el = document.getElementById(id);
-    if(el) el.classList.remove('active-atend','active-cad','active-pass','active-emis-cad','active-emis-dec','active-emis-vis');
+    if(el) el.classList.remove('active-atend','active-cad','active-pass','active-emis-cad','active-emis-dec','active-emis-vis','active-coima');
   });
 
   const map = {
@@ -680,6 +759,7 @@ window.setServico = (s) => {
     'emissao-cadastro'  : ['btn-emis-cad', 'active-emis-cad'],
     'emissao-declaracao': ['btn-emis-dec', 'active-emis-dec'],
     'emissao-visto'     : ['btn-emis-vis', 'active-emis-vis'],
+    'pagamento-coima'   : ['btn-coima',    'active-coima'],
   };
   const [btnId, cls] = map[s] || [];
   if(btnId) document.getElementById(btnId)?.classList.add(cls);
@@ -747,10 +827,14 @@ window.setServico = (s) => {
     buildTicker(EXEMPLOS_VIS, 'vis', 'ticker-visto-track', 'ticker-visto-wrap');
 
     document.getElementById('nif').focus();
+
+  } else if(s === 'pagamento-coima'){
+    document.getElementById('coima-wrap').classList.add('show');
+    document.getElementById('coima-nif').focus();
   }
 };
 
-/* Contador NIF */
+/* Contadores NIF */
 document.addEventListener('DOMContentLoaded', () => {
   const nifInput = document.getElementById('nif');
   if(nifInput){
@@ -759,6 +843,19 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('nif-counter').textContent = nifInput.value.length + '/9';
       if(nifInput.value.length > 0)
         document.getElementById('nif-error').classList.remove('show');
+    });
+  }
+  const coimaNif = document.getElementById('coima-nif');
+  if(coimaNif){
+    coimaNif.addEventListener('input', () => {
+      coimaNif.value = coimaNif.value.replace(/\D/g, '').slice(0, 9);
+      document.getElementById('coima-nif-counter').textContent = coimaNif.value.length + '/9';
+    });
+  }
+  const coimaMatricula = document.getElementById('coima-matricula');
+  if(coimaMatricula){
+    coimaMatricula.addEventListener('input', () => {
+      coimaMatricula.value = coimaMatricula.value.toUpperCase();
     });
   }
 });
@@ -875,6 +972,38 @@ document.getElementById("form").addEventListener("submit", e => {
     }
   }
 
+  /* Validação específica para pagamento de coima (sem usar EMISSAO_SERVICOS) */
+  if(servico === 'pagamento-coima'){
+    const cNif = document.getElementById('coima-nif').value.trim();
+    const cNot = document.getElementById('coima-notificacao').value.trim();
+    const cVal = document.getElementById('coima-valor').value.trim();
+    const cMat = document.getElementById('coima-matricula').value.trim();
+    if(!cNif || cNif.length !== 9 || !/^\d{9}$/.test(cNif)){
+      msgEl.style.color = "#dc2626";
+      msgEl.textContent = "⚠️ Indique um NIF válido (9 dígitos) para a coima";
+      document.getElementById('coima-nif').focus();
+      return;
+    }
+    if(!cNot){
+      msgEl.style.color = "#dc2626";
+      msgEl.textContent = "⚠️ Indique o número de notificação";
+      document.getElementById('coima-notificacao').focus();
+      return;
+    }
+    if(!cVal){
+      msgEl.style.color = "#dc2626";
+      msgEl.textContent = "⚠️ Indique o valor da coima";
+      document.getElementById('coima-valor').focus();
+      return;
+    }
+    if(!cMat){
+      msgEl.style.color = "#dc2626";
+      msgEl.textContent = "⚠️ Indique a chapa/matrícula do veículo";
+      document.getElementById('coima-matricula').focus();
+      return;
+    }
+  }
+
   const nome    = document.getElementById("nome").value.trim();
   const apelido = document.getElementById("apelido").value.trim();
 
@@ -893,6 +1022,12 @@ document.getElementById("form").addEventListener("submit", e => {
     if(servico === 'emissao-visto')
       dadosFila.tipoVisto = document.getElementById('tipo-visto').value.trim();
   }
+  if(servico === 'pagamento-coima'){
+    dadosFila.coimaNif        = document.getElementById('coima-nif').value.trim();
+    dadosFila.coimaNotificacao= document.getElementById('coima-notificacao').value.trim();
+    dadosFila.coimaValor      = document.getElementById('coima-valor').value.trim();
+    dadosFila.coimaMatricula  = document.getElementById('coima-matricula').value.trim().toUpperCase();
+  }
 
   push(ref(db, "fila"), dadosFila);
 
@@ -906,9 +1041,9 @@ document.getElementById("form").addEventListener("submit", e => {
   servico = "";
   hideAllExtras();
   document.querySelectorAll(".priority-btn").forEach(b => b.classList.remove("active"));
-  ['btn-atend','btn-cad','btn-pass','btn-emis-cad','btn-emis-dec','btn-emis-vis'].forEach(id => {
+  ['btn-atend','btn-cad','btn-pass','btn-emis-cad','btn-emis-dec','btn-emis-vis','btn-coima'].forEach(id => {
     const el = document.getElementById(id);
-    if(el) el.classList.remove('active-atend','active-cad','active-pass','active-emis-cad','active-emis-dec','active-emis-vis');
+    if(el) el.classList.remove('active-atend','active-cad','active-pass','active-emis-cad','active-emis-dec','active-emis-vis','active-coima');
   });
 });
 </script>
