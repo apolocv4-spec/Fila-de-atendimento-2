@@ -671,6 +671,13 @@ footer{
   color:var(--green);
 }
 
+/* ── COIMA ── */
+.emis-item.tipo-coima{border-left:2px solid var(--red);}
+.ett-coima{background:rgba(248,113,113,.12);color:var(--red);}
+.emis-finalidade-ico.fc-coima{color:var(--red);}
+.emis-finalidade-row.fc-coima{border-color:rgba(248,113,113,.25);background:rgba(248,113,113,.06);}
+.emis-finalidade-val.fc-coima{color:#fca5a5;}
+
 /* ── VISTO ── */
 .emis-item.tipo-vis{border-left:2px solid #34d399;}
 .ett-vis{background:rgba(52,211,153,.12);color:#34d399;}
@@ -831,6 +838,10 @@ footer{
             <i class="fa-solid fa-stamp" style="color:#34d399;font-size:14px;margin-bottom:3px;"></i>
             Emis. Visto
           </button>
+          <button type="button" class="prio-btn" id="op-coima" onclick="opSetServico('pagamento-coima')" style="flex-direction:column;font-size:10px;padding:8px 6px;">
+            <i class="fa-solid fa-car-burst" style="color:var(--red);font-size:14px;margin-bottom:3px;"></i>
+            Pag. Coima
+          </button>
         </div>
 
         <!-- NIF operador -->
@@ -858,6 +869,20 @@ footer{
         <div id="op-visto-wrap" style="display:none;flex-direction:column;gap:5px;background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.3);border-radius:8px;padding:10px 12px;">
           <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#34d399;font-family:'Courier New',monospace;"><i class="fa-solid fa-stamp"></i> Tipo de Visto</div>
           <input type="text" id="op-visto" placeholder="Ex: Visto de Residência 6M, Visto Temporário 3M…" maxlength="80" autocomplete="off" style="border-color:rgba(52,211,153,.4);">
+        </div>
+
+        <!-- Pagamento de Coima operador -->
+        <div id="op-coima-wrap" style="display:none;flex-direction:column;gap:6px;background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.3);border-radius:8px;padding:10px 12px;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--red);font-family:'Courier New',monospace;"><i class="fa-solid fa-car-burst"></i> Pagamento de Coima</div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <input type="text" id="op-coima-nif" placeholder="NIF (9 dígitos)" maxlength="9" inputmode="numeric" style="flex:1;border-color:rgba(248,113,113,.4);" oninput="this.value=this.value.replace(/\D/g,'').slice(0,9)">
+            <button type="button" class="btn-copy-nif" id="btn-copy-op-coima-nif" onclick="copyNif('op-coima-nif','btn-copy-op-coima-nif')" title="Copiar NIF"><i class="fa-regular fa-copy"></i></button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+            <input type="text" id="op-coima-notificacao" placeholder="Nº Notificação" maxlength="30" style="border-color:rgba(248,113,113,.4);">
+            <input type="text" id="op-coima-valor" placeholder="Valor (ex: 50€)" maxlength="20" style="border-color:rgba(248,113,113,.4);">
+          </div>
+          <input type="text" id="op-coima-matricula" placeholder="Chapa / Matrícula (ex: AA-00-AA)" maxlength="20" style="border-color:rgba(248,113,113,.4);text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
         </div>
 
         <div class="prio-grid">
@@ -955,6 +980,9 @@ footer{
         <button class="stab" id="stab-emis-vis" onclick="setFiltro('emissao-visto')">
           <i class="fa-solid fa-stamp"></i> Emis. Visto
         </button>
+        <button class="stab" id="stab-coima" onclick="setFiltro('pagamento-coima')">
+          <i class="fa-solid fa-car-burst"></i> Pag. Coima
+        </button>
       </div>
 
       <button class="btn btn-outline" id="btnChamar" onclick="chamar()">
@@ -995,8 +1023,8 @@ footer{
       <div class="card-head-left">
         <div class="cico ico-p"><i class="fa-solid fa-file-circle-plus"></i></div>
         <div>
-          <div class="c-title">Emissão de Cadastro / Declaração</div>
-          <div class="c-sub">Utentes com NIF e finalidade registados — detalhes completos</div>
+          <div class="c-title">Emissão / Coima</div>
+          <div class="c-sub">Utentes com NIF e detalhes registados — vista completa</div>
         </div>
       </div>
       <i class="fa-solid fa-chevron-down chevron"></i>
@@ -1014,6 +1042,9 @@ footer{
         </button>
         <button class="stab" id="etab-vis" onclick="setEmisFilter('emissao-visto')">
           <i class="fa-solid fa-stamp"></i> Emissão de Visto
+        </button>
+        <button class="stab" id="etab-coima" onclick="setEmisFilter('pagamento-coima')">
+          <i class="fa-solid fa-car-burst"></i> Pag. Coima
         </button>
       </div>
 
@@ -1079,17 +1110,17 @@ let filaForcada = false;
 const norm = t => (t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim();
 const full = (n,a) => norm(n+" "+a);
 
-const EMIS_SERVICOS = ['emissao-cadastro','emissao-declaracao','emissao-visto'];
+const EMIS_SERVICOS = ['emissao-cadastro','emissao-declaracao','emissao-visto','pagamento-coima'];
 
 /* ── FILTRO FILA PRINCIPAL ── */
 window.setFiltro = (f) => {
   filtroAtual = f;
-  ['all','atend','cad','pass','emis-cad','emis-dec','emis-vis'].forEach(s => {
+  ['all','atend','cad','pass','emis-cad','emis-dec','emis-vis','coima'].forEach(s => {
     const el = document.getElementById('stab-'+s);
     if(el) el.className = 'stab';
   });
-  const activeClass = {all:'active-all',atendimento:'active-all',cadastro:'active-cad',passaporte:'active-pass','emissao-cadastro':'active-cad','emissao-declaracao':'active-pass','emissao-visto':'active-pass'}[f]||'active-all';
-  const tabId = {all:'stab-all',atendimento:'stab-atend',cadastro:'stab-cad',passaporte:'stab-pass','emissao-cadastro':'stab-emis-cad','emissao-declaracao':'stab-emis-dec','emissao-visto':'stab-emis-vis'}[f];
+  const activeClass = {all:'active-all',atendimento:'active-all',cadastro:'active-cad',passaporte:'active-pass','emissao-cadastro':'active-cad','emissao-declaracao':'active-pass','emissao-visto':'active-pass','pagamento-coima':'active-pass'}[f]||'active-all';
+  const tabId = {all:'stab-all',atendimento:'stab-atend',cadastro:'stab-cad',passaporte:'stab-pass','emissao-cadastro':'stab-emis-cad','emissao-declaracao':'stab-emis-dec','emissao-visto':'stab-emis-vis','pagamento-coima':'stab-coima'}[f];
   if(tabId) document.getElementById(tabId).classList.add(activeClass);
   render();
 };
@@ -1097,12 +1128,12 @@ window.setFiltro = (f) => {
 /* ── FILTRO PAINEL EMISSÃO ── */
 window.setEmisFilter = (f) => {
   emisFilter = f;
-  ['etab-all','etab-cad','etab-dec','etab-vis'].forEach(id => {
+  ['etab-all','etab-cad','etab-dec','etab-vis','etab-coima'].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.className = 'stab';
   });
   const cls = 'active-all';
-  const tid = {all:'etab-all','emissao-cadastro':'etab-cad','emissao-declaracao':'etab-dec','emissao-visto':'etab-vis'}[f];
+  const tid = {all:'etab-all','emissao-cadastro':'etab-cad','emissao-declaracao':'etab-dec','emissao-visto':'etab-vis','pagamento-coima':'etab-coima'}[f];
   if(tid) document.getElementById(tid).classList.add(cls);
   renderEmis();
 };
@@ -1117,52 +1148,60 @@ window.setPrio = (e, t) => {
 /* ── SERVIÇO OPERADOR ── */
 window.opSetServico = (s) => {
   opServico = s;
-  ['op-atend','op-cad','op-pass','op-emis-cad','op-emis-dec','op-emis-vis'].forEach(id => document.getElementById(id)?.classList.remove("active"));
+  ['op-atend','op-cad','op-pass','op-emis-cad','op-emis-dec','op-emis-vis','op-coima'].forEach(id => document.getElementById(id)?.classList.remove("active"));
   const idMap = {
     atendimento:'op-atend',
     cadastro:'op-cad',
     passaporte:'op-pass',
     'emissao-cadastro':'op-emis-cad',
     'emissao-declaracao':'op-emis-dec',
-    'emissao-visto':'op-emis-vis'
+    'emissao-visto':'op-emis-vis',
+    'pagamento-coima':'op-coima'
   };
   document.getElementById(idMap[s])?.classList.add("active");
 
-  const nifWrap  = document.getElementById('op-nif-wrap');
-  const finWrap  = document.getElementById('op-finalidade-wrap');
-  const finLbl   = document.getElementById('op-finalidade-label-el');
-  const finInp   = document.getElementById('op-finalidade');
-  const visWrap  = document.getElementById('op-visto-wrap');
+  const nifWrap   = document.getElementById('op-nif-wrap');
+  const finWrap   = document.getElementById('op-finalidade-wrap');
+  const finLbl    = document.getElementById('op-finalidade-label-el');
+  const finInp    = document.getElementById('op-finalidade');
+  const visWrap   = document.getElementById('op-visto-wrap');
+  const coimaWrap = document.getElementById('op-coima-wrap');
 
   // reset all extra fields
-  if(nifWrap) nifWrap.style.display = 'none';
-  if(finWrap) finWrap.style.display = 'none';
-  if(visWrap) visWrap.style.display = 'none';
-  if(finInp)  finInp.value = '';
+  if(nifWrap)   nifWrap.style.display   = 'none';
+  if(finWrap)   finWrap.style.display   = 'none';
+  if(visWrap)   visWrap.style.display   = 'none';
+  if(coimaWrap) coimaWrap.style.display = 'none';
+  if(finInp)    finInp.value = '';
   const visInp = document.getElementById('op-visto');
   if(visInp) visInp.value = '';
+  ['op-coima-nif','op-coima-notificacao','op-coima-valor','op-coima-matricula'].forEach(id=>{
+    const el = document.getElementById(id); if(el) el.value='';
+  });
 
-  if(EMIS_SERVICOS.includes(s)){
+  if(s === 'emissao-cadastro'){
     nifWrap.style.display = 'flex';
-    if(s === 'emissao-cadastro'){
-      finWrap.style.background = 'rgba(167,139,250,.07)';
-      finWrap.style.border = '1px solid rgba(167,139,250,.3)';
-      finLbl.style.color = 'var(--purple)';
-      finLbl.innerHTML = '<i class="fa-solid fa-circle-question"></i> Finalidade / Para que efeito';
-      finInp.placeholder = 'Ex: Concurso público, Pedido de emprego…';
-      finInp.style.borderColor = 'rgba(167,139,250,.4)';
-      finWrap.style.display = 'flex';
-    } else if(s === 'emissao-declaracao'){
-      finWrap.style.background = 'rgba(56,189,248,.07)';
-      finWrap.style.border = '1px solid rgba(56,189,248,.3)';
-      finLbl.style.color = 'var(--sky)';
-      finLbl.innerHTML = '<i class="fa-solid fa-file-circle-question"></i> Tipo / Motivo da declaração';
-      finInp.placeholder = 'Ex: Decl. de extravio, Decl. de denúncia…';
-      finInp.style.borderColor = 'rgba(56,189,248,.4)';
-      finWrap.style.display = 'flex';
-    } else if(s === 'emissao-visto'){
-      visWrap.style.display = 'flex';
-    }
+    finWrap.style.background = 'rgba(167,139,250,.07)';
+    finWrap.style.border = '1px solid rgba(167,139,250,.3)';
+    finLbl.style.color = 'var(--purple)';
+    finLbl.innerHTML = '<i class="fa-solid fa-circle-question"></i> Finalidade / Para que efeito';
+    finInp.placeholder = 'Ex: Concurso público, Pedido de emprego…';
+    finInp.style.borderColor = 'rgba(167,139,250,.4)';
+    finWrap.style.display = 'flex';
+  } else if(s === 'emissao-declaracao'){
+    nifWrap.style.display = 'flex';
+    finWrap.style.background = 'rgba(56,189,248,.07)';
+    finWrap.style.border = '1px solid rgba(56,189,248,.3)';
+    finLbl.style.color = 'var(--sky)';
+    finLbl.innerHTML = '<i class="fa-solid fa-file-circle-question"></i> Tipo / Motivo da declaração';
+    finInp.placeholder = 'Ex: Decl. de extravio, Decl. de denúncia…';
+    finInp.style.borderColor = 'rgba(56,189,248,.4)';
+    finWrap.style.display = 'flex';
+  } else if(s === 'emissao-visto'){
+    nifWrap.style.display = 'flex';
+    visWrap.style.display = 'flex';
+  } else if(s === 'pagamento-coima'){
+    coimaWrap.style.display = 'flex';
   }
 };
 
@@ -1178,20 +1217,20 @@ document.getElementById("form").onsubmit = e => {
   const opNifVal = opNifEl ? opNifEl.value.trim() : '';
   const opFinVal = document.getElementById('op-finalidade')?.value.trim() || '';
   const opVisVal = document.getElementById('op-visto')?.value.trim() || '';
+  const opCNif   = document.getElementById('op-coima-nif')?.value.trim() || '';
+  const opCNot   = document.getElementById('op-coima-notificacao')?.value.trim() || '';
+  const opCVal   = document.getElementById('op-coima-valor')?.value.trim() || '';
+  const opCMat   = document.getElementById('op-coima-matricula')?.value.trim() || '';
 
-  if(EMIS_SERVICOS.includes(opServico)){
-    if(opNifVal.length !== 9){
-      msgEl.textContent = "⚠️ NIF inválido — 9 dígitos obrigatórios";
-      return;
-    }
-    if((opServico === 'emissao-cadastro' || opServico === 'emissao-declaracao') && !opFinVal){
-      msgEl.textContent = "⚠️ Indique a finalidade / motivo";
-      return;
-    }
-    if(opServico === 'emissao-visto' && !opVisVal){
-      msgEl.textContent = "⚠️ Indique o tipo de visto";
-      return;
-    }
+  if(opServico === 'pagamento-coima'){
+    if(!opCNif || opCNif.length !== 9){ msgEl.textContent = "⚠️ NIF inválido — 9 dígitos obrigatórios"; return; }
+    if(!opCNot){ msgEl.textContent = "⚠️ Indique o número de notificação"; return; }
+    if(!opCVal){ msgEl.textContent = "⚠️ Indique o valor da coima"; return; }
+    if(!opCMat){ msgEl.textContent = "⚠️ Indique a chapa/matrícula"; return; }
+  } else if(['emissao-cadastro','emissao-declaracao','emissao-visto'].includes(opServico)){
+    if(opNifVal.length !== 9){ msgEl.textContent = "⚠️ NIF inválido — 9 dígitos obrigatórios"; return; }
+    if((opServico === 'emissao-cadastro' || opServico === 'emissao-declaracao') && !opFinVal){ msgEl.textContent = "⚠️ Indique a finalidade / motivo"; return; }
+    if(opServico === 'emissao-visto' && !opVisVal){ msgEl.textContent = "⚠️ Indique o tipo de visto"; return; }
   }
 
   const dadosOp = {
@@ -1201,12 +1240,16 @@ document.getElementById("form").onsubmit = e => {
     servico:opServico,
     timestamp:Date.now()
   };
-  if(EMIS_SERVICOS.includes(opServico)){
+  if(['emissao-cadastro','emissao-declaracao','emissao-visto'].includes(opServico)){
     dadosOp.nif = opNifVal;
-    if(opServico === 'emissao-cadastro' || opServico === 'emissao-declaracao')
-      dadosOp.finalidade = opFinVal;
-    if(opServico === 'emissao-visto')
-      dadosOp.tipoVisto = opVisVal;
+    if(opServico === 'emissao-cadastro' || opServico === 'emissao-declaracao') dadosOp.finalidade = opFinVal;
+    if(opServico === 'emissao-visto') dadosOp.tipoVisto = opVisVal;
+  }
+  if(opServico === 'pagamento-coima'){
+    dadosOp.coimaNif         = opCNif;
+    dadosOp.coimaNotificacao = opCNot;
+    dadosOp.coimaValor       = opCVal;
+    dadosOp.coimaMatricula   = opCMat.toUpperCase();
   }
 
   push(ref(db,"fila"), dadosOp);
@@ -1214,10 +1257,11 @@ document.getElementById("form").onsubmit = e => {
   setTimeout(()=>msgEl.textContent="",2500);
   e.target.reset(); tipo=""; opServico="";
   document.querySelectorAll(".prio-btn").forEach(b=>b.classList.remove("active"));
-  ['op-atend','op-cad','op-pass','op-emis-cad','op-emis-dec','op-emis-vis'].forEach(id=>document.getElementById(id)?.classList.remove("active"));
+  ['op-atend','op-cad','op-pass','op-emis-cad','op-emis-dec','op-emis-vis','op-coima'].forEach(id=>document.getElementById(id)?.classList.remove("active"));
   document.getElementById('op-nif-wrap').style.display='none';
   document.getElementById('op-finalidade-wrap').style.display='none';
   document.getElementById('op-visto-wrap').style.display='none';
+  document.getElementById('op-coima-wrap').style.display='none';
 };
 
 /* ── VERIFICAÇÃO ── */
@@ -1268,12 +1312,13 @@ function sTag(s){
     'emissao-cadastro':['st-cad','EMIS.CAD'],
     'emissao-declaracao':['st-pass','EMIS.DEC'],
     'emissao-visto':['st-pass','EMIS.VISTO'],
+    'pagamento-coima':['st-atend','COIMA'],
   };
   const v=map[s]||['',''];
   return v[1]?`<span class="service-tag ${v[0]}">${v[1]}</span>`:'';
 }
 
-function sCls(s){return s==='cadastro'||s==='emissao-cadastro'?'s-cadastro':s==='passaporte'||s==='emissao-declaracao'||s==='emissao-visto'?'s-passaporte':'';}
+function sCls(s){return s==='cadastro'||s==='emissao-cadastro'?'s-cadastro':s==='passaporte'||s==='emissao-declaracao'||s==='emissao-visto'?'s-passaporte':s==='pagamento-coima'?'abandono':'';}
 
 /* ── FILA ── */
 onValue(ref(db,"fila"), snap => {
@@ -1347,26 +1392,32 @@ function renderEmis(){
     const isCad   = p.servico === 'emissao-cadastro';
     const isDec   = p.servico === 'emissao-declaracao';
     const isVis   = p.servico === 'emissao-visto';
+    const isCoima = p.servico === 'pagamento-coima';
 
-    const tipoCls   = isCad ? 'tipo-cad' : isDec ? 'tipo-dec' : 'tipo-vis';
-    const colorClass = isCad ? 'fc-cad' : isDec ? 'fc-dec' : 'fc-vis';
+    const tipoCls   = isCad ? 'tipo-cad' : isDec ? 'tipo-dec' : isVis ? 'tipo-vis' : 'tipo-coima';
+    const colorClass = isCad ? 'fc-cad' : isDec ? 'fc-dec' : isVis ? 'fc-vis' : 'fc-coima';
 
     const tipoTag = isCad
       ? '<span class="emis-type-tag ett-cad"><i class="fa-solid fa-file-circle-plus"></i> Emissão Cadastro</span>'
       : isDec
         ? '<span class="emis-type-tag ett-dec"><i class="fa-solid fa-file-signature"></i> Emissão Declaração</span>'
-        : '<span class="emis-type-tag ett-vis"><i class="fa-solid fa-stamp"></i> Emissão Visto</span>';
+        : isVis
+          ? '<span class="emis-type-tag ett-vis"><i class="fa-solid fa-stamp"></i> Emissão Visto</span>'
+          : '<span class="emis-type-tag ett-coima"><i class="fa-solid fa-car-burst"></i> Pagamento Coima</span>';
 
     const prioBadge = isPrio
       ? `<span class="emis-prio-tag"><i class="fa-solid fa-star"></i> ${p.tipo.toUpperCase()}</span>`
       : '';
 
-    const nifDisplay = p.nif
+    /* NIF: para coima usa coimaNif, para os outros usa nif */
+    const nifRaw = isCoima ? (p.coimaNif||'') : (p.nif||'');
+    const nifElemId = isCoima ? `cnif-${p.id}` : `nif-${p.id}`;
+    const nifDisplay = nifRaw
       ? `<div class="emis-detail">
            <div class="emis-detail-label"><i class="fa-solid fa-hashtag"></i> NIF</div>
            <div style="display:flex;align-items:center;gap:6px;">
-             <div class="emis-detail-val nif-val" id="nif-${p.id}">${p.nif}</div>
-             <button type="button" class="btn-copy-nif" id="btn-copy-${p.id}" onclick="copyNif('nif-${p.id}','btn-copy-${p.id}')" title="Copiar NIF">
+             <div class="emis-detail-val nif-val" id="${nifElemId}">${nifRaw}</div>
+             <button type="button" class="btn-copy-nif" id="btn-copy-${p.id}" onclick="copyNif('${nifElemId}','btn-copy-${p.id}')" title="Copiar NIF">
                <i class="fa-regular fa-copy"></i>
              </button>
            </div>
@@ -1378,7 +1429,29 @@ function renderEmis(){
 
     /* Bloco de detalhe extra conforme tipo */
     let extraBlock = '';
-    if(isVis){
+    if(isCoima){
+      const cNot = p.coimaNotificacao || '—';
+      const cVal = p.coimaValor       || '—';
+      const cMat = p.coimaMatricula   || '—';
+      extraBlock = `
+        <div class="emis-finalidade-row fc-coima">
+          <i class="fa-solid fa-car-burst emis-finalidade-ico fc-coima"></i>
+          <div class="emis-finalidade-body" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;flex:1;">
+            <div>
+              <div class="emis-finalidade-lbl">Nº Notificação</div>
+              <div class="emis-finalidade-val fc-coima">${cNot}</div>
+            </div>
+            <div>
+              <div class="emis-finalidade-lbl">Valor</div>
+              <div class="emis-finalidade-val fc-coima">${cVal}</div>
+            </div>
+            <div>
+              <div class="emis-finalidade-lbl">Matrícula</div>
+              <div class="emis-finalidade-val fc-coima">${cMat}</div>
+            </div>
+          </div>
+        </div>`;
+    } else if(isVis){
       const vistoVal = p.tipoVisto || '';
       extraBlock = vistoVal
         ? `<div class="emis-finalidade-row fc-vis">
