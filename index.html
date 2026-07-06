@@ -180,6 +180,49 @@ input::placeholder{color:#a0b4d0;}
 .service-btn.active-atend{background:rgba(26,58,110,.07);border-color:#1a3a6e;color:#0f2550;}
 .service-btn.active-cad{background:rgba(212,168,42,.1);border-color:#d4a82a;color:#a07830;}
 .service-btn.active-pass{background:rgba(39,118,74,.08);border-color:#27764a;color:#155a30;}
+.service-btn.active-lev{background:rgba(212,168,42,.1);border-color:#d4a82a;color:#a07830;}
+
+/* ── SUBMENU LEVANTAMENTO ── */
+.lev-sub{
+  display:none;
+  flex-direction:column;
+  gap:7px;
+  background:rgba(212,168,42,.05);
+  border:1px solid rgba(212,168,42,.3);
+  border-radius:10px;
+  padding:11px 12px;
+  margin-top:2px;
+  animation:fadeIn .2s ease;
+}
+.lev-sub.show{display:flex;}
+
+.lev-sub-label{
+  font-size:10px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:#a07830;
+  display:flex;align-items:center;gap:5px;
+}
+
+.lev-sub-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:6px;
+}
+
+.lev-btn{
+  background:#f8f9fc;
+  border:1px solid #d8dfef;
+  border-radius:8px;
+  padding:9px 10px;
+  font-size:11px;font-weight:600;
+  color:#5a7099;
+  cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+  transition:all .16s;
+  font-family:inherit;width:100%;
+  text-align:left;
+}
+.lev-btn:hover{background:#fff;border-color:#d4a82a;color:#a07830;}
+.lev-btn.active{background:rgba(212,168,42,.12);border-color:#d4a82a;color:#a07830;}
+.lev-btn i{font-size:13px;flex-shrink:0;color:#d4a82a;}
 .service-btn.active-emis-cad{background:rgba(139,92,246,.08);border-color:#7c3aed;color:#5b21b6;}
 .service-btn.active-emis-dec{background:rgba(6,182,212,.08);border-color:#0891b2;color:#164e63;}
 .service-btn.active-emis-vis{background:rgba(5,150,105,.08);border-color:#059669;color:#065f46;}
@@ -472,6 +515,10 @@ input#tipo-visto::placeholder{color:#a0b4d0;}
   94%  {transform:translateY(-72px);}
   100% {transform:translateY(-90px);}
 }
+
+/* ── MAIÚSCULAS AUTOMÁTICAS ── */
+input[type=text]{text-transform:uppercase;}
+input[type=text]::placeholder{text-transform:none;}
 </style>
 </head>
 <body>
@@ -515,13 +562,9 @@ input#tipo-visto::placeholder{color:#a0b4d0;}
         <i class="fa-solid fa-id-card" style="color:#1a3a6e;"></i>
         Atendimento Geral
       </button>
-      <button type="button" class="service-btn" id="btn-cad" onclick="setServico('cadastro')">
-        <i class="fa-solid fa-user-plus" style="color:#d4a82a;"></i>
-        Levantamento de Cadastro
-      </button>
-      <button type="button" class="service-btn" id="btn-pass" onclick="setServico('passaporte')">
-        <i class="fa-solid fa-passport" style="color:#27764a;"></i>
-        Levantamento de Passaporte
+      <button type="button" class="service-btn" id="btn-lev" onclick="toggleLev()">
+        <i class="fa-solid fa-folder-open" style="color:#d4a82a;"></i>
+        Levantamento Passaporte/Documentos
       </button>
       <button type="button" class="service-btn" id="btn-emis-cad" onclick="setServico('emissao-cadastro')">
         <i class="fa-solid fa-file-circle-plus" style="color:#7c3aed;"></i>
@@ -539,6 +582,18 @@ input#tipo-visto::placeholder{color:#a0b4d0;}
         <i class="fa-solid fa-car-burst" style="color:#dc2626;"></i>
         Pagamento de Coima
       </button>
+    </div>
+
+    <!-- SUBMENU LEVANTAMENTO -->
+    <div class="lev-sub" id="lev-sub">
+      <div class="lev-sub-label"><i class="fa-solid fa-chevron-right"></i> Seleccione o documento</div>
+      <div class="lev-sub-grid">
+        <button type="button" class="lev-btn" id="lev-pass-cv"   onclick="setServico('pass-caboverdiano')"><i class="fa-solid fa-passport"></i> Passaporte Caboverdiano</button>
+        <button type="button" class="lev-btn" id="lev-pass-est"  onclick="setServico('pass-estrangeiro')"><i class="fa-solid fa-earth-africa"></i> Passaporte Estrangeiro</button>
+        <button type="button" class="lev-btn" id="lev-cadastro"  onclick="setServico('cadastro')"><i class="fa-solid fa-user-plus"></i> Cadastro</button>
+        <button type="button" class="lev-btn" id="lev-declaracao" onclick="setServico('declaracao')"><i class="fa-solid fa-file-lines"></i> Declaração</button>
+        <button type="button" class="lev-btn" id="lev-residencia" onclick="setServico('titulo-residencia')"><i class="fa-solid fa-id-card"></i> Título de Residência</button>
+      </div>
     </div>
 
     <!-- ── CAMPO NIF (partilhado por emissão de cadastro, declaração e visto) ── -->
@@ -743,26 +798,64 @@ function hideAllExtras() {
   document.getElementById('coima-matricula').value = '';
 }
 
+/* Abre/fecha submenu levantamento */
+window.toggleLev = () => {
+  const sub = document.getElementById('lev-sub');
+  const btn = document.getElementById('btn-lev');
+  const isOpen = sub.classList.contains('show');
+  // fechar e limpar se já estava aberto
+  if(isOpen){
+    sub.classList.remove('show');
+    btn.classList.remove('active-lev');
+    // se o serviço actual era levantamento, limpa
+    if(['pass-caboverdiano','pass-estrangeiro','cadastro','declaracao','titulo-residencia'].includes(servico)){
+      servico = '';
+      document.querySelectorAll('.lev-btn').forEach(b => b.classList.remove('active'));
+    }
+  } else {
+    sub.classList.add('show');
+    btn.classList.add('active-lev');
+  }
+};
+
 window.setServico = (s) => {
   servico = s;
 
-  /* Remove activos */
-  ['btn-atend','btn-cad','btn-pass','btn-emis-cad','btn-emis-dec','btn-emis-vis','btn-coima'].forEach(id => {
+  /* Remove activos dos botões principais */
+  ['btn-atend','btn-lev','btn-emis-cad','btn-emis-dec','btn-emis-vis','btn-coima'].forEach(id => {
     const el = document.getElementById(id);
-    if(el) el.classList.remove('active-atend','active-cad','active-pass','active-emis-cad','active-emis-dec','active-emis-vis','active-coima');
+    if(el) el.classList.remove('active-atend','active-lev','active-emis-cad','active-emis-dec','active-emis-vis','active-coima');
   });
+  /* Remove activos dos sub-botões */
+  document.querySelectorAll('.lev-btn').forEach(b => b.classList.remove('active'));
 
-  const map = {
-    'atendimento'       : ['btn-atend',    'active-atend'],
-    'cadastro'          : ['btn-cad',      'active-cad'],
-    'passaporte'        : ['btn-pass',     'active-pass'],
-    'emissao-cadastro'  : ['btn-emis-cad', 'active-emis-cad'],
-    'emissao-declaracao': ['btn-emis-dec', 'active-emis-dec'],
-    'emissao-visto'     : ['btn-emis-vis', 'active-emis-vis'],
-    'pagamento-coima'   : ['btn-coima',    'active-coima'],
-  };
-  const [btnId, cls] = map[s] || [];
-  if(btnId) document.getElementById(btnId)?.classList.add(cls);
+  const LEV_SERVICOS = ['pass-caboverdiano','pass-estrangeiro','cadastro','declaracao','titulo-residencia'];
+
+  if(LEV_SERVICOS.includes(s)){
+    /* mantém o botão pai activo e o submenu aberto */
+    document.getElementById('btn-lev')?.classList.add('active-lev');
+    document.getElementById('lev-sub')?.classList.add('show');
+    const subMap = {
+      'pass-caboverdiano':'lev-pass-cv',
+      'pass-estrangeiro':'lev-pass-est',
+      'cadastro':'lev-cadastro',
+      'declaracao':'lev-declaracao',
+      'titulo-residencia':'lev-residencia',
+    };
+    document.getElementById(subMap[s])?.classList.add('active');
+  } else {
+    /* fecha o submenu se seleccionou outro serviço */
+    document.getElementById('lev-sub')?.classList.remove('show');
+    const map = {
+      'atendimento'       : ['btn-atend',    'active-atend'],
+      'emissao-cadastro'  : ['btn-emis-cad', 'active-emis-cad'],
+      'emissao-declaracao': ['btn-emis-dec', 'active-emis-dec'],
+      'emissao-visto'     : ['btn-emis-vis', 'active-emis-vis'],
+      'pagamento-coima'   : ['btn-coima',    'active-coima'],
+    };
+    const [btnId, cls] = map[s] || [];
+    if(btnId) document.getElementById(btnId)?.classList.add(cls);
+  }
 
   hideAllExtras();
 
@@ -1041,11 +1134,23 @@ document.getElementById("form").addEventListener("submit", e => {
   servico = "";
   hideAllExtras();
   document.querySelectorAll(".priority-btn").forEach(b => b.classList.remove("active"));
-  ['btn-atend','btn-cad','btn-pass','btn-emis-cad','btn-emis-dec','btn-emis-vis','btn-coima'].forEach(id => {
+  ['btn-atend','btn-lev','btn-emis-cad','btn-emis-dec','btn-emis-vis','btn-coima'].forEach(id => {
     const el = document.getElementById(id);
-    if(el) el.classList.remove('active-atend','active-cad','active-pass','active-emis-cad','active-emis-dec','active-emis-vis','active-coima');
+    if(el) el.classList.remove('active-atend','active-lev','active-emis-cad','active-emis-dec','active-emis-vis','active-coima');
+  });
+  document.querySelectorAll('.lev-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('lev-sub')?.classList.remove('show');
+});
+
+/* ── FORÇAR MAIÚSCULAS EM TODOS OS CAMPOS TEXT ── */
+document.querySelectorAll('input[type=text]').forEach(inp => {
+  inp.addEventListener('input', function(){
+    const pos = this.selectionStart;
+    this.value = this.value.toUpperCase();
+    this.setSelectionRange(pos, pos);
   });
 });
+
 </script>
 </body>
 </html>
