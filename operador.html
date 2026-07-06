@@ -427,15 +427,21 @@ input:focus{border-color:var(--b2);background:rgba(0,212,255,.05);box-shadow:0 0
 .cdot:hover{transform:scale(1.3);box-shadow:0 0 8px currentColor;}
 
 .editor{
-  flex:1;min-height:180px;
+  min-height:180px;
+  max-height:360px;
+  overflow-y:auto;
   background:rgba(255,255,255,.03);border:1px solid var(--b0);
   border-radius:var(--rsm);padding:12px 13px;
   color:var(--t0);font-size:14px;line-height:1.7;
   font-family:'Segoe UI',sans-serif;
-  outline:none;overflow-y:auto;resize:vertical;
+  outline:none;resize:none;
   transition:border-color .2s,box-shadow .2s;
 }
 .editor:focus{border-color:var(--b2);background:rgba(0,212,255,.04);box-shadow:0 0 0 3px rgba(0,212,255,.07);}
+.editor::-webkit-scrollbar{width:4px;}
+.editor::-webkit-scrollbar-track{background:transparent;}
+.editor::-webkit-scrollbar-thumb{background:var(--t3);border-radius:4px;}
+.editor::-webkit-scrollbar-thumb:hover{background:var(--cyan);}
 
 .section-tabs{
   display:flex;gap:6px;
@@ -671,6 +677,143 @@ footer{
   color:var(--green);
 }
 
+/* ── CHAT MENSAGENS ── */
+.ac-chat{background:linear-gradient(90deg,#818cf8,transparent);}
+.ico-chat{background:rgba(129,140,248,.12);color:#818cf8;}
+
+.chat-panel{display:flex;flex-direction:column;gap:0;height:420px;}
+
+.chat-messages{
+  flex:1;overflow-y:auto;
+  display:flex;flex-direction:column;gap:10px;
+  padding:14px 14px 10px;
+  background:rgba(0,0,0,.15);
+  border-radius:var(--rsm);
+  border:1px solid var(--b0);
+  scroll-behavior:smooth;
+}
+.chat-messages::-webkit-scrollbar{width:3px;}
+.chat-messages::-webkit-scrollbar-thumb{background:var(--t3);border-radius:3px;}
+
+.chat-empty{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:8px;color:var(--t2);font-size:12px;
+  font-family:'Courier New',monospace;
+}
+.chat-empty i{font-size:28px;opacity:.25;}
+
+/* bolha base */
+.msg-row{display:flex;flex-direction:column;gap:3px;max-width:75%;}
+.msg-row.sent{align-self:flex-end;align-items:flex-end;}
+.msg-row.recv{align-self:flex-start;align-items:flex-start;}
+
+.msg-who{
+  font-size:9px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;font-family:'Courier New',monospace;
+  opacity:.6;
+}
+.msg-row.sent .msg-who{color:#818cf8;}
+.msg-row.recv .msg-who{color:var(--cyan);}
+
+.msg-bubble{
+  padding:9px 13px;
+  border-radius:14px;
+  font-size:13px;line-height:1.5;
+  word-break:break-word;
+  position:relative;
+}
+.msg-row.sent .msg-bubble{
+  background:linear-gradient(135deg,rgba(129,140,248,.25),rgba(99,102,241,.2));
+  border:1px solid rgba(129,140,248,.3);
+  border-bottom-right-radius:4px;
+  color:var(--t0);
+}
+.msg-row.recv .msg-bubble{
+  background:linear-gradient(135deg,rgba(0,212,255,.12),rgba(0,180,220,.08));
+  border:1px solid rgba(0,212,255,.22);
+  border-bottom-left-radius:4px;
+  color:var(--t0);
+}
+.msg-time{
+  font-size:9px;color:var(--t2);
+  font-family:'Courier New',monospace;
+  padding:0 4px;
+}
+
+/* input area */
+.chat-input-area{
+  display:flex;gap:7px;align-items:flex-end;
+  padding:10px 0 0;
+}
+
+.chat-head-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+.chat-name-sel{
+  background:rgba(129,140,248,.08);
+  border:1px solid rgba(129,140,248,.25);
+  border-radius:var(--rsm);
+  color:var(--t0);font-size:10px;
+  font-weight:700;letter-spacing:.04em;
+  font-family:'Courier New',monospace;
+  padding:6px 9px;outline:none;
+  cursor:pointer;flex-shrink:0;
+  transition:border-color .2s,background .2s;
+}
+.chat-name-sel:hover{background:rgba(129,140,248,.14);}
+.chat-name-sel:focus{border-color:rgba(129,140,248,.5);box-shadow:0 0 0 3px rgba(129,140,248,.1);}
+.chat-name-sel option{background:#0d1a2e;}
+
+.chat-input{
+  flex:1;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--b0);
+  border-radius:var(--rsm);
+  padding:9px 12px;
+  color:var(--t0);font-size:13px;
+  font-family:'Segoe UI',sans-serif;
+  outline:none;resize:none;
+  line-height:1.5;
+  transition:border-color .2s,box-shadow .2s;
+  min-height:38px;max-height:100px;
+  overflow-y:auto;
+}
+.chat-input:focus{
+  border-color:rgba(129,140,248,.4);
+  box-shadow:0 0 0 3px rgba(129,140,248,.08);
+  background:rgba(129,140,248,.04);
+}
+.chat-input::placeholder{color:var(--t2);}
+.chat-input::-webkit-scrollbar{width:3px;}
+.chat-input::-webkit-scrollbar-thumb{background:var(--t3);border-radius:3px;}
+.chat-input::-webkit-scrollbar-thumb:hover{background:rgba(129,140,248,.5);}
+
+.chat-send-btn{
+  width:38px;height:38px;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(129,140,248,.25),rgba(99,102,241,.2));
+  border:1px solid rgba(129,140,248,.35);
+  border-radius:var(--rsm);
+  color:#818cf8;font-size:14px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .16s;
+}
+.chat-send-btn:hover{
+  background:linear-gradient(135deg,rgba(129,140,248,.38),rgba(99,102,241,.3));
+  box-shadow:0 0 12px rgba(129,140,248,.2);
+}
+.chat-send-btn:active{transform:scale(.95);}
+
+.chat-clear-btn{
+  width:38px;height:38px;flex-shrink:0;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--b0);
+  border-radius:var(--rsm);
+  color:var(--t2);font-size:13px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .16s;
+}
+.chat-clear-btn:hover{border-color:var(--red);color:var(--red);background:rgba(248,113,113,.08);}
+
 /* ── COIMA ── */
 .emis-item.tipo-coima{border-left:2px solid var(--red);}
 .ett-coima{background:rgba(248,113,113,.12);color:var(--red);}
@@ -758,11 +901,7 @@ footer{
         </div>
         <div class="counter-pill">
           <div class="counter-val" id="cnt-cad" style="color:var(--gold)">0</div>
-          <div class="counter-lbl">Lev. Cadastro</div>
-        </div>
-        <div class="counter-pill">
-          <div class="counter-val" id="cnt-pass" style="color:var(--green)">0</div>
-          <div class="counter-lbl">Passaporte</div>
+          <div class="counter-lbl">Levantamento</div>
         </div>
         <div class="counter-pill cp-purple">
           <div class="counter-val" id="cnt-emis">0</div>
@@ -818,13 +957,9 @@ footer{
             <i class="fa-solid fa-id-card" style="color:var(--cyan);font-size:14px;margin-bottom:3px;"></i>
             Atend. Geral
           </button>
-          <button type="button" class="prio-btn" id="op-cad" onclick="opSetServico('cadastro')" style="flex-direction:column;font-size:10px;padding:8px 6px;">
-            <i class="fa-solid fa-user-plus" style="color:var(--gold);font-size:14px;margin-bottom:3px;"></i>
-            Lev. Cadastro
-          </button>
-          <button type="button" class="prio-btn" id="op-pass" onclick="opSetServico('passaporte')" style="flex-direction:column;font-size:10px;padding:8px 6px;">
-            <i class="fa-solid fa-passport" style="color:var(--green);font-size:14px;margin-bottom:3px;"></i>
-            Passaporte
+          <button type="button" class="prio-btn" id="op-lev" onclick="opToggleLev()" style="flex-direction:column;font-size:10px;padding:8px 6px;">
+            <i class="fa-solid fa-folder-open" style="color:var(--gold);font-size:14px;margin-bottom:3px;"></i>
+            Lev. Passaporte/Doc.
           </button>
           <button type="button" class="prio-btn" id="op-emis-cad" onclick="opSetServico('emissao-cadastro')" style="flex-direction:column;font-size:10px;padding:8px 6px;">
             <i class="fa-solid fa-file-circle-plus" style="color:var(--purple);font-size:14px;margin-bottom:3px;"></i>
@@ -842,6 +977,18 @@ footer{
             <i class="fa-solid fa-car-burst" style="color:var(--red);font-size:14px;margin-bottom:3px;"></i>
             Pag. Coima
           </button>
+        </div>
+
+        <!-- SUBMENU LEVANTAMENTO (operador) -->
+        <div id="op-lev-sub" style="display:none;flex-direction:column;gap:6px;background:rgba(240,192,64,.07);border:1px solid rgba(240,192,64,.3);border-radius:8px;padding:10px 12px;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-family:'Courier New',monospace;"><i class="fa-solid fa-chevron-right"></i> Seleccione o documento</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+            <button type="button" class="prio-btn op-lev-btn" id="op-lev-pass-cv"   onclick="opSetServico('pass-caboverdiano')"  style="font-size:10px;gap:5px;"><i class="fa-solid fa-passport"            style="color:var(--gold);font-size:12px;"></i> Passaporte Caboverdiano</button>
+            <button type="button" class="prio-btn op-lev-btn" id="op-lev-pass-est"  onclick="opSetServico('pass-estrangeiro')"   style="font-size:10px;gap:5px;"><i class="fa-solid fa-earth-africa"        style="color:var(--gold);font-size:12px;"></i> Passaporte Estrangeiro</button>
+            <button type="button" class="prio-btn op-lev-btn" id="op-lev-cadastro"  onclick="opSetServico('cadastro')"           style="font-size:10px;gap:5px;"><i class="fa-solid fa-user-plus"           style="color:var(--gold);font-size:12px;"></i> Cadastro</button>
+            <button type="button" class="prio-btn op-lev-btn" id="op-lev-declaracao" onclick="opSetServico('declaracao')"        style="font-size:10px;gap:5px;"><i class="fa-solid fa-file-lines"          style="color:var(--gold);font-size:12px;"></i> Declaração</button>
+            <button type="button" class="prio-btn op-lev-btn" id="op-lev-residencia" onclick="opSetServico('titulo-residencia')" style="font-size:10px;gap:5px;"><i class="fa-solid fa-house-circle-check"  style="color:var(--gold);font-size:12px;"></i> Título de Residência</button>
+          </div>
         </div>
 
         <!-- NIF operador -->
@@ -944,6 +1091,54 @@ footer{
     <div class="resize-handle"></div>
   </div>
 
+
+  <!-- PAINEL 6: CHAT MENSAGENS -->
+  <div class="card" id="c-chat">
+    <div class="card-accent ac-chat"></div>
+    <div class="card-head" onclick="toggle('c-chat')">
+      <div class="card-head-left">
+        <div class="cico ico-chat"><i class="fa-solid fa-comments"></i></div>
+        <div>
+          <div class="c-title">Chat Interno</div>
+          <div class="c-sub">Troca de mensagens em tempo real</div>
+        </div>
+      </div>
+      <div class="chat-head-right">
+        <select class="chat-name-sel" id="chat-who" onclick="event.stopPropagation()">
+          <option value="Operador">Operador</option>
+          <option value="Colega">Colega</option>
+          <option value="Supervisor">Supervisor</option>
+        </select>
+        <i class="fa-solid fa-chevron-down chevron"></i>
+      </div>
+    </div>
+    <div class="card-body" style="padding:14px;">
+      <div class="chat-panel">
+
+        <!-- Mensagens -->
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-empty" id="chat-empty">
+            <i class="fa-regular fa-comments"></i>
+            Ainda não há mensagens
+          </div>
+        </div>
+
+        <!-- Input -->
+        <div class="chat-input-area">
+          <textarea class="chat-input" id="chat-input" placeholder="Escreva uma mensagem…" rows="1"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"></textarea>
+          <button class="chat-send-btn" onclick="sendMsg()" title="Enviar">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+          <button class="chat-clear-btn" onclick="clearChat()" title="Limpar chat">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- PAINEL 4: FILA PRINCIPAL -->
   <div class="card" id="c-fila" style="grid-column:span 2;">
     <div class="card-accent ac-green"></div>
@@ -965,11 +1160,8 @@ footer{
         <button class="stab" id="stab-atend" onclick="setFiltro('atendimento')">
           <i class="fa-solid fa-id-card"></i> Atendimento
         </button>
-        <button class="stab" id="stab-cad" onclick="setFiltro('cadastro')">
-          <i class="fa-solid fa-user-plus"></i> Lev. Cadastro
-        </button>
-        <button class="stab" id="stab-pass" onclick="setFiltro('passaporte')">
-          <i class="fa-solid fa-passport"></i> Passaporte
+        <button class="stab" id="stab-lev" onclick="setFiltro('levantamento')">
+          <i class="fa-solid fa-folder-open"></i> Levantamento
         </button>
         <button class="stab" id="stab-emis-cad" onclick="setFiltro('emissao-cadastro')">
           <i class="fa-solid fa-file-circle-plus"></i> Emis. Cadastro
@@ -1011,6 +1203,7 @@ footer{
           <button class="cdot" style="background:#f87171;" onclick="clr('#f87171')"></button>
         </div>
         <div id="editor" class="editor" contenteditable="true" spellcheck="true"></div>
+
       </div>
     </div>
     <div class="resize-handle"></div>
@@ -1054,7 +1247,6 @@ footer{
     </div>
     <div class="resize-handle"></div>
   </div>
-
 </div>
 
 <footer>
@@ -1112,15 +1304,17 @@ const full = (n,a) => norm(n+" "+a);
 
 const EMIS_SERVICOS = ['emissao-cadastro','emissao-declaracao','emissao-visto','pagamento-coima'];
 
+const LEV_SERVICOS = ['pass-caboverdiano','pass-estrangeiro','cadastro','declaracao','titulo-residencia'];
+
 /* ── FILTRO FILA PRINCIPAL ── */
 window.setFiltro = (f) => {
   filtroAtual = f;
-  ['all','atend','cad','pass','emis-cad','emis-dec','emis-vis','coima'].forEach(s => {
+  ['all','atend','lev','emis-cad','emis-dec','emis-vis','coima'].forEach(s => {
     const el = document.getElementById('stab-'+s);
     if(el) el.className = 'stab';
   });
-  const activeClass = {all:'active-all',atendimento:'active-all',cadastro:'active-cad',passaporte:'active-pass','emissao-cadastro':'active-cad','emissao-declaracao':'active-pass','emissao-visto':'active-pass','pagamento-coima':'active-pass'}[f]||'active-all';
-  const tabId = {all:'stab-all',atendimento:'stab-atend',cadastro:'stab-cad',passaporte:'stab-pass','emissao-cadastro':'stab-emis-cad','emissao-declaracao':'stab-emis-dec','emissao-visto':'stab-emis-vis','pagamento-coima':'stab-coima'}[f];
+  const activeClass = {all:'active-all',atendimento:'active-all',levantamento:'active-cad','emissao-cadastro':'active-cad','emissao-declaracao':'active-pass','emissao-visto':'active-pass','pagamento-coima':'active-pass'}[f]||'active-all';
+  const tabId = {all:'stab-all',atendimento:'stab-atend',levantamento:'stab-lev','emissao-cadastro':'stab-emis-cad','emissao-declaracao':'stab-emis-dec','emissao-visto':'stab-emis-vis','pagamento-coima':'stab-coima'}[f];
   if(tabId) document.getElementById(tabId).classList.add(activeClass);
   render();
 };
@@ -1145,20 +1339,48 @@ window.setPrio = (e, t) => {
   if(tipo) e.currentTarget.classList.add("active");
 };
 
+/* Toggle submenu levantamento no operador */
+window.opToggleLev = () => {
+  const sub = document.getElementById('op-lev-sub');
+  const btn = document.getElementById('op-lev');
+  const isOpen = sub.style.display === 'flex';
+  sub.style.display = isOpen ? 'none' : 'flex';
+  btn.classList.toggle('active', !isOpen);
+  if(isOpen && LEV_SERVICOS.includes(opServico)){
+    opServico = '';
+    document.querySelectorAll('.op-lev-btn').forEach(b => b.classList.remove('active'));
+  }
+};
+
 /* ── SERVIÇO OPERADOR ── */
 window.opSetServico = (s) => {
   opServico = s;
-  ['op-atend','op-cad','op-pass','op-emis-cad','op-emis-dec','op-emis-vis','op-coima'].forEach(id => document.getElementById(id)?.classList.remove("active"));
+  ['op-atend','op-lev','op-emis-cad','op-emis-dec','op-emis-vis','op-coima'].forEach(id => document.getElementById(id)?.classList.remove("active"));
+  document.querySelectorAll('.op-lev-btn').forEach(b => b.classList.remove('active'));
+
   const idMap = {
     atendimento:'op-atend',
-    cadastro:'op-cad',
-    passaporte:'op-pass',
     'emissao-cadastro':'op-emis-cad',
     'emissao-declaracao':'op-emis-dec',
     'emissao-visto':'op-emis-vis',
-    'pagamento-coima':'op-coima'
+    'pagamento-coima':'op-coima',
   };
-  document.getElementById(idMap[s])?.classList.add("active");
+
+  if(LEV_SERVICOS.includes(s)){
+    document.getElementById('op-lev')?.classList.add('active');
+    document.getElementById('op-lev-sub').style.display = 'flex';
+    const subMap = {
+      'pass-caboverdiano':'op-lev-pass-cv',
+      'pass-estrangeiro':'op-lev-pass-est',
+      'cadastro':'op-lev-cadastro',
+      'declaracao':'op-lev-declaracao',
+      'titulo-residencia':'op-lev-residencia',
+    };
+    document.getElementById(subMap[s])?.classList.add('active');
+  } else {
+    document.getElementById('op-lev-sub').style.display = 'none';
+    document.getElementById(idMap[s])?.classList.add("active");
+  }
 
   const nifWrap   = document.getElementById('op-nif-wrap');
   const finWrap   = document.getElementById('op-finalidade-wrap');
@@ -1257,7 +1479,9 @@ document.getElementById("form").onsubmit = e => {
   setTimeout(()=>msgEl.textContent="",2500);
   e.target.reset(); tipo=""; opServico="";
   document.querySelectorAll(".prio-btn").forEach(b=>b.classList.remove("active"));
-  ['op-atend','op-cad','op-pass','op-emis-cad','op-emis-dec','op-emis-vis','op-coima'].forEach(id=>document.getElementById(id)?.classList.remove("active"));
+  ['op-atend','op-lev','op-emis-cad','op-emis-dec','op-emis-vis','op-coima'].forEach(id=>document.getElementById(id)?.classList.remove("active"));
+  document.querySelectorAll('.op-lev-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('op-lev-sub').style.display='none';
   document.getElementById('op-nif-wrap').style.display='none';
   document.getElementById('op-finalidade-wrap').style.display='none';
   document.getElementById('op-visto-wrap').style.display='none';
@@ -1306,19 +1530,27 @@ function pCls(t){return {idoso:"p-y",gestante:"p-p",bebe:"p-o",pmr:"p-b"}[t]||""
 
 function sTag(s){
   const map={
-    atendimento:       ['st-atend','ATEND.'],
-    cadastro:          ['st-cad','CADASTRO'],
-    passaporte:        ['st-pass','PASSAPORTE'],
-    'emissao-cadastro':['st-cad','EMIS.CAD'],
-    'emissao-declaracao':['st-pass','EMIS.DEC'],
-    'emissao-visto':['st-pass','EMIS.VISTO'],
-    'pagamento-coima':['st-atend','COIMA'],
+    atendimento:           ['st-atend','ATEND.'],
+    'pass-caboverdiano':   ['st-cad','PASS. CV'],
+    'pass-estrangeiro':    ['st-cad','PASS. EST.'],
+    cadastro:              ['st-cad','CADASTRO'],
+    declaracao:            ['st-cad','DECLARAÇÃO'],
+    'titulo-residencia':   ['st-cad','RESIDÊNCIA'],
+    'emissao-cadastro':    ['st-cad','EMIS.CAD'],
+    'emissao-declaracao':  ['st-pass','EMIS.DEC'],
+    'emissao-visto':       ['st-pass','EMIS.VISTO'],
+    'pagamento-coima':     ['st-atend','COIMA'],
   };
   const v=map[s]||['',''];
   return v[1]?`<span class="service-tag ${v[0]}">${v[1]}</span>`:'';
 }
 
-function sCls(s){return s==='cadastro'||s==='emissao-cadastro'?'s-cadastro':s==='passaporte'||s==='emissao-declaracao'||s==='emissao-visto'?'s-passaporte':s==='pagamento-coima'?'abandono':'';}
+function sCls(s){
+  if(LEV_SERVICOS.includes(s)) return 's-cadastro';
+  if(s==='emissao-declaracao'||s==='emissao-visto') return 's-passaporte';
+  if(s==='pagamento-coima') return 'abandono';
+  return '';
+}
 
 /* ── FILA ── */
 onValue(ref(db,"fila"), snap => {
@@ -1330,10 +1562,10 @@ onValue(ref(db,"fila"), snap => {
 });
 
 function updateCounters(){
+  const LEV_S = ['pass-caboverdiano','pass-estrangeiro','cadastro','declaracao','titulo-residencia'];
   document.getElementById("cnt-total").textContent = fila.length;
   document.getElementById("cnt-atend").textContent = fila.filter(p=>!p.servico||p.servico==='atendimento').length;
-  document.getElementById("cnt-cad").textContent   = fila.filter(p=>p.servico==='cadastro').length;
-  document.getElementById("cnt-pass").textContent  = fila.filter(p=>p.servico==='passaporte').length;
+  document.getElementById("cnt-cad").textContent   = fila.filter(p=>LEV_S.includes(p.servico)).length;
   document.getElementById("cnt-emis").textContent  = fila.filter(p=>EMIS_SERVICOS.includes(p.servico)).length;
 }
 
@@ -1343,6 +1575,7 @@ function render(){
   if(filtroAtual !== 'all') {
     lista = fila.filter(p => {
       if(filtroAtual==='atendimento') return !p.servico||p.servico==='atendimento';
+      if(filtroAtual==='levantamento') return LEV_SERVICOS.includes(p.servico);
       return p.servico===filtroAtual;
     });
   }
@@ -1549,6 +1782,7 @@ window.chamar = () => {
   if(filtroAtual !== 'all') {
     const filtrado = fila.filter(p=>{
       if(filtroAtual==='atendimento') return !p.servico||p.servico==='atendimento';
+      if(filtroAtual==='levantamento') return LEV_SERVICOS.includes(p.servico);
       return p.servico===filtroAtual;
     });
     if(filtrado.length) alvo = filtrado[0];
@@ -1655,6 +1889,65 @@ function applyFs(px){
 
 window.fsUp=()=>{const c=selSz();applyFs(sizes.find(s=>s>c)||sizes[sizes.length-1]);ed.focus();};
 window.fsDown=()=>{const c=selSz();applyFs([...sizes].reverse().find(s=>s<c)||sizes[0]);ed.focus();};
+
+/* ── CHAT ── */
+const chatRef = ref(db, "chat");
+
+function timeStr(ts){
+  const d = new Date(ts);
+  return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+}
+
+function scrollChat(){
+  const box = document.getElementById('chat-messages');
+  if(box) box.scrollTop = box.scrollHeight;
+}
+
+onValue(chatRef, snap => {
+  const data = snap.val();
+  const box  = document.getElementById('chat-messages');
+  const empty = document.getElementById('chat-empty');
+  if(!data){
+    box.innerHTML = '';
+    box.appendChild(empty);
+    return;
+  }
+  const msgs = Object.values(data).sort((a,b)=>a.ts-b.ts);
+  box.innerHTML = '';
+  const myName = document.getElementById('chat-who')?.value || 'Operador';
+  msgs.forEach(m => {
+    const isSent = m.who === myName;
+    const row = document.createElement('div');
+    row.className = 'msg-row ' + (isSent ? 'sent' : 'recv');
+    row.innerHTML = `
+      <div class="msg-who">${m.who}</div>
+      <div class="msg-bubble">${m.text.replace(/\n/g,'<br>')}</div>
+      <div class="msg-time">${timeStr(m.ts)}</div>`;
+    box.appendChild(row);
+  });
+  scrollChat();
+});
+
+window.sendMsg = () => {
+  const input = document.getElementById('chat-input');
+  const who   = document.getElementById('chat-who')?.value || 'Operador';
+  const text  = input.value.trim();
+  if(!text) return;
+  push(chatRef, { who, text, ts: Date.now() });
+  input.value = '';
+  input.style.height = '';
+  input.focus();
+};
+
+window.clearChat = () => {
+  if(confirm('Apagar todo o histórico de mensagens?')) set(chatRef, null);
+};
+
+// auto-resize textarea
+document.getElementById('chat-input')?.addEventListener('input', function(){
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+});
 </script>
 </body>
 </html>
